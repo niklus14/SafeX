@@ -1,0 +1,9 @@
+external_id,category,severity,title_az,description_az,lat,lng,status,created_at,org_key
+NRM-2024-0012,road_excavation,medium,Qazılmış asfalt bərpa olunmayıb,Su xətti təmirindən sonra asfalt örtüyü bərpa edilməyib,40.4093,49.8671,resolved,2024-11-03,azersu
+NRM-2024-0027,waste,high,Zibil konteynerləri daşıb,Konteynerlərin ətrafında tullantılar yığılıb,40.4121,49.8602,resolved,2024-11-10,temiz_seher
+NRM-2024-0041,lighting,medium,İşıq dirəyi işləmir,Küçə işıqlandırması sıradan çıxıb,40.4078,49.8715,resolved,2024-12-01,bakiisiq
+NRM-2025-0008,green_zone,low,Yaşıllıq vaxtında biçilməyib,Bulvar boyu otlar uzanıb,40.4145,49.8559,in_progress,2025-01-15,yasilliq
+NRM-2025-0019,sidewalk,medium,Səki bardürləri zədələnib,Piyada zonasında bardürlər sınıb,40.4102,49.8688,routed,2025-02-02,abadliq
+NRM-2025-0033,park_equipment,high,Sınmış uşaq atraksionu,Parkda atraksion təhlükəlidir,40.4159,49.8631,routed,2025-02-20,abadliq
+NRM-2025-0047,facade,low,Fasad rəngi solub,Yaşayış binasının fasadı təmir tələb edir,40.4067,49.8649,manual_review,2025-03-05,mktb
+NRM-2025-0052,flooding,high,İntensiv yağışdan subasma,Yağışdan sonra yol hissəsi su altında qalıb,40.4088,49.8593,resolved,2025-03-18,azersu

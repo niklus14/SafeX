@@ -1,0 +1,10 @@
+key,name_az,scope,contact_hint
+mktb,Nərimanov rayon Mənzil-Kommunal Təsərrüfatı Birliyi,district,nerimanov-mktb@.gov.az
+abadliq,Nərimanov RİH — Abadlıq və Kommunal Təsərrüfat şöbəsi,district,abadliq@nerimanov-ih.gov.az
+tikinti,Nərimanov RİH — Tikinti və Arxitektura şöbəsi,district,tikinti@nerimanov-ih.gov.az
+azersu,“Azərsu” ASC,city_utility,104
+azeriqaz,“Azəriqaz” İstehsalat Birliyi,city_utility,104
+azerisiq,“Azərişıq” ASC,city_utility,920
+bakiisiq,“Bakıişıq” MMC (küçə işıqlandırması),city_service,bakiisiq@.gov.az
+temiz_seher,“Təmiz Şəhər” ASC,city_service,temizseher@.gov.az
+yasilliq,Bakı Şəhər Yaşıllaşdırma Təsərrüfat Birliyi,city_service,"Xan Şuşinski 63, Nərimanov r."
