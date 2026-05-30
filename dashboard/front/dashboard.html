@@ -372,7 +372,7 @@ input, select { font-family: inherit; outline: none; border: none; }
 <!-- ===== TOP BAR ===== -->
 <header class="topbar">
   <div class="topbar-brand">
-    <span class="tb-logo">Openwave</span>
+    <span class="tb-logo">myRegion</span>
     <span class="tb-divider"></span>
     <span class="tb-sub">Nərimanov Rayonu &middot; Admin Panel</span>
   </div>
@@ -438,7 +438,7 @@ input, select { font-family: inherit; outline: none; border: none; }
           <span class="stat-icon total"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>
           <span class="stat-change up">+12%</span>
         </div>
-        <div class="stat-value">1,247</div>
+        <div class="stat-value" id="stat-total">—</div>
         <div class="stat-label">Ümumi müraciət</div>
       </div>
       <div class="stat-card">
@@ -446,7 +446,7 @@ input, select { font-family: inherit; outline: none; border: none; }
           <span class="stat-icon open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
           <span class="stat-change up">+5%</span>
         </div>
-        <div class="stat-value">342</div>
+        <div class="stat-value" id="stat-open">—</div>
         <div class="stat-label">Açıq müraciət</div>
       </div>
       <div class="stat-card">
@@ -454,7 +454,7 @@ input, select { font-family: inherit; outline: none; border: none; }
           <span class="stat-icon resolved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span>
           <span class="stat-change up">+18%</span>
         </div>
-        <div class="stat-value">847</div>
+        <div class="stat-value" id="stat-resolved">—</div>
         <div class="stat-label">Həll edildi</div>
       </div>
       <div class="stat-card">
@@ -462,8 +462,8 @@ input, select { font-family: inherit; outline: none; border: none; }
           <span class="stat-icon urgent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
           <span class="stat-change down">-3%</span>
         </div>
-        <div class="stat-value">58</div>
-        <div class="stat-label">Kritik</div>
+        <div class="stat-value" id="stat-overdue">—</div>
+        <div class="stat-label">Gecikmiş</div>
       </div>
     </div>
 
@@ -511,21 +511,21 @@ input, select { font-family: inherit; outline: none; border: none; }
     <div class="quick-actions">
       <button class="btn btn-primary" onclick="navigateTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Müraciətlərə bax</button>
       <button class="btn btn-secondary" onclick="navigateTo('map')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg> Xəritəni aç</button>
-      <button class="btn btn-secondary"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Məlumat ixrac et</button>
+      <button class="btn btn-secondary" onclick="exportPDF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF ixrac et</button>
       <button class="btn btn-secondary" onclick="openDetailPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Yeni müraciət</button>
     </div>
   </section>
 
   <!-- REPORTS -->
   <section class="page" id="page-reports">
-    <div id="reports-page"> class="page-header">
+    <div class="page-header">
       <div>
         <h1>Müraciət İdarəetməsi</h1>
         <p>Bütün müraciətləri idarə edin və izləyin</p>
       </div>
       <div style="display:flex;gap:8px;">
         <button class="btn btn-primary" onclick="openDetailPanel()">+ Yeni müraciət</button>
-        <button class="btn btn-secondary">İxrac et</button>
+        <button class="btn btn-secondary" onclick="exportPDF()">PDF ixrac et</button>
       </div>
     </div>
 
@@ -534,7 +534,7 @@ input, select { font-family: inherit; outline: none; border: none; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input class="search-input" type="text" placeholder="Müraciət axtar...">
       </div>
-      <select class="filter-select"><option>Bütün statuslar</option><option>AI yoxlaması</option><option>Operator yoxlaması</option><option>Yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option><option>İmtina edildi</option></select>
+      <select class="filter-select"><option>Bütün statuslar</option><option>Süni intellekt yoxlaması</option><option>Operator yoxlaması</option><option>Quruma yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option><option>İmtina edildi</option></select>
       <select class="filter-select"><option>Bütün kateqoriyalar</option><option>Yol zədəsi</option><option>Zibil</option><option>İnfrastruktur</option><option>İşıqlandırma</option><option>Qanunsuz tullantı</option></select>
       <select class="filter-select"><option>Bütün prioritetlər</option><option>Kritik</option><option>Yüksək</option><option>Orta</option><option>Aşağı</option></select>
       <select class="filter-select"><option>Bütün zonalar</option><option>Montin</option><option>Nəriman Nərimanov</option><option>Gənclik</option><option>Ulduz</option><option>Atatürk Parkı</option><option>Respublika Stadionu</option><option>Bakı Zooparkı</option><option>Mərkəzi prospektlər</option></select>
@@ -567,7 +567,7 @@ input, select { font-family: inherit; outline: none; border: none; }
       <div class="map-container" id="map-container">
         <div class="map-filters">
           <select class="filter-select" style="min-width:140px;"><option>Bütün problem növləri</option><option>Yol zədəsi</option><option>Zibil</option><option>İnfrastruktur</option><option>İşıqlandırma</option><option>Qanunsuz tullantı</option></select>
-          <select class="filter-select" style="min-width:120px;"><option>Bütün statuslar</option><option>AI yoxlaması</option><option>Operator yoxlaması</option><option>Yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option></select>
+          <select class="filter-select" style="min-width:120px;"><option>Bütün statuslar</option><option>Süni intellekt yoxlaması</option><option>Operator yoxlaması</option><option>Quruma yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option></select>
           <select class="filter-select" style="min-width:110px;"><option>Bütün prioritetlər</option><option>Kritik</option><option>Yüksək</option><option>Orta</option></select>
           <select class="filter-select" style="min-width:140px;"><option>Bütün zonalar</option><option>Montin</option><option>Nəriman Nərimanov</option><option>Gənclik</option><option>Ulduz</option><option>Atatürk Parkı</option><option>Respublika Stadionu</option><option>Bakı Zooparkı</option><option>Mərkəzi prospektlər</option></select>
           <select class="filter-select" style="min-width:110px;"><option>Bütün tarixlər</option><option>Bu həftə</option><option>Bu ay</option></select>
@@ -706,7 +706,7 @@ input, select { font-family: inherit; outline: none; border: none; }
         <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Şöbə təyin et</label>
         <select><option>Şöbə seçin</option><option>Yol Təmiri</option><option>Sanitariya</option><option>İnfrastruktur</option><option>Parklar və İstirahət</option></select></div>
         <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Statusu yenilə</label>
-        <select><option>AI yoxlaması</option><option>Operator yoxlaması</option><option>Yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option><option>İmtina edildi</option></select></div>
+        <select><option>Süni intellekt yoxlaması</option><option>Operator yoxlaması</option><option>Quruma yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option><option>İmtina edildi</option></select></div>
         <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Qeyd əlavə et</label>
         <textarea placeholder="İnzibati qeyd daxil edin..."></textarea></div>
         <div style="display:flex;gap:8px;margin-top:4px;">
@@ -744,6 +744,149 @@ input, select { font-family: inherit; outline: none; border: none; }
 </div>
 
 <script>
+/* ===== API + LABEL MAPS (must be first) ===== */
+
+const API = 'http://localhost:8000';
+
+// Backend enum value → Azerbaijani display label (mirrors enums.py label_az)
+const STATUS_LABEL = {
+  ai_review:     'Süni intellekt yoxlaması',
+  manual_review: 'Operator yoxlaması',
+  routed:        'Quruma yönləndirildi',
+  in_progress:   'İcradadır',
+  resolved:      'Həll edildi',
+  rejected:      'İmtina edildi',
+};
+const STATUS_BADGE = {
+  ai_review: 'slate', manual_review: 'amber', routed: 'blue',
+  in_progress: 'orange', resolved: 'green', rejected: 'red',
+};
+
+// Backend category enum → Azerbaijani label (mirrors enums.py Category.label_az)
+const CATEGORY_LABEL = {
+  facade: 'Bina fasadı',            green_zone: 'Yaşıllıq zonası',
+  flooding: 'Subasma',              ice: 'Buzlaşma',
+  cleanliness: 'Təmizlik',          waste: 'Zibil konteynerləri',
+  road_excavation: 'Qazılmış asfalt', road_surface: 'Asfalt örtüyü',
+  signage: 'Reklam lövhələri',      storefront: 'Vitrinlər',
+  park_equipment: 'Park avadanlığı', fountain: 'Fontanlar',
+  sidewalk: 'Səki',                 construction_fence: 'Tikinti hasarı',
+  lighting: 'İşıqlandırma',         other: 'Digər',
+};
+
+function priorityLabel(score) {
+  if (score >= 55) return 'kritik';
+  if (score >= 35) return 'yuksek';
+  if (score >= 15) return 'orta';
+  return 'asagi';
+}
+
+// Map a backend issue object to the allReports row shape the dashboard uses
+function mapIssue(i) {
+  const statusKey = i.status;
+  return {
+    _api_id:  i.id,
+    id:       String(i.id),
+    lat:      i.lat,
+    lng:      i.lng,
+    title:    i.title_az || CATEGORY_LABEL[i.category] || i.category,
+    desc:     `${CATEGORY_LABEL[i.category] || i.category} — Nərimanov rayonu`,
+    cat:      CATEGORY_LABEL[i.category] || i.category,
+    location: `${i.lat.toFixed(4)}°N, ${i.lng.toFixed(4)}°E`,
+    date:     new Date(i.deadline || Date.now()).toLocaleDateString('az-AZ'),
+    status:   STATUS_LABEL[statusKey] || statusKey,
+    _status:  statusKey,
+    priority: priorityLabel(i.priority || 0),
+    img:      '',
+    mStatus:  STATUS_BADGE[statusKey] || 'slate',
+    zone:     assignZone(i.lat, i.lng).label,
+    resolution: 0,
+    org_key:  i.org_key,
+  };
+}
+
+async function loadIssues() {
+  try {
+    const [issRes, statsRes] = await Promise.all([
+      fetch(`${API}/admin/issues?page_size=200`),
+      fetch(`${API}/admin/stats`),
+    ]);
+    if (issRes.ok) {
+      const data = await issRes.json();
+      allReports = data.items.map(mapIssue);
+      const badge = document.querySelector('.nav-item[data-page="reports"] .nav-badge');
+      if (badge) badge.textContent = allReports.filter(r => r._status !== 'resolved' && r._status !== 'rejected').length;
+    }
+    if (statsRes.ok) {
+      const s = await statsRes.json();
+      const el = id => document.getElementById(id);
+      if (el('stat-total'))    el('stat-total').textContent    = Object.values(s.by_status || {}).reduce((a,b)=>a+b,0);
+      if (el('stat-open'))     el('stat-open').textContent     = s.open    ?? '—';
+      if (el('stat-resolved')) el('stat-resolved').textContent = s.resolved ?? '—';
+      if (el('stat-overdue'))  el('stat-overdue').textContent  = s.overdue ?? '—';
+    }
+  } catch { /* API offline — static demo data stays */ }
+  refreshReports();
+}
+
+async function loadMapFromAPI() {
+  try {
+    const res = await fetch(`${API}/admin/map`);
+    if (!res.ok) return;
+    const items = await res.json();
+    items.forEach(item => {
+      const icon = L.divIcon({
+        className: '',
+        html: `<div style="width:14px;height:14px;border-radius:50%;background:${item.color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
+        iconSize: [14,14], iconAnchor: [7,7],
+      });
+      const marker = L.marker([item.lat, item.lng], { icon }).addTo(map);
+      marker._reportData = {
+        id: String(item.id), lat: item.lat, lng: item.lng,
+        title: CATEGORY_LABEL[item.category] || item.category,
+        desc: `${item.report_count} müraciət · Prioritet: ${item.priority?.toFixed(0)}`,
+        cat: CATEGORY_LABEL[item.category] || item.category,
+        location: `${item.lat.toFixed(4)}°N, ${item.lng.toFixed(4)}°E`,
+        zone: assignZone(item.lat, item.lng).label,
+        date: '',
+        mStatus: item.color === '#b3001b' ? 'red' : item.color === '#e23b2e' ? 'orange' : item.color === '#f0833a' ? 'amber' : 'slate',
+        status: '',
+      };
+      markers.push(marker);
+      marker.on('click', () => showMapPanel(marker._reportData));
+    });
+  } catch { /* offline — static markers loaded by initMap */ }
+}
+
+function showMapPanel(d) {
+  const get = id => document.getElementById(id);
+  if (d.img) { get('mp-img').src = d.img; get('mp-img').style.display = 'block'; }
+  else { get('mp-img').style.display = 'none'; }
+  get('mp-title').textContent = d.title;
+  get('mp-id').textContent    = 'ID: ' + d.id;
+  get('mp-desc').textContent  = d.desc;
+  get('mp-loc').textContent   = d.location;
+  get('mp-zone').textContent  = d.zone;
+  get('mp-date').textContent  = d.date;
+  const stMap = { orange:'İcradadır', green:'Həll edildi', blue:'Quruma yönləndirildi', amber:'Operator yoxlaması', slate:'Süni intellekt yoxlaması', red:'İmtina edildi' };
+  get('mp-status').innerHTML  = `<span class="status-badge ${d.mStatus}">${stMap[d.mStatus] || d.status || ''}</span>`;
+  document.getElementById('map-panel').classList.add('open');
+}
+
+async function exportPDF() {
+  try {
+    const res = await fetch(`${API}/admin/export.pdf`);
+    if (!res.ok) throw new Error('PDF endpoint returned ' + res.status);
+    const blob = await res.blob();
+    const url  = URL.createObjectURL(blob);
+    const a    = Object.assign(document.createElement('a'), { href: url, download: `myregion-${new Date().toISOString().slice(0,10)}.pdf` });
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  } catch (e) { alert('PDF ixrac edilə bilmədi: ' + e.message); }
+}
+
 /* ===== NAVIGATION ===== */
 const pages = {
   dashboard: 'page-dashboard',
@@ -855,7 +998,7 @@ function initAnalyticsCharts() {
   new Chart(doughnutCtx, {
     type: 'doughnut',
     data: {
-      labels: ['AI yoxlaması','Operator yoxlaması','Yönləndirildi','İcradadır','Həll edildi','İmtina edildi'],
+      labels: ['Süni intellekt yoxlaması','Operator yoxlaması','Quruma yönləndirildi','İcradadır','Həll edildi','İmtina edildi'],
       datasets: [{ data: [120,210,89,210,847,69], backgroundColor: ['#64748B','#E0A100','#2563EB','#EA7317','#1F9D55','#DC2626'], borderWidth: 0 }]
     },
     options: {
@@ -936,25 +1079,25 @@ const heatColorMap = {
 
 const allReports = [
   { id: '001252', lat: 40.4093, lng: 49.8671, title: 'Əsas yolda böyük çuxur', desc: 'İnşaatçılar prospekti ilə Koroğlu küçəsinin kəsişməsində dərin çuxur. Bir neçə avtomobil təkər və asqı zədəsi alıb.', cat: 'Yol zədəsi', location: 'İnşaatçılar prospekti, Nərimanov mərkəzi', date: '28 May 2026', status: 'İcradadır', priority: 'kritik', img: 'https://picsum.photos/seed/narimo1/400/300', mStatus: 'orange', zone: 'Nəriman Nərimanov', resolution: 18 },
-  { id: '001251', lat: 40.4120, lng: 49.8620, title: 'İşıq dirəyi sınıb', desc: 'Mirzə Fətəli küçəsində 3 ədəd işıq dirəyi iki həftədir işləmir. Gecə vaxtı piyadalar üçün təhlükə yaradır.', cat: 'İşıqlandırma', location: 'Mirzə Fətəli küç., Nərimanov mərkəzi', date: '27 May 2026', status: 'Yönləndirildi', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo2/400/300', mStatus: 'blue', zone: 'Ulduz', resolution: 32 },
+  { id: '001251', lat: 40.4120, lng: 49.8620, title: 'İşıq dirəyi sınıb', desc: 'Mirzə Fətəli küçəsində 3 ədəd işıq dirəyi iki həftədir işləmir. Gecə vaxtı piyadalar üçün təhlükə yaradır.', cat: 'İşıqlandırma', location: 'Mirzə Fətəli küç., Nərimanov mərkəzi', date: '27 May 2026', status: 'Quruma yönləndirildi', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo2/400/300', mStatus: 'blue', zone: 'Ulduz', resolution: 32 },
   { id: '001250', lat: 40.4070, lng: 49.8700, title: 'Qanunsuz tikinti tullantısı', desc: 'Park küçəsi ilə Nərimanov prospekti arasında tikinti şirkəti tərəfindən atılmış inşaat tullantıları 1 aydır yığışdırılmır.', cat: 'Qanunsuz tullantı', location: 'Park küçəsi, Nərimanov mərkəzi', date: '26 May 2026', status: 'Həll edildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo3/400/300', mStatus: 'green', zone: 'Nəriman Nərimanov', resolution: 48 },
   { id: '001249', lat: 40.4150, lng: 49.8580, title: 'İçməli su borusu partlayıb', desc: 'Əhməd Rəcəbli küçəsində magistral su xətti partlayıb, küçə su altında qalıb. Su təchizatı ətraf binalarda kəsilib.', cat: 'İnfrastruktur', location: 'Əhməd Rəcəbli küç., Nərimanov mərkəzi', date: '25 May 2026', status: 'Operator yoxlaması', priority: 'kritik', img: 'https://picsum.photos/seed/narimo4/400/300', mStatus: 'amber', zone: 'Atatürk Parkı', resolution: 6 },
-  { id: '001248', lat: 40.4040, lng: 49.8720, title: 'Zibil konteynerləri daşıb', desc: 'Gənclik metro stansiyası qarşısındakı zibil konteynerləri 5 gündür boşaldılmır. Üfunət ətrafa yayılır, siçovullar artıb.', cat: 'Zibil', location: 'Gənclik metro stansiyası, Nərimanov mərkəzi', date: '25 May 2026', status: 'AI yoxlaması', priority: 'kritik', img: 'https://picsum.photos/seed/narimo5/400/300', mStatus: 'slate', zone: 'Gənclik', resolution: 12 },
+  { id: '001248', lat: 40.4040, lng: 49.8720, title: 'Zibil konteynerləri daşıb', desc: 'Gənclik metro stansiyası qarşısındakı zibil konteynerləri 5 gündür boşaldılmır. Üfunət ətrafa yayılır, siçovullar artıb.', cat: 'Zibil', location: 'Gənclik metro stansiyası, Nərimanov mərkəzi', date: '25 May 2026', status: 'Süni intellekt yoxlaması', priority: 'kritik', img: 'https://picsum.photos/seed/narimo5/400/300', mStatus: 'slate', zone: 'Gənclik', resolution: 12 },
   { id: '001247', lat: 40.4180, lng: 49.8550, title: 'Səki plitələri dağılıb', desc: 'Atatürk prospekti boyu 150 metr məsafədə səki plitələri tamamilə dağılmış vəziyyətdə. Yaşlı sakinlər keçə bilmir.', cat: 'Yol zədəsi', location: 'Atatürk prospekti, Nərimanov mərkəzi', date: '24 May 2026', status: 'İcradadır', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo6/400/300', mStatus: 'orange', zone: 'Atatürk Parkı', resolution: 36 },
   { id: '001246', lat: 40.4105, lng: 49.8650, title: 'Ağac yolun üstünə aşıb', desc: 'Mərkəzi Parkda külək nəticəsində böyük ağac aşıb, piyada keçidini bağlayıb. İnsanlar yoldan kənar keçməyə məcburdur.', cat: 'İnfrastruktur', location: 'Mərkəzi Park, Nərimanov mərkəzi', date: '24 May 2026', status: 'Həll edildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo7/400/300', mStatus: 'green', zone: 'Nəriman Nərimanov', resolution: 8 },
   { id: '001245', lat: 40.4020, lng: 49.8780, title: 'Məktəb divarında qraffiti', desc: 'Təbriz küçəsindəki 45 nömrəli məktəbin fasadında nalayiq yazılar və şəkillər çəkilib. Valideynlər narahatdır.', cat: 'Digər', location: 'Təbriz küç., Nərimanov mərkəzi', date: '23 May 2026', status: 'İmtina edildi', priority: 'asagi', img: 'https://picsum.photos/seed/narimo8/400/300', mStatus: 'red', zone: 'Gənclik', resolution: 2 },
-  { id: '001244', lat: 40.4200, lng: 49.8600, title: 'Elektrik transformatoru partlayıb', desc: 'Cavad Xan küçəsində transformator partlaması nəticəsində 3 gündür ətraf binalar işıqsızdır. Sakinlər soyuducularda qida qalmasından şikayətlənir.', cat: 'İnfrastruktur', location: 'Cavad Xan küç., Nərimanov mərkəzi', date: '23 May 2026', status: 'Yönləndirildi', priority: 'kritik', img: 'https://picsum.photos/seed/narimo9/400/300', mStatus: 'blue', zone: 'Ulduz', resolution: 72 },
+  { id: '001244', lat: 40.4200, lng: 49.8600, title: 'Elektrik transformatoru partlayıb', desc: 'Cavad Xan küçəsində transformator partlaması nəticəsində 3 gündür ətraf binalar işıqsızdır. Sakinlər soyuducularda qida qalmasından şikayətlənir.', cat: 'İnfrastruktur', location: 'Cavad Xan küç., Nərimanov mərkəzi', date: '23 May 2026', status: 'Quruma yönləndirildi', priority: 'kritik', img: 'https://picsum.photos/seed/narimo9/400/300', mStatus: 'blue', zone: 'Ulduz', resolution: 72 },
   { id: '001243', lat: 40.4080, lng: 49.8750, title: 'Yağış drenajı tıxanıb', desc: 'Gənclik prospektində yağış suyu drenajı yarpaq və zibillə tıxanıb. Hər yağışda yol bağlanır, suyun dərinliyi 30 sm-ə çatır.', cat: 'İnfrastruktur', location: 'Gənclik prospekti, Nərimanov mərkəzi', date: '22 May 2026', status: 'Operator yoxlaması', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo10/400/300', mStatus: 'amber', zone: 'Mərkəzi prospektlər', resolution: 24 },
   { id: '001242', lat: 40.4135, lng: 49.8680, title: 'Kanalizasiya qapağı yoxdur', desc: 'Koroğlu küçəsində kanalizasiya lyukunun qapağı oğurlanıb. Dərin quyu tamamilə açıqdır — piyadalar, xüsusilə uşaqlar üçün həyati təhlükə.', cat: 'Yol zədəsi', location: 'Koroğlu küç., Nərimanov mərkəzi', date: '22 May 2026', status: 'İcradadır', priority: 'kritik', img: 'https://picsum.photos/seed/narimo11/400/300', mStatus: 'orange', zone: 'Nəriman Nərimanov', resolution: 4 },
   { id: '001241', lat: 40.4055, lng: 49.8640, title: 'İctimai bağda basılmış otlar', desc: 'Nərimanov qəsəbəsi bağında otlar 1 metr hündürlüyə çatıb. İlan və həşərat yuvaları əmələ gəlib.', cat: 'Digər', location: 'Nərimanov qəsəbə bağı, Nərimanov mərkəzi', date: '21 May 2026', status: 'Həll edildi', priority: 'asagi', img: 'https://picsum.photos/seed/narimo12/400/300', mStatus: 'green', zone: 'Mərkəzi prospektlər', resolution: 36 },
-  { id: '001240', lat: 40.4110, lng: 49.8560, title: 'Yol nişanı əyilib', desc: 'Atatürk parkı girişində "Dayan" yol nişanı zərbədən 45 dərəcə əyilib. Sürücülər görmür, qəza riski yüksəkdir.', cat: 'Yol zədəsi', location: 'Atatürk parkı girişi, Nərimanov mərkəzi', date: '21 May 2026', status: 'Yönləndirildi', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo13/400/300', mStatus: 'blue', zone: 'Atatürk Parkı', resolution: 5 },
-  { id: '001239', lat: 40.4175, lng: 49.8690, title: 'Dayanacaqda zibil yığını', desc: 'Nərimanov MTK ərazisində avtobus dayanacağı arxasında qanunsuz zibil yığını əmələ gəlib.', cat: 'Zibil', location: 'Nərimanov MTK dayanacağı, Nərimanov mərkəzi', date: '20 May 2026', status: 'AI yoxlaması', priority: 'orta', img: 'https://picsum.photos/seed/narimo14/400/300', mStatus: 'slate', zone: 'Nəriman Nərimanov', resolution: 8 },
+  { id: '001240', lat: 40.4110, lng: 49.8560, title: 'Yol nişanı əyilib', desc: 'Atatürk parkı girişində "Dayan" yol nişanı zərbədən 45 dərəcə əyilib. Sürücülər görmür, qəza riski yüksəkdir.', cat: 'Yol zədəsi', location: 'Atatürk parkı girişi, Nərimanov mərkəzi', date: '21 May 2026', status: 'Quruma yönləndirildi', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo13/400/300', mStatus: 'blue', zone: 'Atatürk Parkı', resolution: 5 },
+  { id: '001239', lat: 40.4175, lng: 49.8690, title: 'Dayanacaqda zibil yığını', desc: 'Nərimanov MTK ərazisində avtobus dayanacağı arxasında qanunsuz zibil yığını əmələ gəlib.', cat: 'Zibil', location: 'Nərimanov MTK dayanacağı, Nərimanov mərkəzi', date: '20 May 2026', status: 'Süni intellekt yoxlaması', priority: 'orta', img: 'https://picsum.photos/seed/narimo14/400/300', mStatus: 'slate', zone: 'Nəriman Nərimanov', resolution: 8 },
   { id: '001238', lat: 40.4000, lng: 49.8800, title: 'Uşaq meydançası sınıb', desc: 'Gənclik yaşayış massivindəki uşaq meydançasında yelləncək qırılıb, sürüşmə qülləsi paslanıb.', cat: 'İnfrastruktur', location: 'Gənclik yaşayış massivi, Nərimanov mərkəzi', date: '20 May 2026', status: 'Operator yoxlaması', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo15/400/300', mStatus: 'amber', zone: 'Gənclik', resolution: 28 },
   { id: '001237', lat: 40.4220, lng: 49.8530, title: 'Asfalt örtüyü qopub', desc: 'Ulduz metro stansiyası yaxınlığında yol asfaltı tamamilə qopub, çınqıl açılıb. Avtomobillər zədələnir.', cat: 'Yol zədəsi', location: 'Ulduz metro ətrafı, Nərimanov mərkəzi', date: '19 May 2026', status: 'İcradadır', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo16/400/300', mStatus: 'orange', zone: 'Ulduz', resolution: 16 },
   { id: '001236', lat: 40.4035, lng: 49.8550, title: 'Su xətti sızır', desc: 'Gənclik ərazisində içməli su xətti sızır — su boş yerə axır, ətraf evlərdə təzyiq aşağı düşüb.', cat: 'İnfrastruktur', location: 'Gənclik yaşayış massivi, Nərimanov mərkəzi', date: '19 May 2026', status: 'İmtina edildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo17/400/300', mStatus: 'red', zone: 'Gənclik', resolution: 1 },
-  { id: '001235', lat: 40.4090, lng: 49.8800, title: 'Avtobus pavilyonu sınıb', desc: 'Ş. İ. Xətai prospektindəki avtobus pavilyonunun şüşələri sınıb, dam örtüyü qopub.', cat: 'İnfrastruktur', location: 'Ş. İ. Xətai prospekti, Nərimanov mərkəzi', date: '18 May 2026', status: 'Yönləndirildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo18/400/300', mStatus: 'blue', zone: 'Respublika Stadionu', resolution: 14 },
+  { id: '001235', lat: 40.4090, lng: 49.8800, title: 'Avtobus pavilyonu sınıb', desc: 'Ş. İ. Xətai prospektindəki avtobus pavilyonunun şüşələri sınıb, dam örtüyü qopub.', cat: 'İnfrastruktur', location: 'Ş. İ. Xətai prospekti, Nərimanov mərkəzi', date: '18 May 2026', status: 'Quruma yönləndirildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo18/400/300', mStatus: 'blue', zone: 'Respublika Stadionu', resolution: 14 },
   { id: '001234', lat: 40.4140, lng: 49.8730, title: 'Küçə itləri sürüsü', desc: 'Nərimanov parkının yaxınlığında sahibsiz it sürüsü toplaşıb. Bir neçə sakin dişlənmə hadisəsi bildirib.', cat: 'Digər', location: 'Nərimanov parkı ətrafı, Nərimanov mərkəzi', date: '18 May 2026', status: 'İcradadır', priority: 'kritik', img: 'https://picsum.photos/seed/narimo19/400/300', mStatus: 'orange', zone: 'Nəriman Nərimanov', resolution: 48 },
-  { id: '001233', lat: 40.4250, lng: 49.8480, title: 'Körpü məhəccəri qırılıb', desc: 'Montin yaşayış massivi yaxınlığında piyada keçidinin metal məhəccəri tamamilə qırılıb. 5 metr hündürlük — böyük təhlükə.', cat: 'İnfrastruktur', location: 'Montin yaşayış massivi, Nərimanov mərkəzi', date: '17 May 2026', status: 'Yönləndirildi', priority: 'kritik', img: 'https://picsum.photos/seed/narimo20/400/300', mStatus: 'blue', zone: 'Montin', resolution: 10 }
+  { id: '001233', lat: 40.4250, lng: 49.8480, title: 'Körpü məhəccəri qırılıb', desc: 'Montin yaşayış massivi yaxınlığında piyada keçidinin metal məhəccəri tamamilə qırılıb. 5 metr hündürlük — böyük təhlükə.', cat: 'İnfrastruktur', location: 'Montin yaşayış massivi, Nərimanov mərkəzi', date: '17 May 2026', status: 'Quruma yönləndirildi', priority: 'kritik', img: 'https://picsum.photos/seed/narimo20/400/300', mStatus: 'blue', zone: 'Montin', resolution: 10 }
 ];
 
 function getStatusColor(mStatus) {
@@ -981,20 +1124,7 @@ function initMap() {
     marker._reportData = r;
     markers.push(marker);
 
-    marker.on('click', () => {
-      const d = marker._reportData;
-      document.getElementById('mp-img').src = d.img;
-      document.getElementById('mp-img').style.display = 'block';
-      document.getElementById('mp-title').textContent = d.title;
-      document.getElementById('mp-id').textContent = 'REP-2024-' + d.id;
-      document.getElementById('mp-desc').textContent = d.desc;
-      document.getElementById('mp-loc').textContent = d.lat.toFixed(4) + '°N, ' + d.lng.toFixed(4) + '°E';
-      document.getElementById('mp-zone').textContent = d.zone;
-      document.getElementById('mp-date').textContent = d.date;
-      const stMap = { orange: 'İcradadır', green: 'Həll edildi', blue: 'Yönləndirildi', amber: 'Operator yoxlaması', slate: 'AI yoxlaması', red: 'İmtina edildi' };
-      document.getElementById('mp-status').innerHTML = `<span class="status-badge ${d.mStatus}">${stMap[d.mStatus] || d.mStatus}</span>`;
-      document.getElementById('map-panel').classList.add('open');
-    });
+    marker.on('click', () => showMapPanel(marker._reportData));
   });
 }
 
@@ -1038,13 +1168,18 @@ function toggleHeatmap() {
 }
 
 /* ===== REPORTS TABLE / CARD RENDERING ===== */
+// Maps the display label (STATUS_LABEL value) → badge CSS class
+// This is the same mapping as STATUS_BADGE but keyed by the AZ label
 const statusMap = {
-  'AI yoxlaması': 'slate',
-  'Operator yoxlaması': 'amber',
+  'Süni intellekt yoxlaması': 'slate',
+  'Operator yoxlaması':       'amber',
+  'Quruma yönləndirildi':     'blue',
+  'İcradadır':                'orange',
+  'Həll edildi':              'green',
+  'İmtina edildi':            'red',
+  // Legacy labels from static demo data (kept so static rows still render)
+  'AI yoxlaması':  'slate',
   'Yönləndirildi': 'blue',
-  'İcradadır': 'orange',
-  'Həll edildi': 'green',
-  'İmtina edildi': 'red'
 };
 const authorities = [
   { key: 'mktb',         name_az: 'MKT Birliyi',                        scope: 'district',      contact_hint: 'nerimanov-mktb@mail.gov.az' },
@@ -1116,7 +1251,7 @@ function renderReportsTable() {
       <td>
         <div class="row-actions" style="display:flex;flex-wrap:wrap;gap:4px;">
           <button class="btn btn-secondary btn-xs" onclick="openDetailPanel()">Bax</button>
-          <button class="btn btn-secondary btn-xs" onclick="resolveReport('${r.id}', this)" ${r.status === 'Həll edildi' ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>${r.status === 'Həll edildi' ? '✓ Həll edildi' : 'Həll et'}</button>
+          <button class="btn btn-secondary btn-xs" onclick="resolveReport('${r.id}')" ${r.status === 'Həll edildi' ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>${r.status === 'Həll edildi' ? '✓ Həll edildi' : 'Həll et'}</button>
           <button class="btn btn-xs" style="background:var(--brand-500);color:#fff;" onclick="sendToAuthority('${r.id}')" title="${auth.name}-ə şikayət">${auth.name}</button>
         </div>
       </td>
@@ -1147,7 +1282,7 @@ function renderReportsCards() {
         </div>
         <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
           <button class="btn btn-secondary btn-xs" onclick="openDetailPanel()">Bax</button>
-          <button class="btn btn-secondary btn-xs" onclick="resolveReport('${r.id}', this)" ${r.status === 'Həll edildi' ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>${r.status === 'Həll edildi' ? '✓ Həll edildi' : 'Həll et'}</button>
+          <button class="btn btn-secondary btn-xs" onclick="resolveReport('${r.id}')" ${r.status === 'Həll edildi' ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>${r.status === 'Həll edildi' ? '✓ Həll edildi' : 'Həll et'}</button>
           <button class="btn btn-xs" style="background:var(--brand-500);color:#fff;" onclick="sendToAuthority('${r.id}')">${auth.name}</button>
         </div>
       </div>
@@ -1158,13 +1293,21 @@ function renderReportsCards() {
   }
 }
 
-function resolveReport(id, btn) {
+async function resolveReport(id) {
   const report = allReports.find(r => r.id === id);
-  if (!report) return;
-  if (report.status === 'Həll edildi') { return; }
-  report.status = 'Həll edildi';
+  if (!report || report.status === 'Həll edildi') return;
+
+  if (report._api_id) {
+    try {
+      const fd = new FormData();
+      fd.append('status', 'resolved');
+      await fetch(`${API}/admin/issues/${report._api_id}/status`, { method: 'POST', body: fd });
+    } catch { /* offline — update locally anyway */ }
+  }
+
+  report.status  = 'Həll edildi';
+  report._status = 'resolved';
   report.mStatus = 'green';
-  report.resolution = report.resolution || 24;
   refreshReports();
 }
 
@@ -1224,19 +1367,21 @@ function closeDetailPanel() {
 
 /* ===== INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
-  renderReportsTable();
-  renderReportsCards();
+  // Try to load live data from the backend; static demo data is the fallback
+  loadIssues();
 
   const searchInput = document.querySelector('#page-reports .search-input');
-  if (searchInput) {
-    searchInput.addEventListener('input', refreshReports);
-  }
-  const filterSelects = document.querySelectorAll('#page-reports .filter-select');
-  filterSelects.forEach(sel => {
-    sel.addEventListener('change', refreshReports);
-  });
+  if (searchInput) searchInput.addEventListener('input', refreshReports);
+  document.querySelectorAll('#page-reports .filter-select').forEach(sel =>
+    sel.addEventListener('change', refreshReports)
+  );
 
-  setTimeout(() => { initMap(); }, 300);
+  setTimeout(() => {
+    initMap();
+    // After the static markers are placed, overlay live API markers (if server is up)
+    setTimeout(loadMapFromAPI, 600);
+  }, 300);
+
   initAnalyticsCharts();
   updateTime();
 });
