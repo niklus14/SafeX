@@ -10,13 +10,42 @@ import {
   ThumbsUp,
   X,
 } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../store';
 import { ReportComment } from '../types';
+import { api } from '../api';
 
 export default function ReportDetailScreen() {
   const { state, dispatch, navigate, toast } = useApp();
-  const { selectedReportId, reports, prevScreen, user } = state;
+  const { selectedReportId, reports, prevScreen, user, apiIssueIds } = state;
+
+  // Sync live status / steps / org from the backend when an apiIssueId exists
+  useEffect(() => {
+    if (!selectedReportId) return;
+    const apiId = apiIssueIds[selectedReportId];
+    if (!apiId) return;
+    api.getIssue(apiId).then(issue => {
+      const statusMap: Record<string, 'İCRADADIR' | 'HƏLL EDİLDİ' | 'GÖZLƏYİR'> = {
+        ai_review: 'GÖZLƏYİR', manual_review: 'GÖZLƏYİR', routed: 'GÖZLƏYİR',
+        in_progress: 'İCRADADIR', resolved: 'HƏLL EDİLDİ', rejected: 'HƏLL EDİLDİ',
+      };
+      dispatch({
+        type: 'UPDATE_REPORT',
+        id: selectedReportId,
+        patch: {
+          status: statusMap[issue.status] ?? 'GÖZLƏYİR',
+          authority: issue.org?.name_az ?? undefined,
+          reactionsCount: issue.report_count,
+          steps: issue.steps.map(s => ({
+            name: s.name,
+            status: s.status as 'completed' | 'current' | 'pending',
+            subtitle: s.subtitle,
+          })),
+        },
+      });
+    }).catch(() => {/* API offline — show local optimistic state */});
+  }, [selectedReportId]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const [commentText, setCommentText] = useState('');
   const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
   const [showAllStatusSteps, setShowAllStatusSteps] = useState(false);

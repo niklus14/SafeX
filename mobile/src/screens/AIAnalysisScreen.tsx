@@ -25,11 +25,12 @@ export default function AIAnalysisScreen() {
       if (p >= 100) {
         clearInterval(interval);
 
-        // Dispatch state update (creates report + navigates to success)
-        dispatch({ type: 'COMPLETE_ANALYSIS' });
+        // Generate local ID first so we can wire it to the API response
+        const reportId = `#RG-${Math.floor(10000 + Math.random() * 90000)}`;
+        dispatch({ type: 'COMPLETE_ANALYSIS', reportId });
         toast('Müraciət qəbul edildi! +10 Coin Balansınıza Əlavə Olundu.', 'success');
 
-        // Also persist to backend asynchronously
+        // Persist to backend — fire-and-forget, UI already updated optimistically
         const uid = state.userId;
         if (uid !== null) {
           const lat = 40.4093 + (Math.random() - 0.5) * 0.005;
@@ -44,11 +45,10 @@ export default function AIAnalysisScreen() {
             })
             .then(result => {
               if (result.is_relevant && result.issue_id) {
-                // We can't easily get the just-created localId here since state was already updated.
-                // The store's COMPLETE_ANALYSIS creates the report; we just note the API id.
-                dispatch({ type: 'MAP_API_ISSUE', localId: '', apiId: result.issue_id });
+                dispatch({ type: 'MAP_API_ISSUE', localId: reportId, apiId: result.issue_id });
+                // We gave +10 coins optimistically; cluster bonus is only +5, so correct
                 if (result.joined_thread) {
-                  dispatch({ type: 'UPDATE_USER', patch: { coins: state.user.coins + 10 - 5 } });
+                  dispatch({ type: 'ADJUST_COINS', delta: -5 });
                 }
               }
             })

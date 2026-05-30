@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback, useRef } from 'react';
 import { Screen, Report, Reward, UserProfile, DraftReport, ReportComment } from './types';
 import { INITIAL_USER, INITIAL_REPORTS, INITIAL_REWARDS } from './data';
-import { api } from './api';
+import { api, MyReportSummary } from './api';
 
 // ── State ────────────────────────────────────────────────────────────────────
 
@@ -71,7 +71,9 @@ export type Action =
   | { type: 'SET_REWARDS'; rewards: Reward[] }
   | { type: 'MAP_API_ISSUE'; localId: string; apiId: number }
   | { type: 'SET_DRAFT'; patch: Partial<DraftReport> }
-  | { type: 'COMPLETE_ANALYSIS' }
+  | { type: 'COMPLETE_ANALYSIS'; reportId: string }
+  | { type: 'ADJUST_COINS'; delta: number }
+  | { type: 'HYDRATE_BACKEND_REPORTS'; summaries: MyReportSummary[] }
   | { type: 'CLAIM_REWARD'; reward: Reward; code: string }
   | { type: 'CLEAR_CLAIMED' }
   | { type: 'TOAST'; message: string; toastType: 'success' | 'info' | 'error' }
@@ -131,9 +133,62 @@ function reducer(state: AppState, action: Action): AppState {
     case 'SET_DRAFT':
       return { ...state, draft: { ...state.draft, ...action.patch } };
 
+    case 'ADJUST_COINS':
+      return { ...state, user: { ...state.user, coins: state.user.coins + action.delta } };
+
+    case 'HYDRATE_BACKEND_REPORTS': {
+      const BACKEND_STATUS: Record<string, 'GÖZLƏYİR' | 'İCRADADIR' | 'HƏLL EDİLDİ'> = {
+        ai_review: 'GÖZLƏYİR', manual_review: 'GÖZLƏYİR', routed: 'GÖZLƏYİR',
+        in_progress: 'İCRADADIR', resolved: 'HƏLL EDİLDİ', rejected: 'HƏLL EDİLDİ',
+      };
+      const BACKEND_CAT: Record<string, string> = {
+        facade: 'Bina fasadı', green_zone: 'Yaşıllıq zonası', flooding: 'Subasma',
+        ice: 'Buzlaşma', cleanliness: 'Təmizlik', waste: 'Zibil',
+        road_excavation: 'Yol qazıntısı', road_surface: 'Asfalt örtüyü',
+        signage: 'Reklam lövhəsi', storefront: 'Vitrin', park_equipment: 'Park avadanlığı',
+        fountain: 'Fontanlar', sidewalk: 'Səki', construction_fence: 'Tikinti hasarı',
+        lighting: 'İşıqlandırma', other: 'Digər',
+      };
+      let reports = [...state.reports];
+      const apiIssueIds = { ...state.apiIssueIds };
+      for (const s of action.summaries) {
+        const localId = `#API-${s.issue_id}`;
+        const match = reports.find(r => r.imageUrl === s.image_url || r.id === localId);
+        if (match) {
+          apiIssueIds[match.id] = s.issue_id;
+        } else {
+          const created = new Date(s.created_at);
+          reports = [{
+            id: localId,
+            title: s.title_az,
+            category: BACKEND_CAT[s.category] ?? s.category,
+            status: BACKEND_STATUS[s.status] ?? 'GÖZLƏYİR',
+            time: created.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }),
+            date: created.toLocaleDateString('az-AZ', { day: 'numeric', month: 'long' }),
+            imageUrl: s.image_url,
+            descr: s.title_az,
+            location: 'Nərimanov r.',
+            severity: 'Orta',
+            authority: '',
+            reporterName: state.user.name,
+            reporterAvatar: state.user.avatar,
+            reactionsCount: 1,
+            hasUserReacted: true,
+            comments: [],
+            steps: [
+              { name: 'Süni intellekt yoxlaması', status: 'completed', subtitle: 'Tamamlandı', time: '' },
+              { name: 'Operator yoxlaması', status: 'current', subtitle: 'Hazırda bu mərhələdədir' },
+            ],
+          }, ...reports];
+          apiIssueIds[localId] = s.issue_id;
+        }
+      }
+      return { ...state, reports, apiIssueIds };
+    }
+
     case 'COMPLETE_ANALYSIS': {
       const { draft, user } = state;
-      const reportId = `#RG-${Math.floor(10000 + Math.random() * 90000)}`;
+      const reportId = action.reportId;
       const newReport: Report = {
         id: reportId,
         title:
@@ -317,9 +372,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     [],
   );
 
-  // Bootstrap: register user + fetch rewards once on mount
+  // Bootstrap: register/restore user + fetch rewards once on mount
   React.useEffect(() => {
-    if (!state.userId) {
+    const uid = state.userId;
+    if (!uid) {
       api
         .createUser(INITIAL_USER.name)
         .then(u => {
@@ -327,6 +383,19 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           localStorage.setItem('openwave_user_id', String(u.id));
         })
         .catch(() => {});
+    } else {
+      api.getMe(uid).then(p => {
+        dispatch({
+          type: 'UPDATE_USER',
+          patch: {
+            coins: p.coins,
+            trustScore: p.credibility,
+            reportsCount: p.reports.length,
+            solvedCount: p.reports.filter(r => r.status === 'resolved').length,
+          },
+        });
+        dispatch({ type: 'HYDRATE_BACKEND_REPORTS', summaries: p.reports });
+      }).catch(() => {});
     }
 
     api
