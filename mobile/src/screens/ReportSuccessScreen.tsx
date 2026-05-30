@@ -1,4 +1,4 @@
-import { ArrowLeft, Award, Calendar, CheckCircle2, ClipboardList } from 'lucide-react';
+import { ArrowRight, Award, Calendar, CheckCircle2, ClipboardList } from 'lucide-react';
 import { useApp } from '../store';
 
 export default function ReportSuccessScreen() {
@@ -87,7 +87,7 @@ export default function ReportSuccessScreen() {
           onClick={viewReport}
           className="w-full h-14 bg-brand-primary text-white rounded-full font-bold flex items-center justify-center gap-2 active:scale-95 transition-all text-sm tracking-wide cursor-pointer hover:bg-brand-primary-container shadow-md"
         >
-          Müraciətə bax <ArrowLeft size={16} className="rotate-180" />
+          Müraciətə bax <ArrowRight size={16} />
         </button>
         <button
           onClick={() => navigate('feed')}

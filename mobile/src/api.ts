@@ -65,6 +65,7 @@ export interface IssueReport {
   image_url: string;
   created_at: string;
   is_root: boolean;
+  reporter_name: string;
 }
 
 export interface IssueDetail {
@@ -80,6 +81,7 @@ export interface IssueDetail {
   lng: number;
   org: { key: string; name_az: string } | null;
   report_count: number;
+  location_az: string;
   reports: IssueReport[];
   steps: IssueStep[];
 }
@@ -100,6 +102,29 @@ export interface UserProfile {
   credibility: number;
   coins: number;
   reports: MyReportSummary[];
+}
+
+export interface FeedIssue {
+  id: number;
+  title_az: string;
+  category: string;
+  severity: string;
+  status: string;
+  priority: number;
+  report_count: number;
+  org_key: string | null;
+  deadline: string | null;
+  lat: number;
+  lng: number;
+  image_url: string | null;
+  created_at: string;
+  location_az: string;
+  reporter_name: string;
+}
+
+export interface FeedResponse {
+  total: number;
+  items: FeedIssue[];
 }
 
 export interface ApiReward {
@@ -156,5 +181,10 @@ export const api = {
   /** Static rewards catalog (marketplace mocked per spec). */
   getRewards(): Promise<ApiReward[]> {
     return get('/rewards');
+  },
+
+  /** Community feed — all open issues sorted by priority, newest first. */
+  listIssues(pageSize = 50): Promise<FeedResponse> {
+    return get(`/admin/issues?sort=created&page_size=${pageSize}`);
   },
 };

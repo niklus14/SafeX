@@ -1,6 +1,5 @@
 import { Bell, CheckCircle2, ChevronRight, Globe, LogOut } from 'lucide-react';
 import { useApp } from '../store';
-import { INITIAL_REPORTS } from '../data';
 
 export default function ProfileScreen() {
   const { state, dispatch, navigate, toast } = useApp();
@@ -24,7 +23,7 @@ export default function ProfileScreen() {
   const circumference = 339.3;
 
   return (
-    <main className="px-6 space-y-6 max-w-xl mx-auto w-full pt-4 pb-8">
+    <main className="px-5 space-y-5 max-w-xl mx-auto w-full pt-4 pb-28">
       {/* Trust score gauge */}
       <section className="flex flex-col items-center justify-center text-center">
         <div className="relative w-32 h-32 flex items-center justify-center">

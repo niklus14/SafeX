@@ -52,6 +52,7 @@ export interface Report {
   hasUserReacted: boolean;
   comments: ReportComment[];
   steps: StatusStep[];
+  isOwn?: boolean;
 }
 
 export interface Reward {

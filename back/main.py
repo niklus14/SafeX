@@ -72,6 +72,31 @@ def _db() -> Session:
 # ---------------------------------------------------------------------------
 # Internal helpers
 
+_ZONES = [
+    ("İnşaatçılar prospekti, Nərimanov r.", 40.4093, 49.8671),
+    ("Mirzə Fətəli Axundzadə küçəsi",      40.4120, 49.8620),
+    ("Gənclik metro stansiyası ətrafı",    40.4040, 49.8720),
+    ("Atatürk prospekti",                  40.4150, 49.8580),
+    ("Nərimanov bağı",                     40.4180, 49.8550),
+    ("Gənclik prospekti",                  40.4110, 49.8560),
+    ("Nərimanov prospekti",                40.4020, 49.8780),
+    ("Cavad Xan küçəsi",                   40.4200, 49.8600),
+    ("Gənclik yaşayış massivi",            40.4000, 49.8800),
+    ("Ulduz metro ətrafı",                 40.4220, 49.8530),
+    ("Koroğlu küçəsi",                     40.4135, 49.8680),
+    ("Montin yaşayış massivi",             40.4250, 49.8480),
+    ("Ş. İ. Xətai prospekti",              40.4090, 49.8800),
+    ("Park küçəsi",                        40.4160, 49.8680),
+    ("Rəşid Behbudov küçəsi",              40.4030, 49.8660),
+    ("Atatürk parkı",                      40.4100, 49.8500),
+]
+
+
+def _location_label(lat: float, lng: float) -> str:
+    best = min(_ZONES, key=lambda z: (z[1] - lat) ** 2 + (z[2] - lng) ** 2)
+    return best[0]
+
+
 def _recompute_priority(issue: Issue) -> None:
     issue.priority = priority_score(issue.severity, issue.report_count, issue.created_at)
     issue.updated_at = _utcnow()
@@ -84,11 +109,12 @@ def _steps(status: IssueStatus) -> list[dict]:
     except ValueError:
         current_idx = -1  # REJECTED — all steps pending
 
+    all_done = status == IssueStatus.RESOLVED
     result = []
     for idx, s in enumerate(CITIZEN_PIPELINE):
         if current_idx == -1:
             step_status, subtitle = "pending", ""
-        elif idx < current_idx:
+        elif all_done or idx < current_idx:
             step_status, subtitle = "completed", "Tamamlandı"
         elif idx == current_idx:
             step_status, subtitle = "current", "Hazırda bu mərhələdədir"
@@ -247,6 +273,12 @@ def get_issue(issue_id: int, session: Session = Depends(_db)):
     thread.sort(key=lambda r: r.created_at)
     org = session.get(Organization, issue.org_key) if issue.org_key else None
 
+    # Batch-fetch reporter names for the thread
+    thread_user_ids = [r.user_id for r in thread if r.user_id]
+    thread_users: dict[int, User] = {}
+    if thread_user_ids:
+        thread_users = {u.id: u for u in session.exec(select(User).where(User.id.in_(thread_user_ids))).all()}
+
     return {
         "id": issue.id,
         "category": issue.category.value,
@@ -257,13 +289,17 @@ def get_issue(issue_id: int, session: Session = Depends(_db)):
         "deadline": issue.deadline.isoformat() if issue.deadline else None,
         "created_at": issue.created_at.isoformat(),
         "lat": issue.lat, "lng": issue.lng,
+        "location_az": _location_label(issue.lat, issue.lng),
         "org": {"key": org.key, "name_az": org.name_az} if org else None,
         "report_count": issue.report_count,
         "reports": [
             {
-                "id": r.id, "user_text": r.user_text, "image_url": r.image_url,
+                "id": r.id,
+                "user_text": r.user_text,
+                "image_url": r.image_url,
                 "created_at": r.created_at.isoformat(),
                 "is_root": r.id == issue.root_report_id,
+                "reporter_name": thread_users[r.user_id].display_name if r.user_id and r.user_id in thread_users else "Vətəndaş",
             }
             for r in thread
         ],
@@ -358,21 +394,36 @@ def admin_list_issues(
     total = len(issues)
     page_items = issues[(page - 1) * page_size : page * page_size]
 
-    return {
-        "total": total,
-        "items": [
-            {
-                "id": i.id, "title_az": i.title_az,
-                "category": i.category.value, "severity": i.severity.value,
-                "status": i.status.value, "priority": i.priority,
-                "report_count": i.report_count, "org_key": i.org_key,
-                "deadline": i.deadline.isoformat() if i.deadline else None,
-                "ai_confidence": i.ai_confidence,
-                "lat": i.lat, "lng": i.lng,
-            }
-            for i in page_items
-        ],
-    }
+    # Bulk-fetch root reports + their users (no N+1)
+    root_ids = [i.root_report_id for i in page_items if i.root_report_id]
+    root_map: dict[int, Report] = {}
+    if root_ids:
+        root_map = {r.id: r for r in session.exec(select(Report).where(Report.id.in_(root_ids))).all()}
+
+    user_ids = [r.user_id for r in root_map.values() if r.user_id]
+    from models import User as _User
+    users_map: dict[int, _User] = {}
+    if user_ids:
+        users_map = {u.id: u for u in session.exec(select(_User).where(_User.id.in_(user_ids))).all()}
+
+    def _item(i: Issue) -> dict:
+        root = root_map.get(i.root_report_id) if i.root_report_id else None
+        reporter = users_map.get(root.user_id) if root and root.user_id else None
+        return {
+            "id": i.id, "title_az": i.title_az,
+            "category": i.category.value, "severity": i.severity.value,
+            "status": i.status.value, "priority": i.priority,
+            "report_count": i.report_count, "org_key": i.org_key,
+            "deadline": i.deadline.isoformat() if i.deadline else None,
+            "ai_confidence": i.ai_confidence,
+            "lat": i.lat, "lng": i.lng,
+            "image_url": root.image_url if root else None,
+            "created_at": i.created_at.isoformat(),
+            "location_az": _location_label(i.lat, i.lng),
+            "reporter_name": reporter.display_name if reporter else "Vətəndaş",
+        }
+
+    return {"total": total, "items": [_item(i) for i in page_items]}
 
 
 @app.get("/admin/map", summary="Heatmap / dots layer — active issues only with intensity + colour")

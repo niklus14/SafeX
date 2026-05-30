@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback, useRef } from 'react';
 import { Screen, Report, Reward, UserProfile, DraftReport, ReportComment } from './types';
 import { INITIAL_USER, INITIAL_REPORTS, INITIAL_REWARDS } from './data';
-import { api, MyReportSummary } from './api';
+import { api, MyReportSummary, FeedIssue } from './api';
 
 // ── State ────────────────────────────────────────────────────────────────────
 
@@ -23,6 +23,7 @@ export interface AppState {
   carouselIndex: number;
   permissions: { camera: boolean; location: boolean };
   activeChip: 'HAMISI' | 'AKTIV' | 'HELLEDILIB';
+  reportDetailView: 'thread' | 'comments';
 }
 
 const INITIAL_DRAFT: DraftReport = {
@@ -54,6 +55,7 @@ const INITIAL_STATE: AppState = {
   carouselIndex: 0,
   permissions: { camera: false, location: false },
   activeChip: 'HAMISI',
+  reportDetailView: 'thread' as const,
 };
 
 // ── Actions ──────────────────────────────────────────────────────────────────
@@ -65,7 +67,7 @@ export type Action =
   | { type: 'SET_REPORTS'; reports: Report[] }
   | { type: 'ADD_REPORT'; report: Report }
   | { type: 'UPDATE_REPORT'; id: string; patch: Partial<Report> }
-  | { type: 'SELECT_REPORT'; id: string }
+  | { type: 'SELECT_REPORT'; id: string; view?: 'thread' | 'comments' }
   | { type: 'SELECT_ORG'; org: string }
   | { type: 'SET_MESSAGE_THREAD'; thread: string | null }
   | { type: 'SET_REWARDS'; rewards: Reward[] }
@@ -74,6 +76,7 @@ export type Action =
   | { type: 'COMPLETE_ANALYSIS'; reportId: string }
   | { type: 'ADJUST_COINS'; delta: number }
   | { type: 'HYDRATE_BACKEND_REPORTS'; summaries: MyReportSummary[] }
+  | { type: 'LOAD_FEED'; issues: FeedIssue[] }
   | { type: 'CLAIM_REWARD'; reward: Reward; code: string }
   | { type: 'CLEAR_CLAIMED' }
   | { type: 'TOAST'; message: string; toastType: 'success' | 'info' | 'error' }
@@ -84,6 +87,26 @@ export type Action =
   | { type: 'SUPPORT_REPORT'; id: string; userName: string; avatar: string }
   | { type: 'ADD_COMMENT'; reportId: string; comment: ReportComment }
   | { type: 'RESET' };
+
+// ── Shared label maps (used by both HYDRATE_BACKEND_REPORTS and LOAD_FEED) ───
+
+const BACKEND_STATUS: Record<string, 'GÖZLƏYİR' | 'İCRADADIR' | 'HƏLL EDİLDİ'> = {
+  ai_review: 'GÖZLƏYİR', manual_review: 'GÖZLƏYİR', routed: 'GÖZLƏYİR',
+  in_progress: 'İCRADADIR', resolved: 'HƏLL EDİLDİ', rejected: 'HƏLL EDİLDİ',
+};
+
+const BACKEND_CAT: Record<string, string> = {
+  facade: 'Bina fasadı', green_zone: 'Yaşıllıq zonası', flooding: 'Subasma',
+  ice: 'Buzlaşma', cleanliness: 'Təmizlik', waste: 'Zibil',
+  road_excavation: 'Yol qazıntısı', road_surface: 'Asfalt örtüyü',
+  signage: 'Reklam lövhəsi', storefront: 'Vitrin', park_equipment: 'Park avadanlığı',
+  fountain: 'Fontanlar', sidewalk: 'Səki', construction_fence: 'Tikinti hasarı',
+  lighting: 'İşıqlandırma', other: 'Digər',
+};
+
+const BACKEND_SEV: Record<string, 'Orta' | 'Yüksək' | 'Aşağı'> = {
+  low: 'Aşağı', medium: 'Orta', high: 'Yüksək',
+};
 
 // ── Reducer ──────────────────────────────────────────────────────────────────
 
@@ -113,7 +136,7 @@ function reducer(state: AppState, action: Action): AppState {
       };
 
     case 'SELECT_REPORT':
-      return { ...state, selectedReportId: action.id };
+      return { ...state, selectedReportId: action.id, reportDetailView: action.view ?? 'thread' };
 
     case 'SELECT_ORG':
       return { ...state, selectedOrganization: action.org };
@@ -137,25 +160,14 @@ function reducer(state: AppState, action: Action): AppState {
       return { ...state, user: { ...state.user, coins: state.user.coins + action.delta } };
 
     case 'HYDRATE_BACKEND_REPORTS': {
-      const BACKEND_STATUS: Record<string, 'GÖZLƏYİR' | 'İCRADADIR' | 'HƏLL EDİLDİ'> = {
-        ai_review: 'GÖZLƏYİR', manual_review: 'GÖZLƏYİR', routed: 'GÖZLƏYİR',
-        in_progress: 'İCRADADIR', resolved: 'HƏLL EDİLDİ', rejected: 'HƏLL EDİLDİ',
-      };
-      const BACKEND_CAT: Record<string, string> = {
-        facade: 'Bina fasadı', green_zone: 'Yaşıllıq zonası', flooding: 'Subasma',
-        ice: 'Buzlaşma', cleanliness: 'Təmizlik', waste: 'Zibil',
-        road_excavation: 'Yol qazıntısı', road_surface: 'Asfalt örtüyü',
-        signage: 'Reklam lövhəsi', storefront: 'Vitrin', park_equipment: 'Park avadanlığı',
-        fountain: 'Fontanlar', sidewalk: 'Səki', construction_fence: 'Tikinti hasarı',
-        lighting: 'İşıqlandırma', other: 'Digər',
-      };
       let reports = [...state.reports];
       const apiIssueIds = { ...state.apiIssueIds };
       for (const s of action.summaries) {
         const localId = `#API-${s.issue_id}`;
-        const match = reports.find(r => r.imageUrl === s.image_url || r.id === localId);
-        if (match) {
-          apiIssueIds[match.id] = s.issue_id;
+        const matchIdx = reports.findIndex(r => r.imageUrl === s.image_url || r.id === localId);
+        if (matchIdx >= 0) {
+          apiIssueIds[reports[matchIdx].id] = s.issue_id;
+          reports[matchIdx] = { ...reports[matchIdx], isOwn: true };
         } else {
           const created = new Date(s.created_at);
           reports = [{
@@ -179,11 +191,49 @@ function reducer(state: AppState, action: Action): AppState {
               { name: 'Süni intellekt yoxlaması', status: 'completed', subtitle: 'Tamamlandı', time: '' },
               { name: 'Operator yoxlaması', status: 'current', subtitle: 'Hazırda bu mərhələdədir' },
             ],
+            isOwn: true,
           }, ...reports];
           apiIssueIds[localId] = s.issue_id;
         }
       }
       return { ...state, reports, apiIssueIds };
+    }
+
+    case 'LOAD_FEED': {
+      // Keep session-created reports (#RG-*) and ones marked isOwn; replace everything else
+      const ownIds = new Set(state.reports.filter(r => r.isOwn).map(r => r.id));
+      const sessionReports = state.reports.filter(r => r.id.startsWith('#RG-'));
+      const apiIssueIds = { ...state.apiIssueIds };
+      const feedReports: Report[] = action.issues.map(i => {
+        const localId = `#API-${i.id}`;
+        apiIssueIds[localId] = i.id;
+        const created = new Date(i.created_at);
+        return {
+          id: localId,
+          title: i.title_az || BACKEND_CAT[i.category] || i.category,
+          category: BACKEND_CAT[i.category] ?? i.category,
+          status: BACKEND_STATUS[i.status] ?? 'GÖZLƏYİR',
+          time: created.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }),
+          date: created.toLocaleDateString('az-AZ', { day: 'numeric', month: 'long' }),
+          imageUrl: i.image_url ?? '',
+          descr: i.title_az ?? '',
+          location: i.location_az || `${i.lat.toFixed(4)}°N, ${i.lng.toFixed(4)}°E`,
+          severity: BACKEND_SEV[i.severity] ?? 'Orta',
+          authority: '',
+          reporterName: i.reporter_name || 'Vətəndaş',
+          reporterAvatar: `https://picsum.photos/seed/u${i.id}/40/40`,
+          reactionsCount: i.report_count,
+          hasUserReacted: false,
+          comments: [],
+          steps: [],
+          isOwn: ownIds.has(localId),
+        };
+      });
+      return {
+        ...state,
+        reports: [...sessionReports, ...feedReports],
+        apiIssueIds,
+      };
     }
 
     case 'COMPLETE_ANALYSIS': {
@@ -224,6 +274,7 @@ function reducer(state: AppState, action: Action): AppState {
             subtitle: 'Aidiyyatı idarə tərəfindən baxış gözlənilir',
           },
         ],
+        isOwn: true,
       };
       return {
         ...state,
@@ -323,6 +374,7 @@ function reducer(state: AppState, action: Action): AppState {
         },
         reports: INITIAL_REPORTS,
         carouselIndex: 0,
+        reportDetailView: 'thread' as const,
       };
 
     default:

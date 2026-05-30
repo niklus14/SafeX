@@ -145,17 +145,36 @@ def _coerce(payload: dict) -> IntakeResult:
     )
 
 
+_MOCK_TITLES: dict[str, str] = {
+    "road_surface":       "Asfalt örtüyü zədəlidir",
+    "road_excavation":    "Qazılmış asfalt bərpa edilməyib",
+    "sidewalk":           "Səki plitələri qırılıb",
+    "lighting":           "Küçə işıqlandırması işləmir",
+    "waste":              "Zibil konteynerləri dolub",
+    "cleanliness":        "Küçə uzun müddətdir süpürülməyib",
+    "flooding":           "Drenaj tıxanıb, su yığılır",
+    "ice":                "Səkidə təhlükəli buzlaşma var",
+    "green_zone":         "Yaşıllıq sahəsi baxımsız vəziyyətdədir",
+    "park_equipment":     "Park avadanlığı sıradan çıxıb",
+    "fountain":           "Fontan işləmir",
+    "facade":             "Bina fasadından material qopub",
+    "signage":            "Qanunsuz reklam lövhəsi asılıb",
+    "storefront":         "Mağaza vitrini qaydalara uyğun deyil",
+    "construction_fence": "Tikinti hasarı yıxılıb",
+}
+
 def _mock(image_bytes: bytes, user_text: str) -> IntakeResult:
     """Deterministic fake so the frontend can build with no API key."""
     cats = [c for c in Category if c is not Category.OTHER]
     c = cats[len(image_bytes) % len(cats)]
     sev = [Severity.LOW, Severity.MEDIUM, Severity.HIGH][len(image_bytes) % 3]
-    desc = (user_text.strip() or f"Nümunə təsvir — {c.label_az}.")
+    title = user_text.strip()[:60] if user_text.strip() else _MOCK_TITLES.get(c.value, c.label_az)
+    desc = user_text.strip() or f"Nərimanov rayonunda aşkar edilmiş {c.label_az.lower()} problemi."
     return IntakeResult(
         is_relevant=True, category=c, severity=sev, confidence=0.83,
-        title_az=f"[MOCK] {c.label_az}",
-        description_az=f"[MOCK] {desc}",
-        tags=[c.value, "mock", sev.value],
+        title_az=title,
+        description_az=desc,
+        tags=[c.value, sev.value],
         raw={"mock": True, "user_text": user_text},
     )
 

@@ -40,7 +40,7 @@ function ShellHeader() {
   return (
     <header className="shrink-0 h-16 bg-white/90 backdrop-blur-md border-b border-[#e5bdba]/30 shadow-sm z-10 flex items-center justify-between px-6">
       <div className="flex items-center gap-2">
-        <span className="p-1.5 bg-[#fff0ef] rounded-xl text-brand-primary shrink-0 animate-pulse">
+        <span className="p-1.5 bg-[#fff0ef] rounded-xl text-brand-primary shrink-0">
           <MapPin size={20} />
         </span>
         <span className="font-display font-extrabold text-xl text-brand-primary tracking-tight">myRegion</span>

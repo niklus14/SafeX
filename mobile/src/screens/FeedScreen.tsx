@@ -1,197 +1,286 @@
-import { AlertOctagon, MapPin, Heart, MessageCircle, MessageSquare, Phone } from 'lucide-react';
+import { ChevronUp, MapPin, MessageCircle, Users } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../store';
+import { api } from '../api';
+import { Report } from '../types';
 
-const ORGANIZATIONS = [
-  { name: 'Nərimanov RİH', hotline: 'Qaynar xətt', number: null },
-  { name: 'Azərsu', hotline: '955', number: '955' },
-  { name: 'Azərişıq', hotline: '199', number: '199' },
-  { name: 'Azəriqaz', hotline: '104', number: '104' },
-  { name: 'Abadlıq xidməti', hotline: 'Qaynar xətt', number: null },
-];
+// ── Skeleton ─────────────────────────────────────────────────────────────────
 
-export default function FeedScreen() {
-  const { state, dispatch, navigate } = useApp();
-  const { reports, activeChip, user } = state;
+function TweetSkeleton() {
+  return (
+    <div className="flex gap-3 px-4 py-3.5 border-b border-[#e5bdba]/20 animate-pulse">
+      <div className="w-10 h-10 rounded-full bg-[#f5e8e7] shrink-0" />
+      <div className="flex-1 space-y-2.5 pt-0.5">
+        <div className="flex gap-2">
+          <div className="h-3 w-28 bg-[#f5e8e7] rounded-full" />
+          <div className="h-3 w-16 bg-[#f5e8e7] rounded-full" />
+        </div>
+        <div className="h-3.5 w-full bg-[#f5e8e7] rounded" />
+        <div className="h-3.5 w-4/5 bg-[#f5e8e7] rounded" />
+        <div className="h-44 w-full bg-[#f5e8e7] rounded-2xl" />
+        <div className="h-3 w-1/2 bg-[#f5e8e7] rounded" />
+      </div>
+    </div>
+  );
+}
 
-  const filtered = reports.filter(r => {
-    if (activeChip === 'AKTIV') return r.status === 'İCRADADIR' || r.status === 'GÖZLƏYİR';
-    if (activeChip === 'HELLEDILIB') return r.status === 'HƏLL EDİLDİ';
-    return true;
-  });
+// ── Tweet card ────────────────────────────────────────────────────────────────
 
-  const openChat = (org: string) => {
-    dispatch({ type: 'SELECT_ORG', org });
-    navigate('chat');
-  };
+function TweetCard({
+  report,
+  onOpenThread,
+  onOpenComments,
+  onUpvote,
+}: {
+  report: Report;
+  onOpenThread: () => void;
+  onOpenComments: () => void;
+  onUpvote: () => void;
+}) {
+  const [imgError, setImgError] = useState(false);
 
-  const callHotline = (number: string | null) => {
-    if (number) {
-      window.location.href = `tel:${number}`;
-    }
-  };
+  const statusBadge =
+    report.status === 'HƏLL EDİLDİ'
+      ? { label: 'Həll edildi', cls: 'bg-[#e8f5e9] text-[#2e7d32]' }
+      : report.status === 'İCRADADIR'
+      ? { label: 'İcradadır',  cls: 'bg-[#fff0ef] text-brand-primary' }
+      : { label: 'Gözləyir',   cls: 'bg-[#f5f5f5] text-brand-on-surface-variant' };
 
   return (
-    <>
-      <main className="px-6 space-y-6 max-w-xl mx-auto w-full pt-4 pb-32">
-        {/* Welcome */}
-        <div>
-          <h1 className="font-display text-xl font-extrabold text-[#281716]">Salam, {user.name.split(' ')[0]} 🇦🇿</h1>
-          <p className="text-xs font-semibold text-brand-on-surface-variant mt-0.5">Şəhərimizdə problemləri bildirin və birlikdə həll edək.</p>
-        </div>
+    <article className="flex gap-3 px-4 border-b border-[#f0dbd9]/60">
 
-        {/* Filter chips */}
-        <div className="space-y-3">
-          <div className="flex justify-between items-center text-xs font-extrabold text-brand-on-surface-variant uppercase tracking-wider px-1">
-            <span>Müraciətlər</span>
-            <span
-              className="text-[11px] text-[#bd0e21] font-bold hover:underline cursor-pointer"
-              onClick={() => navigate('my-reports')}
-            >
-              Hamısı ({reports.length})
-            </span>
+      {/* Avatar — clicking opens thread */}
+      <div
+        onClick={onOpenThread}
+        className="shrink-0 w-10 h-10 rounded-full overflow-hidden bg-[#f5e8e7] border border-[#e5bdba]/30 mt-3.5 cursor-pointer"
+      >
+        {report.reporterAvatar ? (
+          <img
+            src={report.reporterAvatar}
+            alt={report.reporterName}
+            className="w-full h-full object-cover"
+            onError={e => { (e.target as HTMLImageElement).style.display = 'none'; }}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center text-brand-primary font-bold text-sm">
+            {report.reporterName.charAt(0)}
+          </div>
+        )}
+      </div>
+
+      {/* Content — clicking body opens thread, buttons are independent */}
+      <div className="flex-1 min-w-0 py-3.5">
+
+        {/* Meta + content area — whole thing opens thread */}
+        <div onClick={onOpenThread} className="cursor-pointer">
+          {/* Meta row */}
+          <div className="flex items-center gap-1 flex-wrap mb-1 leading-none">
+            <span className="font-bold text-[13px] text-[#1c0f0e] truncate max-w-[120px]">{report.reporterName}</span>
+            <span className="text-[#c4a09e] text-[11px]">·</span>
+            <span className="text-[11px] text-[#7a5250] font-medium truncate max-w-[90px]">{report.category}</span>
+            <span className="text-[#c4a09e] text-[11px]">·</span>
+            <span className="text-[11px] text-[#a08280]">{report.time}</span>
           </div>
 
-          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-1">
-            {(['HAMISI', 'AKTIV', 'HELLEDILIB'] as const).map(chip => (
-              <button
-                key={chip}
-                onClick={() => dispatch({ type: 'SET_CHIP', chip })}
-                className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap active:scale-95 transition-all cursor-pointer ${
-                  activeChip === chip
-                    ? 'bg-brand-primary text-white shadow-sm'
-                    : 'bg-white text-brand-on-surface-variant border border-[#e5bdba]/50 hover:bg-[#fff0ef]/40'
-                }`}
-              >
-                {chip === 'HAMISI' ? 'Hamısı' : chip === 'AKTIV' ? 'Aktiv' : 'Həll edilib'}
-              </button>
-            ))}
-          </div>
-        </div>
+          {/* Title — bold headline */}
+          <p className="text-[15px] font-bold text-[#1c0f0e] leading-snug mb-2 line-clamp-2">
+            {report.title}
+          </p>
 
-        {/* Social-style Report Cards */}
-        <div className="space-y-4">
-          {filtered.map(report => {
-            const statusColor =
-              report.status === 'HƏLL EDİLDİ'
-                ? 'bg-[#e8f5e9] text-[#2e7d32]'
-                : report.status === 'İCRADADIR'
-                ? 'bg-[#fff0ef] text-brand-primary'
-                : 'bg-brand-highest text-brand-on-surface-variant';
-
-            return (
-              <div
-                key={report.id}
-                onClick={() => {
-                  dispatch({ type: 'SELECT_REPORT', id: report.id });
-                  navigate('report-detail');
-                }}
-                className="bg-white rounded-3xl shadow-[0px_4px_20px_rgba(0,0,0,0.03)] border border-[#e5bdba]/15 overflow-hidden transition-all active:scale-[0.98] cursor-pointer hover:shadow-md"
-              >
-                {/* Post Header */}
-                <div className="px-4 pt-4 pb-2 flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className={`px-2.5 py-1 rounded-full text-[9px] font-extrabold uppercase tracking-wide leading-none ${statusColor}`}>
-                      {report.status}
-                    </span>
-                    <span className="text-[9px] text-brand-on-surface-variant/70 font-bold">{report.category}</span>
-                  </div>
-                  <span className="text-[10px] text-brand-on-surface-variant/70 font-medium">{report.time}</span>
-                </div>
-
-                {/* Title */}
-                <div className="px-4 py-2">
-                  <h3 className="font-bold text-[#281716] text-base leading-tight">{report.title}</h3>
-                </div>
-
-                {/* Image */}
-                {report.imageUrl && (
-                  <div className="px-4 py-2">
-                    <img
-                      className="w-full rounded-2xl object-cover max-h-64"
-                      src={report.imageUrl}
-                      alt={report.title}
-                    />
-                  </div>
-                )}
-
-                {/* Location */}
-                <div className="px-4 py-3 flex items-center gap-2 text-[11px] font-bold text-brand-on-surface-variant bg-white/50">
-                  <MapPin size={14} className="text-brand-primary/80 flex-shrink-0" />
-                  <span>{report.location}</span>
-                </div>
-
-                {/* Actions */}
-                <div className="px-4 py-3 flex items-center justify-between border-t border-[#e5bdba]/20 bg-white/30">
-                  <button className="flex items-center gap-2 text-[11px] font-bold text-brand-on-surface-variant/80 hover:text-brand-primary transition-colors">
-                    <Heart size={16} className={report.hasUserReacted ? 'fill-brand-primary text-brand-primary' : ''} />
-                    <span>{report.reactionsCount}</span>
-                  </button>
-                  <button className="flex items-center gap-2 text-[11px] font-bold text-brand-on-surface-variant/80 hover:text-brand-primary transition-colors">
-                    <MessageCircle size={16} />
-                    <span>{report.comments.length}</span>
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-
-          {filtered.length === 0 && (
-            <div className="bg-white/50 p-10 rounded-3xl border border-dashed border-[#e5bdba]/30 text-center">
-              <AlertOctagon className="text-brand-on-surface-variant/40 mx-auto mb-2" size={32} />
-              <p className="text-sm text-brand-on-surface-variant font-bold">Heç bir müraciət tapılmadı</p>
-              <p className="text-xs text-brand-on-surface-variant/60 mt-1 max-w-xs mx-auto">
-                Filtrləri təmizləyin və ya yeni müraciət edin.
+          {/* Description — secondary context, visually distinct */}
+          {report.descr && (
+            <div className="border-l-2 border-[#e5bdba] pl-2.5 mb-2.5">
+              <p className="text-[12px] text-[#8a6260] leading-relaxed line-clamp-2 italic">
+                {report.descr}
               </p>
             </div>
           )}
-        </div>
 
-        {/* Organizations Section - moved lower */}
-        <div className="space-y-3">
-          <h2 className="text-xs font-extrabold text-brand-on-surface-variant uppercase tracking-wider px-1">
-            Qurumlarla əlaqə
-          </h2>
-          <div className="flex gap-2.5 overflow-x-auto no-scrollbar pb-2">
-            {ORGANIZATIONS.map(org => (
-              <div
-                key={org.name}
-                className="flex-shrink-0 w-32 bg-white rounded-2xl p-3 shadow-sm border border-[#e5bdba]/20 flex flex-col items-center justify-center text-center cursor-pointer active:scale-95 transition-all hover:shadow-md"
-                onClick={() => openChat(org.name)}
-              >
-                <MessageSquare size={20} className="text-brand-primary mb-1.5" />
-                <h3 className="text-[11px] font-bold text-[#281716] mb-2 leading-tight">{org.name}</h3>
-                <p className="text-[9px] text-brand-on-surface-variant/70 font-medium mb-2">{org.hotline}</p>
-                <button
-                  className={`text-[9px] font-bold px-2 py-1 rounded-full transition-all ${
-                    org.number
-                      ? 'bg-brand-primary text-white hover:bg-brand-primary-container'
-                      : 'bg-[#f0f0f0] text-brand-on-surface-variant/50'
-                  }`}
-                  onClick={e => {
-                    e.stopPropagation();
-                    callHotline(org.number);
-                  }}
-                  disabled={!org.number}
-                >
-                  <Phone size={10} className="inline mr-1" />
-                  Zəng et
-                </button>
-              </div>
-            ))}
+          {/* Image */}
+          {report.imageUrl && !imgError && (
+            <div className="mb-2.5 rounded-2xl overflow-hidden border border-[#e5bdba]/25 bg-[#f5e8e7]">
+              <img
+                src={report.imageUrl}
+                alt={report.title}
+                className="w-full object-cover max-h-56"
+                onError={() => setImgError(true)}
+              />
+            </div>
+          )}
+
+          {/* Location */}
+          <div className="flex items-center gap-1 mb-3">
+            <MapPin size={12} className="text-brand-primary/60 shrink-0" />
+            <span className="text-[11.5px] text-[#8a6260] truncate">{report.location}</span>
           </div>
         </div>
 
-        {/* Info banner */}
-        <div className="bg-brand-low p-4 rounded-2xl border border-dashed border-[#e5bdba] flex gap-3 text-xs mb-6">
-          <div className="p-2 bg-brand-primary/10 rounded-xl text-brand-primary self-center shrink-0">
-            <MessageSquare size={20} />
-          </div>
-          <div className="font-medium text-[#5c403e]/90 leading-relaxed">
-            myRegion ilə birlikdə şəhərə xidmət göstərən qurumlarla birbaşa əlaqə saxlayın və problemlərin tez həllini təmin edin.
-          </div>
-        </div>
-      </main>
+        {/* ── Engagement row — each button is independent ── */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-5">
 
-    </>
+            {/* Comments — opens comment tab */}
+            <button
+              onClick={e => { e.stopPropagation(); onOpenComments(); }}
+              className="flex items-center gap-1.5 text-[#a08280] hover:text-brand-primary transition-colors active:scale-95"
+            >
+              <MessageCircle size={16} />
+              <span className="text-[12px] font-medium tabular-nums">{report.comments.length}</span>
+            </button>
+
+            {/* Upvote — triggers support */}
+            <button
+              onClick={e => { e.stopPropagation(); onUpvote(); }}
+              className={`flex items-center gap-1.5 transition-colors active:scale-95 ${
+                report.hasUserReacted
+                  ? 'text-brand-primary'
+                  : 'text-[#a08280] hover:text-brand-primary'
+              }`}
+            >
+              <ChevronUp
+                size={18}
+                className={report.hasUserReacted ? 'fill-brand-primary/20' : ''}
+                strokeWidth={report.hasUserReacted ? 2.5 : 2}
+              />
+              <span className="text-[12px] font-medium tabular-nums">{report.reactionsCount}</span>
+            </button>
+
+            {/* Thread/cluster count */}
+            <button
+              onClick={e => { e.stopPropagation(); onOpenThread(); }}
+              className="flex items-center gap-1 text-[#c4a09e] hover:text-brand-primary/60 transition-colors active:scale-95"
+            >
+              <Users size={14} />
+              <span className="text-[11px]">{report.reactionsCount} bildirdi</span>
+            </button>
+          </div>
+
+          {/* Status pill */}
+          <span className={`text-[9px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-widest ${statusBadge.cls}`}>
+            {statusBadge.label}
+          </span>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+
+function EmptyState({ tab }: { tab: 'AKTIV' | 'HELLEDILIB' }) {
+  return (
+    <div className="flex flex-col items-center justify-center py-24 text-center px-8">
+      <div className="w-16 h-16 rounded-full bg-[#fff0ef] flex items-center justify-center mb-4">
+        <MessageCircle size={28} className="text-brand-primary/40" />
+      </div>
+      <p className="text-sm font-bold text-[#281716]">
+        {tab === 'AKTIV' ? 'Aktiv müraciət yoxdur' : 'Həll edilmiş müraciət yoxdur'}
+      </p>
+      <p className="text-xs text-[#a08280] mt-1 leading-relaxed">
+        {tab === 'AKTIV'
+          ? 'Hazırda aktiv problem qeydə alınmayıb.'
+          : 'Hələ heç bir müraciət tamamlanmayıb.'}
+      </p>
+    </div>
+  );
+}
+
+// ── Main screen ───────────────────────────────────────────────────────────────
+
+export default function FeedScreen() {
+  const { state, dispatch, navigate } = useApp();
+  const { reports, activeChip } = state;
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setLoading(true);
+    api.listIssues().then(data => {
+      dispatch({ type: 'LOAD_FEED', issues: data.items });
+    }).catch(() => {}).finally(() => setLoading(false));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Normalise: treat HAMISI same as AKTIV (2-tab design)
+  const tab: 'AKTIV' | 'HELLEDILIB' = activeChip === 'HELLEDILIB' ? 'HELLEDILIB' : 'AKTIV';
+
+  const filtered = reports.filter(r =>
+    tab === 'AKTIV'
+      ? r.status === 'İCRADADIR' || r.status === 'GÖZLƏYİR'
+      : r.status === 'HƏLL EDİLDİ'
+  );
+
+  const activeCount   = reports.filter(r => r.status === 'İCRADADIR' || r.status === 'GÖZLƏYİR').length;
+  const resolvedCount = reports.filter(r => r.status === 'HƏLL EDİLDİ').length;
+
+  return (
+    <div className="flex flex-col min-h-0">
+
+      {/* ── X-style sticky tab bar ─────────────────────────────── */}
+      <div className="sticky top-0 z-20 bg-white/90 backdrop-blur-md border-b border-[#e5bdba]/30 flex">
+        {(['AKTIV', 'HELLEDILIB'] as const).map(t => {
+          const isActive = tab === t;
+          const count = t === 'AKTIV' ? activeCount : resolvedCount;
+          return (
+            <button
+              key={t}
+              onClick={() => dispatch({ type: 'SET_CHIP', chip: t })}
+              className={`flex-1 py-3.5 flex flex-col items-center gap-0.5 relative transition-colors cursor-pointer ${
+                isActive ? 'text-[#1c0f0e]' : 'text-[#a08280] hover:text-[#6b4947]'
+              }`}
+            >
+              <span className="text-[14px] font-bold leading-none">
+                {t === 'AKTIV' ? 'Aktiv' : 'Həll Edilmiş'}
+              </span>
+              {count > 0 && (
+                <span className={`text-[11px] font-semibold leading-none ${isActive ? 'text-brand-primary' : 'text-[#c4a09e]'}`}>
+                  {count}
+                </span>
+              )}
+              {/* Underline indicator */}
+              {isActive && (
+                <span className="absolute bottom-0 left-1/2 -translate-x-1/2 h-[3px] w-14 bg-brand-primary rounded-full" />
+              )}
+            </button>
+          );
+        })}
+      </div>
+
+      {/* ── Feed list ──────────────────────────────────────────── */}
+      <div>
+        {/* Loading skeletons */}
+        {loading && reports.length === 0 && (
+          <>{[1, 2, 3, 4].map(n => <TweetSkeleton key={n} />)}</>
+        )}
+
+        {/* Tweet cards */}
+        {filtered.map(report => (
+          <TweetCard
+            key={report.id}
+            report={report}
+            onOpenThread={() => {
+              dispatch({ type: 'SELECT_REPORT', id: report.id, view: 'thread' });
+              navigate('report-detail');
+            }}
+            onOpenComments={() => {
+              dispatch({ type: 'SELECT_REPORT', id: report.id, view: 'comments' });
+              navigate('report-detail');
+            }}
+            onUpvote={() => {
+              if (report.hasUserReacted) {
+                dispatch({ type: 'TOAST', message: 'Artıq dəstəkləmisiniz.', toastType: 'info' });
+                return;
+              }
+              dispatch({ type: 'SUPPORT_REPORT', id: report.id, userName: '', avatar: '' });
+              dispatch({ type: 'TOAST', message: '+5 Coin — dəstəyiniz qeydə alındı!', toastType: 'success' });
+            }}
+          />
+        ))}
+
+        {/* Empty state */}
+        {!loading && filtered.length === 0 && <EmptyState tab={tab} />}
+
+        {/* Bottom padding for nav bar */}
+        <div className="h-24" />
+      </div>
+    </div>
   );
 }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Openwave — Admin Panel</title>
+<title>MyRegion — Admin Panel</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
@@ -361,10 +361,81 @@ input, select { font-family: inherit; outline: none; border: none; }
 @media (max-width: 1100px) {
   .stats-grid { grid-template-columns: repeat(2, 1fr); }
   .charts-grid { grid-template-columns: 1fr; }
+  .dash-grid { grid-template-columns: 1fr; }
   .sidebar { width: 56px; min-width: 56px; }
-  .sidebar .nav-item span, .sidebar .nav-badge, .sidebar .user-meta, .topbar-brand .tb-sub { display: none; }
+  .sidebar .nav-item span, .sidebar .nav-badge, .sidebar .sb-role, .sidebar .sb-name, .topbar-brand .tb-sub { display: none; }
   .nav-item { justify-content: center; padding: 10px; }
+  .sidebar-header { padding: 10px; }
 }
+
+/* ===== SIDEBAR HEADER ===== */
+.sidebar { padding: 0; }
+.sidebar-header { padding: 14px 16px; border-bottom: 1px solid var(--slate-800); flex-shrink: 0; }
+.sidebar-brand { display: flex; align-items: center; gap: 10px; }
+.sidebar-brand-icon { width: 32px; height: 32px; background: var(--brand-500); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; color: #fff; }
+.sidebar-brand-icon svg { width: 16px; height: 16px; }
+.sb-name { font-size: 14px; font-weight: 700; color: #fff; line-height: 1.2; }
+.sb-role { font-size: 11px; color: var(--slate-400); }
+.sidebar-nav { padding-top: 8px; }
+
+/* ===== ALERT BANNER ===== */
+.alert-banner { display: flex; align-items: center; gap: 10px; background: #FEF2F2; border: 1px solid #FECACA; border-radius: var(--radius); padding: 11px 16px; margin-bottom: 20px; font-size: 13px; color: #991B1B; }
+.alert-banner svg { flex-shrink: 0; color: #B3001B; }
+.alert-text { flex: 1; }
+.alert-link { color: #B3001B; font-weight: 600; white-space: nowrap; margin-left: 8px; }
+
+/* ===== STAT CARD V2 ===== */
+.stat-card-v2 { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px 20px; box-shadow: var(--shadow-sm); position: relative; overflow: hidden; }
+.stat-card-v2.overdue { border-left: 3px solid var(--status-red); }
+.stat-label-top { font-size: 11px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 12px; }
+.stat-num { font-size: 28px; font-weight: 700; letter-spacing: -0.5px; line-height: 1; }
+.stat-num.red { color: var(--status-red); }
+.stat-icon-r { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); opacity: 0.15; }
+.stat-icon-r svg { width: 36px; height: 36px; }
+
+/* ===== DASH 2-COL GRID ===== */
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
+/* ===== CHART CARD HEADER ===== */
+.cc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+.cc-header h3 { font-size: 14px; font-weight: 600; color: var(--text-primary); text-transform: none; letter-spacing: 0; margin-bottom: 0; }
+.cc-link { font-size: 12px; color: var(--accent); font-weight: 500; }
+.cc-dots { background: none; color: var(--text-muted); font-size: 18px; line-height: 1; padding: 0 4px; border-radius: 4px; }
+.cc-dots:hover { background: var(--slate-50); }
+
+/* ===== RECENT REPORTS ===== */
+.recent-item { display: flex; align-items: flex-start; gap: 12px; padding: 10px 0; border-bottom: 0.5px solid var(--border); }
+.recent-item:last-child { border-bottom: none; padding-bottom: 0; }
+.recent-thumb { width: 52px; height: 52px; border-radius: 6px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+.recent-body { flex: 1; min-width: 0; }
+.recent-title { font-size: 13px; font-weight: 500; margin-bottom: 2px; }
+.recent-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.recent-meta { display: flex; align-items: center; gap: 6px; }
+.recent-loc { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 3px; }
+.recent-loc svg { width: 10px; height: 10px; }
+.recent-time { font-size: 11px; color: var(--text-muted); flex-shrink: 0; margin-left: auto; padding-top: 1px; }
+
+/* ===== DONUT LAYOUT ===== */
+.donut-layout { display: flex; align-items: center; gap: 20px; }
+.donut-legend { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+.donut-legend-item { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.donut-legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+.donut-legend-label { flex: 1; color: var(--text-secondary); }
+.donut-legend-pct { font-weight: 600; color: var(--text-primary); }
+.donut-chart-wrap { position: relative; width: 150px; height: 150px; flex-shrink: 0; }
+.donut-chart-wrap canvas { width: 100% !important; height: 100% !important; }
+.donut-center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; pointer-events: none; }
+.dc-num { font-size: 22px; font-weight: 700; color: var(--text-primary); }
+.dc-label { font-size: 11px; color: var(--text-muted); font-weight: 500; letter-spacing: 0.3px; }
+
+/* ===== AI INSIGHT ===== */
+.ai-insight-card { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-sm); display: flex; align-items: flex-end; }
+.ai-insight-bubble { background: rgba(179,0,27,0.04); border: 0.5px solid rgba(179,0,27,0.18); border-radius: var(--radius); padding: 12px 14px; font-size: 13px; color: var(--text-secondary); line-height: 1.5; display: flex; align-items: flex-start; gap: 8px; width: 100%; }
+.ai-icon { color: var(--accent); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* ===== FAB ===== */
+.fab { position: fixed; bottom: 28px; right: 28px; z-index: 150; width: 52px; height: 52px; border-radius: 50%; background: var(--brand-500); color: #fff; font-size: 26px; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(179,0,27,0.4); transition: all var(--transition); cursor: pointer; border: none; }
+.fab:hover { background: var(--brand-600); transform: scale(1.05); }
 </style>
 </head>
 <body>
@@ -372,13 +443,23 @@ input, select { font-family: inherit; outline: none; border: none; }
 <!-- ===== TOP BAR ===== -->
 <header class="topbar">
   <div class="topbar-brand">
-    <span class="tb-logo">myRegion</span>
+    <span class="tb-logo">MyRegion</span>
     <span class="tb-divider"></span>
     <span class="tb-sub">Nərimanov Rayonu &middot; Admin Panel</span>
   </div>
   <div class="topbar-right">
     <span class="tb-time" id="live-time"></span>
-    <div class="topbar-avatar">AR</div>
+    <button style="background:none;color:var(--slate-300);position:relative;padding:4px;" title="Bildirişlər">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      <span style="position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:var(--brand-500);border:1.5px solid var(--chrome);"></span>
+    </button>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="text-align:right;">
+        <div style="font-size:12px;font-weight:600;color:#fff;">Operator #021</div>
+        <div style="font-size:11px;color:var(--slate-400);">Nərimanov RİH</div>
+      </div>
+      <div class="topbar-avatar">AR</div>
+    </div>
   </div>
 </header>
 
@@ -386,36 +467,52 @@ input, select { font-family: inherit; outline: none; border: none; }
 
 <!-- ===== SIDEBAR ===== -->
 <aside class="sidebar">
+  <div class="sidebar-header">
+    <div class="sidebar-brand">
+      <div class="sidebar-brand-icon">
+        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+      </div>
+      <div>
+        <div class="sb-name">Nərimanov</div>
+        <div class="sb-role">Operator Console</div>
+      </div>
+    </div>
+  </div>
   <nav class="sidebar-nav">
     <div class="nav-item active" data-page="dashboard">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      <span>İdarə Paneli</span>
-    </div>
-    <div class="nav-item" data-page="reports">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      <span>Müraciətlər</span>
-      <span class="nav-badge">342</span>
+      <span>İcmal</span>
     </div>
     <div class="nav-item" data-page="map">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
       <span>Xəritə</span>
     </div>
+    <div class="nav-item" data-page="reports">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+      <span>Müraciətlər</span>
+      <span class="nav-badge" id="nav-badge-reports">342</span>
+    </div>
+    <div class="nav-item" data-page="settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      <span>Qurumlar</span>
+    </div>
     <div class="nav-item" data-page="analytics">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span>Analitika</span>
+      <span>Hesabatlar</span>
     </div>
     <div class="nav-item" data-page="settings">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       <span>Tənzimləmələr</span>
     </div>
   </nav>
-  <div class="sidebar-footer">
-    <div class="user-info">
-      <div class="avatar">AR</div>
-      <div class="user-meta">
-        <div class="user-name">Admin Rəhimov</div>
-        <div class="user-role">Bələdiyyə Admini</div>
-      </div>
+  <div class="sidebar-footer" style="padding:12px;border-top:1px solid var(--slate-800);margin-top:auto;">
+    <div class="nav-item" style="margin-bottom:2px;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span>Dəstək</span>
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      <span>Çıxış</span>
     </div>
   </div>
 </aside>
@@ -425,95 +522,133 @@ input, select { font-family: inherit; outline: none; border: none; }
 
   <!-- DASHBOARD -->
   <section class="page active" id="page-dashboard">
-    <div class="page-header">
-      <div>
-        <h1>Xoş gəlmisiniz, Admin</h1>
-        <p>Nərimanov rayonu üzrə bugünkü icmal</p>
+
+    <!-- Alert Banner -->
+    <div class="alert-banner">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span class="alert-text">Gecikmiş müraciətlər: Diqqət tələb edən <strong>9 müraciət</strong> mövcuddur.</span>
+      <a class="alert-link" href="#" onclick="navigateTo('reports'); return false;">Bax →</a>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
+      <div class="stat-card-v2">
+        <div class="stat-label-top">AÇIQ MÜRACİƏTLƏR</div>
+        <div class="stat-num" id="stat-open">73</div>
+        <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
+      </div>
+      <div class="stat-card-v2">
+        <div class="stat-label-top">İCRADADIR</div>
+        <div class="stat-num" id="stat-inprogress">37</div>
+        <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></div>
+      </div>
+      <div class="stat-card-v2 overdue">
+        <div class="stat-label-top">GECİKMİŞ</div>
+        <div class="stat-num red" id="stat-overdue">9</div>
+        <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+      </div>
+      <div class="stat-card-v2">
+        <div class="stat-label-top">ORTA HƏLL MÜDDƏTİ</div>
+        <div class="stat-num" id="stat-avgtime">6.2 <span style="font-size:15px;font-weight:500;color:var(--text-secondary);">gün</span></div>
+        <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
       </div>
     </div>
 
-    <div class="stats-grid">
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-icon total"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg></span>
-          <span class="stat-change up">+12%</span>
-        </div>
-        <div class="stat-value" id="stat-total">—</div>
-        <div class="stat-label">Ümumi müraciət</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-icon open"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></span>
-          <span class="stat-change up">+5%</span>
-        </div>
-        <div class="stat-value" id="stat-open">—</div>
-        <div class="stat-label">Açıq müraciət</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-icon resolved"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg></span>
-          <span class="stat-change up">+18%</span>
-        </div>
-        <div class="stat-value" id="stat-resolved">—</div>
-        <div class="stat-label">Həll edildi</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-header">
-          <span class="stat-icon urgent"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-          <span class="stat-change down">-3%</span>
-        </div>
-        <div class="stat-value" id="stat-overdue">—</div>
-        <div class="stat-label">Gecikmiş</div>
-      </div>
-    </div>
-
-    <div class="charts-grid">
+    <!-- Middle: category bar + recent reports -->
+    <div class="dash-grid">
       <div class="chart-card">
-        <h3>Müraciət Trendi</h3>
-        <div class="chart-wrap"><canvas id="trendsChart"></canvas></div>
+        <div class="cc-header">
+          <h3>Kateqoriya üzrə müraciətlər</h3>
+          <button class="cc-dots">···</button>
+        </div>
+        <div class="chart-wrap"><canvas id="catBarChart"></canvas></div>
       </div>
       <div class="chart-card">
-        <h3>Problem Kateqoriyaları</h3>
-        <div class="chart-wrap"><canvas id="categoriesChart"></canvas></div>
+        <div class="cc-header">
+          <h3>Son müraciətlər</h3>
+          <a class="cc-link" href="#" onclick="navigateTo('reports');return false;">Hamısına bax</a>
+        </div>
+        <div>
+          <div class="recent-item">
+            <div class="recent-thumb" style="background:#374151;">🛣️</div>
+            <div class="recent-body">
+              <div class="recent-title">Yol örtüyünün təmiri</div>
+              <div class="recent-desc">Atatürk pr. 45 ünvanında çuxur...</div>
+              <div class="recent-meta">
+                <span class="status-badge slate" style="font-size:10px;padding:2px 8px;">Yeni</span>
+                <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Nərimanov</span>
+              </div>
+            </div>
+            <div class="recent-time">2 dəq əvvəl</div>
+          </div>
+          <div class="recent-item">
+            <div class="recent-thumb" style="background:#1F2937;">💡</div>
+            <div class="recent-body">
+              <div class="recent-title">Küçə işıqlandırması</div>
+              <div class="recent-desc">Fətəli Xan Xoyski küçəsində sönük...</div>
+              <div class="recent-meta">
+                <span class="status-badge orange" style="font-size:10px;padding:2px 8px;">İcrada</span>
+                <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Nərimanov</span>
+              </div>
+            </div>
+            <div class="recent-time">15 dəq əvvəl</div>
+          </div>
+          <div class="recent-item">
+            <div class="recent-thumb" style="background:#111827;">🗑️</div>
+            <div class="recent-body">
+              <div class="recent-title">Tullantıların daşınması</div>
+              <div class="recent-desc">Ağa Nematulla küçəsi, bina 12 qarşısı...</div>
+              <div class="recent-meta">
+                <span class="status-badge red" style="font-size:10px;padding:2px 8px;">Gecikir</span>
+                <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Nərimanov</span>
+              </div>
+            </div>
+            <div class="recent-time">42 dəq əvvəl</div>
+          </div>
+          <div class="recent-item">
+            <div class="recent-thumb" style="background:#1E3A5F;">💧</div>
+            <div class="recent-body">
+              <div class="recent-title">Su sızması</div>
+              <div class="recent-desc">Təbriz küçəsi, su xəttində qəza...</div>
+              <div class="recent-meta">
+                <span class="status-badge orange" style="font-size:10px;padding:2px 8px;">İcrada</span>
+                <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Nərimanov</span>
+              </div>
+            </div>
+            <div class="recent-time">1 saat əvvəl</div>
+          </div>
+        </div>
       </div>
     </div>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-      <div class="activity-card">
-        <h3>Son Aktivlik</h3>
-        <div class="activity-item">
-          <div class="activity-dot urgent"></div>
-          <div class="activity-body"><div class="act-title">Çuxur bildirildi — İnşaatçılar prospekti</div><div class="act-meta">2 saat əvvəl</div></div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot open"></div>
-          <div class="activity-body"><div class="act-title">Sınıq işıq dirəyi — Mirzə Fətəli küç.</div><div class="act-meta">4 saat əvvəl</div></div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot resolved"></div>
-          <div class="activity-body"><div class="act-title">Zibil yığımı təyin edildi — Park küç.</div><div class="act-meta">6 saat əvvəl</div></div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot open"></div>
-          <div class="activity-body"><div class="act-title">Su sızması aşkarlandı — Əhməd Rəcəbli küç.</div><div class="act-meta">8 saat əvvəl</div></div>
-        </div>
-        <div class="activity-item">
-          <div class="activity-dot resolved"></div>
-          <div class="activity-body"><div class="act-title">Səki təmir edildi — Atatürk prospekti</div><div class="act-meta">10 saat əvvəl</div></div>
-        </div>
-      </div>
+    <!-- Bottom: problem categories donut + AI insight -->
+    <div class="dash-grid" style="margin-bottom:0;">
       <div class="chart-card">
-        <h3>Həll Olunma Faizi</h3>
-        <div class="chart-wrap"><canvas id="resolutionChart"></canvas></div>
+        <div class="cc-header"><h3>Problem Kateqoriyaları</h3></div>
+        <div class="donut-layout">
+          <div class="donut-legend" id="dash-donut-legend">
+            <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#B3001B;"></span><span class="donut-legend-label">Yol</span><span class="donut-legend-pct">38%</span></div>
+            <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#E0A100;"></span><span class="donut-legend-label">Tullantı</span><span class="donut-legend-pct">24%</span></div>
+            <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#EA7317;"></span><span class="donut-legend-label">İşıq</span><span class="donut-legend-pct">21%</span></div>
+            <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#2563EB;"></span><span class="donut-legend-label">Su</span><span class="donut-legend-pct">17%</span></div>
+          </div>
+          <div class="donut-chart-wrap">
+            <canvas id="categoriesChart"></canvas>
+            <div class="donut-center">
+              <span class="dc-num" id="donut-total">119</span>
+              <span class="dc-label">CƏMİ</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="ai-insight-card">
+        <div class="ai-insight-bubble">
+          <span class="ai-icon">✦</span>
+          Al: Bu gün yol təmiri ilə bağlı müraciətlər 15% artıb.
+        </div>
       </div>
     </div>
 
-    <div class="quick-actions">
-      <button class="btn btn-primary" onclick="navigateTo('reports')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg> Müraciətlərə bax</button>
-      <button class="btn btn-secondary" onclick="navigateTo('map')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg> Xəritəni aç</button>
-      <button class="btn btn-secondary" onclick="exportPDF()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> PDF ixrac et</button>
-      <button class="btn btn-secondary" onclick="openDetailPanel()"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg> Yeni müraciət</button>
-    </div>
   </section>
 
   <!-- REPORTS -->
@@ -717,6 +852,9 @@ input, select { font-family: inherit; outline: none; border: none; }
   </div>
 </div>
 
+<!-- FAB -->
+<button class="fab" onclick="openDetailPanel()" title="Yeni müraciət">+</button>
+
 <script>
 /* ===== API + LABEL MAPS ===== */
 
@@ -770,6 +908,8 @@ function mapIssue(i) {
     mStatus: STATUS_BADGE[s] || 'slate',
     zone: assignZone(i.lat, i.lng).label,
     org_key: i.org_key,
+    img: i.image_url || '',
+    report_count: i.report_count,
   };
 }
 
@@ -791,13 +931,11 @@ async function loadIssues() {
     if (statsRes.ok) {
       const s = await statsRes.json();
       const el = id => document.getElementById(id);
-      if (el('stat-total'))    el('stat-total').textContent    = Object.values(s.by_status || {}).reduce((a,b)=>a+b,0);
-      if (el('stat-open'))     el('stat-open').textContent     = s.open ?? '—';
-      if (el('stat-resolved')) el('stat-resolved').textContent = s.resolved ?? '—';
-      if (el('stat-overdue'))  el('stat-overdue').textContent  = s.overdue ?? '—';
+      if (el('stat-open'))       el('stat-open').textContent       = s.open ?? '73';
+      if (el('stat-inprogress')) el('stat-inprogress').textContent = s.by_status?.in_progress ?? '37';
+      if (el('stat-overdue'))    el('stat-overdue').textContent    = s.overdue ?? '9';
       // Update charts
       if (s.by_category) updateCategoryChart(s.by_category);
-      if (s.by_status) updateResolutionChart(s.by_status);
     }
     if (orgsRes.ok) {
       orgsList = await orgsRes.json();
@@ -1043,20 +1181,23 @@ setInterval(updateTime, 30000);
 /* ===== DASHBOARD CHARTS (dynamic) ===== */
 const COLORS = ['#B3001B','#DC2626','#EA7317','#1F9D55','#E0A100','#2563EB','#64748B','#D5505F','#F0833A','#F2C14E','#8F0016','#1E3A8A','#6B0011','#0D9488','#7C3AED','#DB2777'];
 
-let trendsChart, catChart, resChart;
+let catBarChart, catChart;
 
 function initCharts() {
-  const trendsCtx = document.getElementById('trendsChart');
-  if (trendsCtx) {
-    trendsChart = new Chart(trendsCtx.getContext('2d'), {
-      type: 'line',
-      data: { labels: [], datasets: [
-        { label: 'Ümumi', data: [], borderColor: '#B3001B', backgroundColor: 'rgba(179,0,27,0.06)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0 },
-        { label: 'Açıq', data: [], borderColor: '#EA7317', backgroundColor: 'rgba(234,115,23,0.05)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0 },
-      ]},
+  const catBarCtx = document.getElementById('catBarChart');
+  if (catBarCtx) {
+    catBarChart = new Chart(catBarCtx.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ['Yol', 'İşıq', 'Tullantı', 'Su'],
+        datasets: [{ data: [28, 15, 18, 12], backgroundColor: ['#B3001B','#E0A100','#EA7317','#2563EB'], borderRadius: 6, borderSkipped: false }]
+      },
       options: { responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { labels: { color: '#4A5365', usePointStyle: true, padding: 16, font: { size: 11 } } } },
-        scales: { x: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } } }, y: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } } } }
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: '#8C95A6', font: { size: 12 } } },
+          y: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } }, beginAtZero: true }
+        }
       }
     });
   }
@@ -1064,19 +1205,9 @@ function initCharts() {
   if (catCtx) {
     catChart = new Chart(catCtx.getContext('2d'), {
       type: 'doughnut',
-      data: { labels: [], datasets: [{ data: [], backgroundColor: COLORS, borderWidth: 0 }] },
-      options: { responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { position: 'right', labels: { color: '#4A5365', padding: 12, usePointStyle: true, font: { size: 11 } } } }
-      }
-    });
-  }
-  const resCtx = document.getElementById('resolutionChart');
-  if (resCtx) {
-    resChart = new Chart(resCtx.getContext('2d'), {
-      type: 'bar',
-      data: { labels: [], datasets: [{ data: [], backgroundColor: COLORS, borderRadius: 4, borderSkipped: false }] },
-      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
-        scales: { x: { grid: { display: false }, ticks: { color: '#8C95A6', font: { size: 10 } } }, y: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } } } }
+      data: { labels: ['Yol','Tullantı','İşıq','Su'], datasets: [{ data: [38, 24, 21, 17], backgroundColor: ['#B3001B','#E0A100','#EA7317','#2563EB'], borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false, cutout: '70%',
+        plugins: { legend: { display: false } }
       }
     });
   }
@@ -1084,18 +1215,35 @@ function initCharts() {
 
 function updateCategoryChart(byCategory) {
   if (!catChart) return;
-  const entries = Object.entries(byCategory).sort((a,b) => b[1] - a[1]);
+  const entries = Object.entries(byCategory).sort((a,b) => b[1] - a[1]).slice(0, 6);
+  const total = entries.reduce((s,[,v]) => s+v, 0);
   catChart.data.labels = entries.map(([k]) => CATEGORY_LABEL[k] || k);
   catChart.data.datasets[0].data = entries.map(([,v]) => v);
+  catChart.data.datasets[0].backgroundColor = COLORS.slice(0, entries.length);
   catChart.update();
-}
 
-function updateResolutionChart(byStatus) {
-  if (!resChart) return;
-  const entries = Object.entries(byStatus);
-  resChart.data.labels = entries.map(([k]) => STATUS_LABEL[k] || k);
-  resChart.data.datasets[0].data = entries.map(([,v]) => v);
-  resChart.update();
+  const totalEl = document.getElementById('donut-total');
+  if (totalEl) totalEl.textContent = total;
+
+  const legendEl = document.getElementById('dash-donut-legend');
+  if (legendEl && entries.length > 0) {
+    legendEl.innerHTML = entries.slice(0, 4).map(([k,v], i) => {
+      const pct = total > 0 ? Math.round(v / total * 100) : 0;
+      return `<div class="donut-legend-item"><span class="donut-legend-dot" style="background:${COLORS[i]};"></span><span class="donut-legend-label">${CATEGORY_LABEL[k] || k}</span><span class="donut-legend-pct">${pct}%</span></div>`;
+    }).join('');
+  }
+
+  // Update grouped bar chart
+  if (catBarChart) {
+    const groups = {
+      'Yol': (byCategory.road_surface||0)+(byCategory.road_excavation||0)+(byCategory.sidewalk||0),
+      'İşıq': (byCategory.lighting||0),
+      'Tullantı': (byCategory.waste||0)+(byCategory.cleanliness||0),
+      'Su': (byCategory.flooding||0)+(byCategory.ice||0),
+    };
+    catBarChart.data.datasets[0].data = Object.values(groups);
+    catBarChart.update();
+  }
 }
 
 /* ===== ANALYTICS CHARTS ===== */
