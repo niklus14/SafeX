@@ -1,0 +1,135 @@
+@import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Hanken Grotesk", sans-serif;
+  --font-sans: "Plus Jakarta Sans", sans-serif;
+
+  /* Color Palette matching Civic Excellence */
+  --color-brand-surface: #fff8f7;
+  --color-brand-surface-dim: #f2d3d0;
+  --color-brand-surface-bright: #fff8f7;
+  --color-brand-lowest: #ffffff;
+  --color-brand-low: #fff0ef;
+  --color-brand-container: #ffe9e7;
+  --color-brand-high: #ffe2df;
+  --color-brand-highest: #fadbd9;
+  
+  --color-brand-on-surface: #281716;
+  --color-brand-on-surface-variant: #5c403e;
+  --color-brand-inverse-surface: #3f2c2a;
+  --color-brand-inverse-on-surface: #ffedeb;
+  
+  --color-brand-outline: #906f6c;
+  --color-brand-outline-variant: #e5bdba;
+  --color-brand-surface-tint: #bd0e21;
+  
+  --color-brand-primary: #870012;
+  --color-brand-primary-container: #b3001b;
+  --color-brand-on-primary-container: #ffbeb9;
+  
+  --color-brand-secondary: #ac3236;
+  --color-brand-secondary-container: #fc6d6c;
+  --color-brand-on-secondary-container: #6d0010;
+  
+  --color-brand-tertiary: #004273;
+  --color-brand-tertiary-container: #005a99;
+  --color-brand-on-tertiary-container: #add1ff;
+  
+  --color-brand-error: #ba1a1a;
+  --color-brand-error-container: #ffdad6;
+  --color-brand-on-error-container: #93000a;
+  
+  /* Fixed versions */
+  --color-brand-primary-fixed: #ffdad7;
+  --color-brand-primary-fixed-dim: #ffb3ae;
+  --color-brand-on-primary-fixed: #410004;
+  --color-brand-on-primary-fixed-variant: #930014;
+  
+  --color-brand-secondary-fixed: #ffdad8;
+  --color-brand-secondary-fixed-dim: #ffb3b0;
+  --color-brand-on-secondary-fixed: #410006;
+  --color-brand-on-secondary-fixed-variant: #8b1821;
+}
+
+body {
+  background-color: #fff8f7;
+  color: #281716;
+  font-family: "Plus Jakarta Sans", sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Custom styles and animations */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes pulse-custom {
+  0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(135, 0, 18, 0.4); }
+  70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(135, 0, 18, 0); }
+  100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(135, 0, 18, 0); }
+}
+
+.pulse-animation-btn {
+  animation: pulse-custom 2s infinite;
+}
+
+@keyframes scan-animation {
+  0% { top: 0%; }
+  50% { top: 100%; }
+  100% { top: 0%; }
+}
+
+.scanning-line-el {
+  animation: scan-animation 3s linear infinite;
+}
+
+.checkmark-scale {
+  animation: scaleIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.coin-shimmer-bg {
+  background: linear-gradient(135deg, #870012 0%, #b3001b 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.coin-shimmer-bg::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: linear-gradient(45deg, transparent 0%, rgba(255,255,255,0.1) 45%, rgba(255,255,255,0.2) 50%, rgba(255,255,255,0.1) 55%, transparent 100%);
+  animation: shimmer 4s infinite linear;
+  transform: rotate(25deg);
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%) rotate(25deg); }
+  100% { transform: translateX(100%) rotate(25deg); }
+}
+
+.thread-vertical-line::before {
+  content: '';
+  position: absolute;
+  left: 23px;
+  top: 48px;
+  bottom: -24px;
+  width: 2px;
+  background-color: #e5bdba;
+  z-index: 0;
+}
+

@@ -1,0 +1,9 @@
+{
+  "name": "Openwave",
+  "description": "A comprehensive civic reporting and engagement platform for Baku, allowing citizens to report infrastructure problems, track solutions in real-time, and earn rewards.",
+  "requestFramePermissions": [
+    "camera",
+    "geolocation"
+  ],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
