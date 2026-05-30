@@ -7,6 +7,7 @@ import {
   Compass,
   Info,
   MapPin,
+  MessageCircle,
   User,
   X,
 } from 'lucide-react';
@@ -16,6 +17,9 @@ import { Screen } from './types';
 // Screens
 import AIAnalysisScreen from './screens/AIAnalysisScreen';
 import CameraScreen from './screens/CameraScreen';
+import ChatScreen from './screens/ChatScreen';
+import MessagesScreen from './screens/MessagesScreen';
+import MessageThreadScreen from './screens/MessageThreadScreen';
 import CreateDetailsScreen from './screens/CreateDetailsScreen';
 import FeedScreen from './screens/FeedScreen';
 import MyReportsScreen from './screens/MyReportsScreen';
@@ -39,13 +43,29 @@ function ShellHeader() {
         <span className="p-1.5 bg-[#fff0ef] rounded-xl text-brand-primary shrink-0 animate-pulse">
           <MapPin size={20} />
         </span>
-        <span className="font-display font-extrabold text-xl text-brand-primary tracking-tight">Openwave</span>
+        <span className="font-display font-extrabold text-xl text-brand-primary tracking-tight">myRegion</span>
       </div>
-      <div
-        onClick={() => navigate('profile')}
-        className="w-10 h-10 rounded-full border-2 border-[#ffdad7] shadow-sm overflow-hidden shrink-0 cursor-pointer hover:scale-105 active:scale-95 transition-all"
-      >
-        <img className="w-full h-full object-cover" src={state.user.avatar} alt="Avatar" />
+      <div className="flex items-center gap-3">
+        {/* Message inbox button */}
+        <div
+          onClick={() => navigate('messages')}
+          className="relative cursor-pointer hover:scale-105 active:scale-95 transition-all"
+        >
+          <button className="p-2 rounded-full bg-brand-primary/10 text-brand-primary hover:bg-brand-primary/20">
+            <MessageCircle size={20} />
+          </button>
+          {/* Unread badge */}
+          <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center">
+            2
+          </span>
+        </div>
+        {/* Profile avatar */}
+        <div
+          onClick={() => navigate('profile')}
+          className="w-10 h-10 rounded-full border-2 border-[#ffdad7] shadow-sm overflow-hidden shrink-0 cursor-pointer hover:scale-105 active:scale-95 transition-all"
+        >
+          <img className="w-full h-full object-cover" src={state.user.avatar} alt="Avatar" />
+        </div>
       </div>
     </header>
   );
@@ -151,6 +171,9 @@ export default function App() {
       {screen === 'permissions' && <PermissionsScreen />}
       {screen === 'camera' && <CameraScreen />}
       {screen === 'ai-analysis' && <AIAnalysisScreen />}
+      {screen === 'chat' && <ChatScreen />}
+      {screen === 'messages' && <MessagesScreen />}
+      {screen === 'message-thread' && <MessageThreadScreen />}
 
       {/*
         Shell layout:

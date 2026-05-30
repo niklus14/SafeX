@@ -12,6 +12,8 @@ export interface AppState {
   user: UserProfile;
   reports: Report[];
   selectedReportId: string | null;
+  selectedOrganization: string | null;
+  messageThread: string | null;
   rewards: Reward[];
   apiIssueIds: Record<string, number>;
   draft: DraftReport;
@@ -41,6 +43,8 @@ const INITIAL_STATE: AppState = {
   user: INITIAL_USER,
   reports: INITIAL_REPORTS,
   selectedReportId: '#88241',
+  selectedOrganization: null,
+  messageThread: null,
   rewards: INITIAL_REWARDS,
   apiIssueIds: {},
   draft: INITIAL_DRAFT,
@@ -62,6 +66,8 @@ export type Action =
   | { type: 'ADD_REPORT'; report: Report }
   | { type: 'UPDATE_REPORT'; id: string; patch: Partial<Report> }
   | { type: 'SELECT_REPORT'; id: string }
+  | { type: 'SELECT_ORG'; org: string }
+  | { type: 'SET_MESSAGE_THREAD'; thread: string | null }
   | { type: 'SET_REWARDS'; rewards: Reward[] }
   | { type: 'MAP_API_ISSUE'; localId: string; apiId: number }
   | { type: 'SET_DRAFT'; patch: Partial<DraftReport> }
@@ -106,6 +112,12 @@ function reducer(state: AppState, action: Action): AppState {
 
     case 'SELECT_REPORT':
       return { ...state, selectedReportId: action.id };
+
+    case 'SELECT_ORG':
+      return { ...state, selectedOrganization: action.org };
+
+    case 'SET_MESSAGE_THREAD':
+      return { ...state, messageThread: action.thread };
 
     case 'SET_REWARDS':
       return { ...state, rewards: action.rewards };

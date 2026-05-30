@@ -4,18 +4,11 @@ import { useApp } from '../store';
 const SLIDES = [
   {
     title: 'Problemi gör, şəkil çək',
-    text: 'Şəhərimizdə gördüyünüz istənilən çatışmazlığı bircə kliklə qeydə alın.',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBsqWwcbOj6sVL--9UqoWekC02Kwu9fzioGQ6p3p2DiDENzLnfrqzdZYejDqi3n_3y4OpUzORlTLhuCex-TVl3PAbPF_EsRA9RMwMz-GEl8OL6CUUFMjbVfoHckwCEULlx1txzz4YeXlh4VtqWUawsrTNDy5AJtibo2EJqTbhHVYqs1Nu60uf6YEhzePWh_0fLPWHlhOFF702MfUoTXfzpUe8lSnehwNnRK9Bv3cVR2YNx4HUipEJm1xS7I0JvQ-ACSDFnVe6KQnzk',
   },
   {
-    title: 'Süni intellekt avtomatik təyin edir',
-    text: 'Ağıllı sistemimiz problemi dərhal analiz edib aidiyyatı quruma yönləndirir.',
+    title: 'Süni intellektlə təyin et, birlikdə həll edək',
     image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCCL21J4rnrVE2wYiSLuK8F5uIgm47q7CGYRBCVM3BQKbLvivzxp69sV-Y6haBDk7lA80oZS83rmFVjNexURYfiX7htSCIQMulYIxZ4hOJG9Yf1BTBICy0Rvd01Np8MRPrhNoHYA56AbvXE4CrSCCL_TfpVnYrIiMCZ9qEwvuVNka4QD-XN6OWGORnFGzaGkifre_ygV_3DyAXUYcD8FgSS9aDFrcun2qFRhPyyrgWxysB3tfbND7LCMBBtuKMNn4uvnItUd-x9TrI',
-  },
-  {
-    title: 'Birlikdə həll edirik',
-    text: 'Problemin həllinə nəzarət edin və şəhərimizin inkişafına töhfə verin.',
-    image: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBJjRv5owZC83lgMOFT3TEE7Qx0eNZR9mwCGzTvJyDewE3XXdVqfOYtJIut7-vMTVpPAy3RnJVIvbcfGyFaD7LfISm05pEmlbSiytCQbFun5ISg2GbA5UVFh2mZvv2Tb2dE1y8oK1lMGn5SufcM6mVnYsF7bAVJhRI69cGre_jFG_uMGDhX29taZ2S4qz9LKoQrNktkTXvHVIg3GsZBXsXdebqSdiBfb9ftLSj_AlnNnrCs3-R71rGwGOo9Yf7N_9TyoRo9065sT28',
   },
 ];
 
@@ -38,7 +31,7 @@ export default function OnboardingScreen() {
       {/* Logo */}
       <div className="mt-8 flex justify-center gap-2">
         <MapPin className="text-white" size={28} />
-        <span className="font-display font-extrabold text-2xl text-white tracking-tight">Openwave</span>
+        <span className="font-display font-extrabold text-2xl text-white tracking-tight">myRegion</span>
       </div>
 
       {/* Slide */}
@@ -53,9 +46,6 @@ export default function OnboardingScreen() {
         <h1 className="font-display text-2xl font-extrabold text-white tracking-tight mb-3">
           {slide.title}
         </h1>
-        <p className="text-sm text-white/80 max-w-xs leading-relaxed font-medium">
-          {slide.text}
-        </p>
       </div>
 
       {/* Dots + CTA */}
