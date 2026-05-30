@@ -3,12 +3,14 @@ import {
   Check,
   Compass,
   Flame,
+  ImagePlus,
   MapPin,
   MessageSquare,
   Send,
   ThumbsUp,
+  X,
 } from 'lucide-react';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useApp } from '../store';
 import { ReportComment } from '../types';
 
@@ -16,6 +18,10 @@ export default function ReportDetailScreen() {
   const { state, dispatch, navigate, toast } = useApp();
   const { selectedReportId, reports, prevScreen, user } = state;
   const [commentText, setCommentText] = useState('');
+  const [isDescriptionExpanded, setIsDescriptionExpanded] = useState(false);
+  const [showAllStatusSteps, setShowAllStatusSteps] = useState(false);
+  const [commentImage, setCommentImage] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const report = reports.find(r => r.id === selectedReportId);
   if (!report) return null;
@@ -27,23 +33,47 @@ export default function ReportDetailScreen() {
   }
 
   function addComment() {
-    if (!commentText.trim()) return;
+    if (!commentText.trim() && !commentImage) return;
     const c: ReportComment = {
       id: `comment-${Date.now()}`,
       author: `${user.name} (Siz)`,
       avatar: user.avatar,
       time: 'İndi',
-      text: commentText,
+      text: commentText.trim() || 'Əlavə şəkil sübutu göndərildi.',
+      imageUrl: commentImage || undefined,
     };
     dispatch({ type: 'ADD_COMMENT', reportId: report!.id, comment: c });
     setCommentText('');
-    toast('Xəbərdarlığınız mövzüya əlavə edildi! +2 Coin', 'success');
+    setCommentImage(null);
+    toast('Bildirişiniz mövzuya əlavə edildi! +2 Coin', 'success');
+  }
+
+  function attachCommentImage(file: File | null) {
+    if (!file) return;
+    setCommentImage(URL.createObjectURL(file));
   }
 
   const statusColor =
     report.status === 'HƏLL EDİLDİ' ? 'bg-[#e8f5e9] text-[#2e7d32]'
     : report.status === 'İCRADADIR' ? 'bg-[#fff0ef] text-brand-primary'
     : 'bg-brand-highest text-brand-on-surface-variant';
+
+  const currentStatusStep =
+    report.steps.find(step => step.status === 'current') ||
+    [...report.steps].reverse().find(step => step.status === 'completed') ||
+    report.steps[0];
+
+  const visibleStatusSteps = showAllStatusSteps
+    ? report.steps
+    : currentStatusStep
+      ? [currentStatusStep]
+      : [];
+
+  const shouldTruncateDescription = report.descr.length > 110;
+  const visibleDescription =
+    isDescriptionExpanded || !shouldTruncateDescription
+      ? report.descr
+      : `${report.descr.slice(0, 110).trim()}...`;
 
   return (
     /* Flex column that fills the phone-root: header | scrollable content | footer */
@@ -103,41 +133,62 @@ export default function ReportDetailScreen() {
                   {report.id.startsWith('#RG-') ? 'Siz' : 'Sakin'}
                 </span>
               </div>
-              <p className="text-xs leading-normal font-medium text-[#281716] whitespace-pre-line bg-brand-low/40 p-3 rounded-xl border border-dashed border-[#e5bdba]/40">
-                {report.descr}
-              </p>
+              <div className="text-xs leading-normal font-medium text-[#281716] bg-brand-low/40 p-3 rounded-xl border border-dashed border-[#e5bdba]/40">
+                <p className="whitespace-pre-line">{visibleDescription}</p>
+                {shouldTruncateDescription && (
+                  <button
+                    onClick={() => setIsDescriptionExpanded(v => !v)}
+                    className="mt-2 text-brand-primary font-extrabold text-[11px] active:scale-95 transition-all"
+                  >
+                    {isDescriptionExpanded ? 'Daha az göstər' : 'Davamı'}
+                  </button>
+                )}
+              </div>
             </div>
           </article>
 
           {/* Status stepper */}
-          <div className="bg-white rounded-2xl p-5 shadow-sm border border-[#e5bdba]/20">
-            <h3 className="text-sm font-bold text-brand-on-surface mb-6 flex items-center gap-1.5">
-              <Flame size={16} className="text-brand-primary" /> Müraciət statusu
-            </h3>
+          <div className="bg-white rounded-2xl p-4 shadow-sm border border-[#e5bdba]/20">
+            <div className="flex items-center justify-between gap-3 mb-4">
+              <h3 className="text-sm font-bold text-brand-on-surface flex items-center gap-1.5">
+                <Flame size={16} className="text-brand-primary" /> Cari status
+              </h3>
+              <button
+                onClick={() => setShowAllStatusSteps(v => !v)}
+                className="px-3 py-1.5 rounded-full bg-[#fff0ef] text-brand-primary text-[10px] font-extrabold active:scale-95 transition-all"
+              >
+                {showAllStatusSteps ? 'Gizlət' : 'Hamısı'}
+              </button>
+            </div>
             <div className="relative pl-1">
-              <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-brand-outline-variant/30 z-0" />
-              <div className="space-y-6 relative z-10">
-                {report.steps.map((step, i) => (
-                  <div key={i} className={`flex items-start gap-3.5 ${step.status === 'pending' ? 'opacity-40' : ''}`}>
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 transition-all relative ${
-                      step.status === 'completed' ? 'bg-[#e8f5e9] border-[#2e7d32] text-[#2e7d32]'
-                      : step.status === 'current' ? 'bg-[#ffe9e7] border-brand-primary text-brand-primary pulse-animation-btn'
-                      : 'bg-brand-low border-brand-outline-variant text-[#5c403e]/40'
-                    }`}>
-                      {step.status === 'completed' ? <Check size={16} /> : <span className="text-xs font-bold">{i + 1}</span>}
-                      {step.status === 'current' && <span className="absolute inset-0 rounded-full bg-brand-primary/20 animate-ping" />}
-                    </div>
-                    <div className="min-w-0 flex-1">
-                      <div className="flex justify-between items-start gap-2">
-                        <h4 className={`text-xs font-bold leading-tight ${step.status === 'current' ? 'text-brand-primary' : 'text-brand-on-surface'}`}>
-                          {step.name}
-                        </h4>
-                        {step.time && <span className="text-[10px] text-brand-on-surface-variant font-medium whitespace-nowrap">{step.time}</span>}
+              {showAllStatusSteps && (
+                <div className="absolute left-[15px] top-2 bottom-2 w-[2px] bg-brand-outline-variant/30 z-0" />
+              )}
+              <div className="space-y-4 relative z-10">
+                {visibleStatusSteps.map((step, i) => {
+                  const realIndex = report.steps.findIndex(s => s.name === step.name);
+                  return (
+                    <div key={`${step.name}-${i}`} className={`flex items-start gap-3.5 ${step.status === 'pending' ? 'opacity-40' : ''}`}>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 border-2 transition-all relative ${
+                        step.status === 'completed' ? 'bg-[#e8f5e9] border-[#2e7d32] text-[#2e7d32]'
+                        : step.status === 'current' ? 'bg-[#ffe9e7] border-brand-primary text-brand-primary pulse-animation-btn'
+                        : 'bg-brand-low border-brand-outline-variant text-[#5c403e]/40'
+                      }`}>
+                        {step.status === 'completed' ? <Check size={16} /> : <span className="text-xs font-bold">{realIndex + 1}</span>}
+                        {step.status === 'current' && <span className="absolute inset-0 rounded-full bg-brand-primary/20 animate-ping" />}
                       </div>
-                      <p className="text-[11px] text-brand-on-surface-variant mt-0.5 leading-tight truncate">{step.subtitle}</p>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex justify-between items-start gap-2">
+                          <h4 className={`text-xs font-bold leading-tight ${step.status === 'current' ? 'text-brand-primary' : 'text-brand-on-surface'}`}>
+                            {step.name}
+                          </h4>
+                          {step.time && <span className="text-[10px] text-brand-on-surface-variant font-medium whitespace-nowrap">{step.time}</span>}
+                        </div>
+                        <p className="text-[11px] text-brand-on-surface-variant mt-0.5 leading-tight">{step.subtitle}</p>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -180,6 +231,13 @@ export default function ReportDetailScreen() {
                       <span className="text-[10px] text-brand-on-surface-variant shrink-0 font-medium">{c.time}</span>
                     </div>
                     <p className="text-[11px] leading-relaxed font-semibold text-brand-on-surface-variant/90">{c.text}</p>
+                    {c.imageUrl && (
+                      <img
+                        src={c.imageUrl}
+                        alt="Şərh şəkli"
+                        className="mt-2 w-full max-h-44 object-cover rounded-xl border border-[#e5bdba]/30"
+                      />
+                    )}
                   </div>
                 </div>
               ))}
@@ -192,20 +250,47 @@ export default function ReportDetailScreen() {
                 </div>
               )}
             </div>
-            <div className="bg-white p-3 rounded-2xl shadow-sm border border-[#e5bdba]/15 flex items-center gap-2">
-              <input
-                type="text"
-                value={commentText}
-                onChange={e => setCommentText(e.target.value)}
-                placeholder="Əlavə məlumat və ya sübut yazın..."
-                className="flex-1 min-w-0 bg-transparent outline-none text-xs font-semibold px-2 placeholder:text-brand-on-surface-variant/50"
-              />
-              <button
-                onClick={addComment}
-                className="p-3 bg-brand-primary text-white rounded-xl active:scale-95 transition-all cursor-pointer hover:bg-brand-primary-container shrink-0"
-              >
-                <Send size={14} />
-              </button>
+            <div className="bg-white p-3 rounded-2xl shadow-sm border border-[#e5bdba]/15 space-y-3">
+              {commentImage && (
+                <div className="relative w-full rounded-xl overflow-hidden border border-[#e5bdba]/30 bg-brand-low/40">
+                  <img src={commentImage} alt="Əlavə edilən sübut" className="w-full max-h-40 object-cover" />
+                  <button
+                    onClick={() => setCommentImage(null)}
+                    className="absolute top-2 right-2 w-7 h-7 rounded-full bg-black/50 text-white flex items-center justify-center active:scale-95"
+                  >
+                    <X size={14} />
+                  </button>
+                </div>
+              )}
+              <div className="flex items-center gap-2">
+                <input
+                  type="text"
+                  value={commentText}
+                  onChange={e => setCommentText(e.target.value)}
+                  placeholder="Əlavə məlumat və ya sübut yazın..."
+                  className="flex-1 min-w-0 bg-transparent outline-none text-xs font-semibold px-2 placeholder:text-brand-on-surface-variant/50"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={e => attachCommentImage(e.target.files?.[0] || null)}
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="p-3 bg-[#fff0ef] text-brand-primary rounded-xl active:scale-95 transition-all cursor-pointer hover:bg-brand-primary/10 shrink-0"
+                  aria-label="Şəkil əlavə et"
+                >
+                  <ImagePlus size={14} />
+                </button>
+                <button
+                  onClick={addComment}
+                  className="p-3 bg-brand-primary text-white rounded-xl active:scale-95 transition-all cursor-pointer hover:bg-brand-primary-container shrink-0"
+                >
+                  <Send size={14} />
+                </button>
+              </div>
             </div>
           </section>
 
