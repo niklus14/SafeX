@@ -3,4 +3,4 @@ uvicorn[standard]
 sqlmodel
 python-multipart
 openai
-fpdf2
+reportlab
