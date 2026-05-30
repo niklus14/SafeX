@@ -18,12 +18,16 @@ Run the demo DB:
     pip install sqlmodel && python -c "from models import init_db; init_db()"
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 
 from sqlmodel import Field, Relationship, SQLModel, create_engine, JSON, Column
 
 from enums import Category, IssueStatus, Severity
+
+
+def _utcnow():
+    return datetime.now(timezone.utc).replace(tzinfo=None)
 
 
 class User(SQLModel, table=True):
@@ -34,7 +38,7 @@ class User(SQLModel, table=True):
     # score throttles a user (see api note) and protects the queue from spam.
     credibility: int = Field(default=100)
     coins: int = Field(default=0)          # earned for accepted/resolved contributions
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
 
     reports: List["Report"] = Relationship(back_populates="user")
 
@@ -82,8 +86,8 @@ class Issue(SQLModel, table=True):
     # derived (recomputed on change; cached for fast map/list reads)
     priority: float = Field(default=0.0, index=True)
 
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
+    updated_at: datetime = Field(default_factory=_utcnow)
 
     reports: List["Report"] = Relationship(back_populates="issue")
 
@@ -107,7 +111,7 @@ class Report(SQLModel, table=True):
     ai_confidence: float = 0.0
     ai_raw: dict = Field(default_factory=dict, sa_column=Column(JSON))
 
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=_utcnow)
 
     user: Optional["User"] = Relationship(back_populates="reports")
     issue: Optional["Issue"] = Relationship(back_populates="reports")

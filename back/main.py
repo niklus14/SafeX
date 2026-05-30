@@ -17,7 +17,8 @@ import csv
 import io
 import os
 import uuid
-from datetime import datetime
+from contextlib import asynccontextmanager
+from datetime import datetime, timezone
 from typing import Optional
 
 from fastapi import Depends, FastAPI, File, Form, HTTPException, UploadFile
@@ -34,10 +35,21 @@ from enums import CITIZEN_PIPELINE, Category, IssueStatus, Severity
 from models import Issue, Organization, Report, User, engine, init_db
 from taxonomy import compute_deadline, suggest_org
 
-# ---------------------------------------------------------------------------
-# App + middleware
 
-app = FastAPI(title="Openwave API", version="1.0")
+def _utcnow() -> datetime:
+    return datetime.now(timezone.utc).replace(tzinfo=None)
+
+
+# ---------------------------------------------------------------------------
+# App lifecycle
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    init_db()
+    yield
+
+
+app = FastAPI(title="Openwave API", version="1.0", lifespan=lifespan)
 
 app.add_middleware(
     CORSMiddleware,
@@ -52,11 +64,6 @@ os.makedirs(UPLOADS_DIR, exist_ok=True)
 app.mount("/uploads", StaticFiles(directory=UPLOADS_DIR), name="uploads")
 
 
-@app.on_event("startup")
-def _startup() -> None:
-    init_db()
-
-
 def _db() -> Session:
     with Session(engine) as s:
         yield s
@@ -67,7 +74,7 @@ def _db() -> Session:
 
 def _recompute_priority(issue: Issue) -> None:
     issue.priority = priority_score(issue.severity, issue.report_count, issue.created_at)
-    issue.updated_at = datetime.utcnow()
+    issue.updated_at = _utcnow()
 
 
 def _steps(status: IssueStatus) -> list[dict]:
@@ -440,7 +447,7 @@ def admin_reject(
         raise HTTPException(404, "Issue not found")
     issue.status = IssueStatus.REJECTED
     issue.rejection_reason_az = rejection_reason_az
-    issue.updated_at = datetime.utcnow()
+    issue.updated_at = _utcnow()
     session.add(issue)
     session.commit()
     return {"id": issue.id, "status": issue.status.value}
@@ -462,7 +469,7 @@ def admin_set_status(
         raise HTTPException(422, f"Unknown status '{status}'")
 
     issue.status = new_status
-    issue.updated_at = datetime.utcnow()
+    issue.updated_at = _utcnow()
     session.add(issue)
 
     if new_status == IssueStatus.RESOLVED:
@@ -496,7 +503,7 @@ def admin_orgs(session: Session = Depends(_db)):
 @app.get("/admin/stats", summary="Dashboard KPI cards")
 def admin_stats(session: Session = Depends(_db)):
     issues = session.exec(select(Issue)).all()
-    now = datetime.utcnow()
+    now = _utcnow()
 
     open_c    = sum(1 for i in issues if not i.status.is_terminal)
     resolved  = sum(1 for i in issues if i.status == IssueStatus.RESOLVED)
@@ -541,7 +548,7 @@ async def admin_import(
             sev     = Severity(row["severity"])
             st      = IssueStatus(row.get("status", "resolved"))
             created = (datetime.fromisoformat(row["created_at"])
-                       if row.get("created_at") else datetime.utcnow())
+                       if row.get("created_at") else _utcnow())
             issue = Issue(
                 category=cat, severity=sev,
                 title_az=row.get("title_az", ""),
@@ -572,7 +579,7 @@ def admin_export_pdf(session: Session = Depends(_db)):
     except Exception as exc:
         raise HTTPException(500, f"PDF generation failed: {exc}")
 
-    fname = f"openwave-{datetime.utcnow().strftime('%Y%m%d')}.pdf"
+    fname = f"openwave-{_utcnow().strftime('%Y%m%d')}.pdf"
     return StreamingResponse(
         io.BytesIO(pdf_bytes),
         media_type="application/pdf",

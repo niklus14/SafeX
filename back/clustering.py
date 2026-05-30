@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import datetime, timezone
 
 from enums import Category, IssueStatus, Severity
 
@@ -84,7 +84,7 @@ def priority_score(severity: Severity, report_count: int,
                    (log-damped so 50 reports doesn't dwarf everything)
       staleness  : older open issues climb (capped at 14 days of contribution)
     """
-    now = now or datetime.utcnow()
+    now = now or datetime.now(timezone.utc).replace(tzinfo=None)
     sev = severity.weight * 10                       # 10 / 20 / 30
     reach = math.log2(max(report_count, 1) + 1) * 8  # 1->8, 3->16, 7->24 ...
     age_days = max(0.0, (now - root_created).total_seconds() / 86_400)

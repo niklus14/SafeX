@@ -17,7 +17,7 @@ say "this stays inside Nərimanov IH" vs "this is escalated to a city utility".
 """
 
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from enums import Category, Severity
 
@@ -128,7 +128,7 @@ def compute_deadline(category: Category, severity: Severity,
     The transparent deadline. NOT an AI prediction — a table lookup.
     start defaults to now (report time).
     """
-    start = start or datetime.utcnow()
+    start = start or datetime.now(timezone.utc).replace(tzinfo=None)
     return start + timedelta(days=SLA_DAYS[category][severity])
 
 

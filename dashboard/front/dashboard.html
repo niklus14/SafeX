@@ -534,11 +534,9 @@ input, select { font-family: inherit; outline: none; border: none; }
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         <input class="search-input" type="text" placeholder="Müraciət axtar...">
       </div>
-      <select class="filter-select"><option>Bütün statuslar</option><option>Süni intellekt yoxlaması</option><option>Operator yoxlaması</option><option>Quruma yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option><option>İmtina edildi</option></select>
-      <select class="filter-select"><option>Bütün kateqoriyalar</option><option>Yol zədəsi</option><option>Zibil</option><option>İnfrastruktur</option><option>İşıqlandırma</option><option>Qanunsuz tullantı</option></select>
-      <select class="filter-select"><option>Bütün prioritetlər</option><option>Kritik</option><option>Yüksək</option><option>Orta</option><option>Aşağı</option></select>
-      <select class="filter-select"><option>Bütün zonalar</option><option>Montin</option><option>Nəriman Nərimanov</option><option>Gənclik</option><option>Ulduz</option><option>Atatürk Parkı</option><option>Respublika Stadionu</option><option>Bakı Zooparkı</option><option>Mərkəzi prospektlər</option></select>
-      <select class="filter-select"><option>Bütün tarixlər</option><option>Bugün</option><option>Bu həftə</option><option>Bu ay</option><option>Son 3 ay</option></select>
+      <select class="filter-select" id="filter-status"><option value="">Bütün statuslar</option></select>
+      <select class="filter-select" id="filter-category"><option value="">Bütün kateqoriyalar</option></select>
+      <select class="filter-select" id="filter-org"><option value="">Bütün şöbələr</option></select>
       <div class="view-toggle" style="margin-left:auto;">
         <button class="active" onclick="switchView('table')" id="btn-table-view">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
@@ -566,11 +564,8 @@ input, select { font-family: inherit; outline: none; border: none; }
     <div class="map-page-wrap">
       <div class="map-container" id="map-container">
         <div class="map-filters">
-          <select class="filter-select" style="min-width:140px;"><option>Bütün problem növləri</option><option>Yol zədəsi</option><option>Zibil</option><option>İnfrastruktur</option><option>İşıqlandırma</option><option>Qanunsuz tullantı</option></select>
-          <select class="filter-select" style="min-width:120px;"><option>Bütün statuslar</option><option>Süni intellekt yoxlaması</option><option>Operator yoxlaması</option><option>Quruma yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option></select>
-          <select class="filter-select" style="min-width:110px;"><option>Bütün prioritetlər</option><option>Kritik</option><option>Yüksək</option><option>Orta</option></select>
-          <select class="filter-select" style="min-width:140px;"><option>Bütün zonalar</option><option>Montin</option><option>Nəriman Nərimanov</option><option>Gənclik</option><option>Ulduz</option><option>Atatürk Parkı</option><option>Respublika Stadionu</option><option>Bakı Zooparkı</option><option>Mərkəzi prospektlər</option></select>
-          <select class="filter-select" style="min-width:110px;"><option>Bütün tarixlər</option><option>Bu həftə</option><option>Bu ay</option></select>
+          <select class="filter-select" id="map-filter-cat" style="min-width:140px;"><option value="">Bütün problem növləri</option></select>
+          <select class="filter-select" id="map-filter-status" style="min-width:120px;"><option value="">Bütün statuslar</option></select>
           <button class="btn btn-secondary btn-sm" onclick="toggleHeatmap()">İstilik xəritəsi</button>
         </div>
         <div id="map"></div>
@@ -595,7 +590,7 @@ input, select { font-family: inherit; outline: none; border: none; }
         <div class="info-row"><span class="ir-label">Status</span><span class="ir-value" id="mp-status"></span></div>
         <div class="info-row"><span class="ir-label">Şöbə</span><span class="ir-value" id="mp-dept">Təyin edilməyib</span></div>
         <div class="mp-actions">
-          <button class="btn btn-primary btn-sm" onclick="openDetailPanel()">Ətraflı bax</button>
+          <button class="btn btn-primary btn-sm" onclick="if(window._currentMapData) openDetailForIssue(window._currentMapData)">Ətraflı bax</button>
           <button class="btn btn-secondary btn-sm">Təyin et</button>
           <button class="btn btn-secondary btn-sm">Statusu yenilə</button>
         </div>
@@ -667,112 +662,85 @@ input, select { font-family: inherit; outline: none; border: none; }
 
     <div class="dp-section">
       <h4>Müraciət Məlumatı</h4>
-      <div class="dp-grid">
-        <div class="dp-item"><div class="dp-label">Müraciət ID</div><div class="dp-value" style="font-family:'JetBrains Mono',monospace;color:var(--accent);">REP-2024-001247</div></div>
-        <div class="dp-item"><div class="dp-label">Kateqoriya</div><div class="dp-value">Yol zədəsi</div></div>
-        <div class="dp-item"><div class="dp-label">Alt kateqoriya</div><div class="dp-value">Çuxur</div></div>
-        <div class="dp-item"><div class="dp-label">Prioritet</div><div class="dp-value"><span class="priority-badge kritik">Kritik</span></div></div>
-        <div class="dp-item"><div class="dp-label">Status</div><div class="dp-value"><span class="status-badge orange">İcradadır</span></div></div>
-        <div class="dp-item"><div class="dp-label">Tarix</div><div class="dp-value">15 Mar 2024</div></div>
+      <div class="dp-grid" id="dp-meta-grid">
+        <div class="dp-item"><div class="dp-label">Müraciət ID</div><div class="dp-value dp-api-id" style="font-family:'JetBrains Mono',monospace;color:var(--accent);">—</div></div>
+        <div class="dp-item"><div class="dp-label">Kateqoriya</div><div class="dp-value dp-api-cat">—<br><select class="filter-select" id="dp-cat-select" style="margin-top:4px;display:none;width:100%;"></select></div></div>
+        <div class="dp-item"><div class="dp-label">Ciddilik</div><div class="dp-value dp-api-sev">—<br><select class="filter-select" id="dp-sev-select" style="margin-top:4px;display:none;width:100%;"></select></div></div>
+        <div class="dp-item"><div class="dp-label">Prioritet</div><div class="dp-value" id="dp-priority-badge">—</div></div>
+        <div class="dp-item"><div class="dp-label">Status</div><div class="dp-value"><span class="status-badge slate" id="dp-status-badge">—</span></div></div>
+        <div class="dp-item"><div class="dp-label">Son tarix</div><div class="dp-value" id="dp-deadline">—</div></div>
       </div>
     </div>
 
     <div class="dp-section">
       <h4>Təsvir</h4>
-      <p style="font-size:13px;color:var(--text-secondary);line-height:1.6;">İnşaatçılar prospekti kəsişməsində əsas yolda böyük çuxur. Nəqliyyat vasitələri və piyadalar üçün ciddi təhlükəsizlik riski yaradır. Bir neçə qəza halı müşahidə olunub.</p>
+      <p id="dp-desc" style="font-size:13px;color:var(--text-secondary);line-height:1.6;">Müraciət seçin...</p>
     </div>
 
     <div class="dp-section">
       <h4>Ünvan</h4>
       <div class="dp-grid">
-        <div class="dp-item"><div class="dp-label">Koordinatlar</div><div class="dp-value" style="font-family:'JetBrains Mono',monospace;">40.4093°N, 49.8671°E</div></div>
-        <div class="dp-item"><div class="dp-label">Ünvan</div><div class="dp-value">İnşaatçılar prospekti, Nərimanov</div></div>
-        <div class="dp-item"><div class="dp-label">Statistik Zona</div><div class="dp-value">Nəriman Nərimanov</div></div>
-        <div class="dp-item"><div class="dp-label">Rayon</div><div class="dp-value">Nərimanov, Bakı</div></div>
-      </div>
-    </div>
-
-    <div class="dp-section">
-      <h4>Vətəndaş Məlumatı</h4>
-      <div class="dp-grid">
-        <div class="dp-item"><div class="dp-label">Ad</div><div class="dp-value">Aylin R.</div></div>
-        <div class="dp-item"><div class="dp-label">Telefon</div><div class="dp-value">+994 XX XXX XX XX</div></div>
+        <div class="dp-item"><div class="dp-label">Koordinatlar</div><div class="dp-value" id="dp-coords" style="font-family:'JetBrains Mono',monospace;">—</div></div>
+        <div class="dp-item"><div class="dp-label">Ünvan</div><div class="dp-value" id="dp-location">—</div></div>
+        <div class="dp-item"><div class="dp-label">Statistik Zona</div><div class="dp-value" id="dp-zone">—</div></div>
+        <div class="dp-item"><div class="dp-label">Müraciət sayı</div><div class="dp-value" id="dp-report-count">—</div></div>
       </div>
     </div>
 
     <div class="dp-section">
       <h4>İdarəetmə</h4>
       <div class="dp-actions">
-        <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Şöbə təyin et</label>
-        <select><option>Şöbə seçin</option><option>Yol Təmiri</option><option>Sanitariya</option><option>İnfrastruktur</option><option>Parklar və İstirahət</option></select></div>
         <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Statusu yenilə</label>
-        <select><option>Süni intellekt yoxlaması</option><option>Operator yoxlaması</option><option>Quruma yönləndirildi</option><option>İcradadır</option><option>Həll edildi</option><option>İmtina edildi</option></select></div>
+        <select id="dp-status-select"><option value="">Dəyişmə</option><option value="routed">Quruma yönləndirildi</option><option value="in_progress">İcradadır</option><option value="resolved">Həll edildi</option><option>İmtina edildi</option></select></div>
+        <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Şöbə təyin et</label>
+        <select id="dp-org-select"><option value="">Avtomatik</option></select></div>
         <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Qeyd əlavə et</label>
-        <textarea placeholder="İnzibati qeyd daxil edin..."></textarea></div>
+        <textarea id="dp-notes" placeholder="İnzibati qeyd daxil edin..."></textarea></div>
         <div style="display:flex;gap:8px;margin-top:4px;">
-          <button class="btn btn-primary">Yadda saxla</button>
-          <button class="btn btn-secondary">Həll et</button>
+          <button class="btn btn-primary" onclick="approveCurrentIssue()">Təsdiqlə və yönləndir</button>
+          <button class="btn btn-secondary" onclick="advanceIssueStatus()">Statusu irəlilət</button>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="rejectCurrentIssue()" style="color:var(--status-red);border-color:var(--status-red);">İmtina et</button>
         </div>
         <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);">
-          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:6px;">Aidiyyəti qurumlara şikayət</label>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;">
-            <button class="btn btn-xs" style="background:var(--brand-500);color:#fff;" onclick="window.open('mailto:nerimanov-mktb@mail.gov.az?subject='+encodeURIComponent('Nərimanov — Müraciət'),'_blank')" title="Nərimanov rayon MKT Birliyi">MKT Birliyi</button>
-            <button class="btn btn-xs" style="background:#D5505F;color:#fff;" onclick="window.open('mailto:abadliq@nerimanov-ih.gov.az?subject='+encodeURIComponent('Nərimanov — Abadlıq müraciəti'),'_blank')" title="RİH — Abadlıq şöbəsi">Abadlıq şöbəsi</button>
-            <button class="btn btn-xs" style="background:#C42032;color:#fff;" onclick="window.open('mailto:tikinti@nerimanov-ih.gov.az?subject='+encodeURIComponent('Nərimanov — Tikinti müraciəti'),'_blank')" title="RİH — Tikinti şöbəsi">Tikinti şöbəsi</button>
-            <button class="btn btn-xs" style="background:#2563EB;color:#fff;" onclick="" title='Tel: 104'>"Azərsu" ASC — 104</button>
-            <button class="btn btn-xs" style="background:#1E3A8A;color:#fff;" onclick="" title='Tel: 104'>"Azəriqaz" İB — 104</button>
-            <button class="btn btn-xs" style="background:#E0A100;color:#fff;" onclick="" title='Tel: 920'>"Azərişıq" ASC — 920</button>
-            <button class="btn btn-xs" style="background:#EA7317;color:#fff;" onclick="window.open('mailto:bakiisiq@mail.gov.az?subject='+encodeURIComponent('Nərimanov — İşıqlandırma'),'_blank')" title='"Bakıişıq" MMC'>"Bakıişıq" MMC</button>
-            <button class="btn btn-xs" style="background:#1F9D55;color:#fff;" onclick="window.open('mailto:temizseher@mail.gov.az?subject='+encodeURIComponent('Nərimanov — Tullantı'),'_blank')" title='"Təmiz Şəhər" ASC'>"Təmiz Şəhər" ASC</button>
-            <button class="btn btn-xs" style="background:#64748B;color:#fff;" onclick="" title='Xan Şuşinski 63, Nərimanov r.'>Yaşıllaşdırma Birliyi</button>
-          </div>
+          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:6px;">Aidiyyəti qurumlar</label>
+          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="dp-org-buttons"></div>
         </div>
       </div>
     </div>
 
     <div class="dp-section">
-      <h4>Aktivlik Xronologiyası</h4>
-      <div class="dp-timeline">
-        <div class="timeline-item"><div class="tl-content"><div>Vətəndaş tərəfindən müraciət yaradıldı</div><div class="tl-time">15 Mar 2024 — 14:30</div></div></div>
-        <div class="timeline-item"><div class="tl-content"><div>İlkin qiymətləndirmə tamamlandı</div><div class="tl-time">16 Mar 2024 — 09:15</div></div></div>
-        <div class="timeline-item"><div class="tl-content"><div>Yol Təmiri şöbəsinə təyin edildi</div><div class="tl-time">16 Mar 2024 — 10:00</div></div></div>
-        <div class="timeline-item"><div class="tl-content"><div>Materiallar sifariş edildi</div><div class="tl-time">17 Mar 2024 — 11:20</div></div></div>
-        <div class="timeline-item" style="border-color:var(--accent);"><div class="tl-content" style="color:var(--accent);"><div>Təmir briqadası təyinatı gözlənilir</div><div class="tl-time">18 Mar 2024 — 08:45</div></div></div>
-      </div>
+      <h4>Müraciət ipliyi</h4>
+      <div class="dp-timeline" id="dp-thread"></div>
     </div>
   </div>
 </div>
 
 <script>
-/* ===== API + LABEL MAPS (must be first) ===== */
+/* ===== API + LABEL MAPS ===== */
 
 const API = 'http://localhost:8000';
 
-// Backend enum value → Azerbaijani display label (mirrors enums.py label_az)
 const STATUS_LABEL = {
-  ai_review:     'Süni intellekt yoxlaması',
-  manual_review: 'Operator yoxlaması',
-  routed:        'Quruma yönləndirildi',
-  in_progress:   'İcradadır',
-  resolved:      'Həll edildi',
-  rejected:      'İmtina edildi',
+  ai_review: 'Süni intellekt yoxlaması', manual_review: 'Operator yoxlaması',
+  routed: 'Quruma yönləndirildi', in_progress: 'İcradadır',
+  resolved: 'Həll edildi', rejected: 'İmtina edildi',
 };
 const STATUS_BADGE = {
   ai_review: 'slate', manual_review: 'amber', routed: 'blue',
   in_progress: 'orange', resolved: 'green', rejected: 'red',
 };
-
-// Backend category enum → Azerbaijani label (mirrors enums.py Category.label_az)
 const CATEGORY_LABEL = {
-  facade: 'Bina fasadı',            green_zone: 'Yaşıllıq zonası',
-  flooding: 'Subasma',              ice: 'Buzlaşma',
-  cleanliness: 'Təmizlik',          waste: 'Zibil konteynerləri',
+  facade: 'Bina fasadı', green_zone: 'Yaşıllıq zonası', flooding: 'Subasma',
+  ice: 'Buzlaşma', cleanliness: 'Təmizlik', waste: 'Zibil konteynerləri',
   road_excavation: 'Qazılmış asfalt', road_surface: 'Asfalt örtüyü',
-  signage: 'Reklam lövhələri',      storefront: 'Vitrinlər',
+  signage: 'Reklam lövhələri', storefront: 'Vitrinlər',
   park_equipment: 'Park avadanlığı', fountain: 'Fontanlar',
-  sidewalk: 'Səki',                 construction_fence: 'Tikinti hasarı',
-  lighting: 'İşıqlandırma',         other: 'Digər',
+  sidewalk: 'Səki', construction_fence: 'Tikinti hasarı',
+  lighting: 'İşıqlandırma', other: 'Digər',
 };
+const SEVERITY_LABEL = { low: 'Aşağı', medium: 'Orta', high: 'Yüksək' };
 
 function priorityLabel(score) {
   if (score >= 55) return 'kritik';
@@ -781,38 +749,41 @@ function priorityLabel(score) {
   return 'asagi';
 }
 
-// Map a backend issue object to the allReports row shape the dashboard uses
+// Global state
+let allReports = [];       // mapped from API
+let rawIssues = [];        // raw API items for detail panel
+let orgsList = [];         // from GET /admin/orgs
+let currentIssueId = null; // selected detail panel issue
+
 function mapIssue(i) {
-  const statusKey = i.status;
+  const s = i.status;
   return {
-    _api_id:  i.id,
-    id:       String(i.id),
-    lat:      i.lat,
-    lng:      i.lng,
-    title:    i.title_az || CATEGORY_LABEL[i.category] || i.category,
-    desc:     `${CATEGORY_LABEL[i.category] || i.category} — Nərimanov rayonu`,
-    cat:      CATEGORY_LABEL[i.category] || i.category,
+    _api_id: i.id, id: String(i.id), lat: i.lat, lng: i.lng,
+    title: i.title_az || CATEGORY_LABEL[i.category] || i.category,
+    desc: `${CATEGORY_LABEL[i.category] || i.category} — Nərimanov rayonu`,
+    cat: CATEGORY_LABEL[i.category] || i.category, _cat: i.category,
     location: `${i.lat.toFixed(4)}°N, ${i.lng.toFixed(4)}°E`,
-    date:     new Date(i.deadline || Date.now()).toLocaleDateString('az-AZ'),
-    status:   STATUS_LABEL[statusKey] || statusKey,
-    _status:  statusKey,
-    priority: priorityLabel(i.priority || 0),
-    img:      '',
-    mStatus:  STATUS_BADGE[statusKey] || 'slate',
-    zone:     assignZone(i.lat, i.lng).label,
-    resolution: 0,
-    org_key:  i.org_key,
+    date: new Date(i.deadline || Date.now()).toLocaleDateString('az-AZ'),
+    status: STATUS_LABEL[s] || s, _status: s,
+    severity: SEVERITY_LABEL[i.severity] || i.severity, _severity: i.severity,
+    priority: priorityLabel(i.priority || 0), _priority: i.priority,
+    mStatus: STATUS_BADGE[s] || 'slate',
+    zone: assignZone(i.lat, i.lng).label,
+    org_key: i.org_key,
   };
 }
 
+/* ===== API: Load all data ===== */
 async function loadIssues() {
   try {
-    const [issRes, statsRes] = await Promise.all([
+    const [issRes, statsRes, orgsRes] = await Promise.all([
       fetch(`${API}/admin/issues?page_size=200`),
       fetch(`${API}/admin/stats`),
+      fetch(`${API}/admin/orgs`),
     ]);
     if (issRes.ok) {
       const data = await issRes.json();
+      rawIssues = data.items;
       allReports = data.items.map(mapIssue);
       const badge = document.querySelector('.nav-item[data-page="reports"] .nav-badge');
       if (badge) badge.textContent = allReports.filter(r => r._status !== 'resolved' && r._status !== 'rejected').length;
@@ -821,14 +792,183 @@ async function loadIssues() {
       const s = await statsRes.json();
       const el = id => document.getElementById(id);
       if (el('stat-total'))    el('stat-total').textContent    = Object.values(s.by_status || {}).reduce((a,b)=>a+b,0);
-      if (el('stat-open'))     el('stat-open').textContent     = s.open    ?? '—';
+      if (el('stat-open'))     el('stat-open').textContent     = s.open ?? '—';
       if (el('stat-resolved')) el('stat-resolved').textContent = s.resolved ?? '—';
       if (el('stat-overdue'))  el('stat-overdue').textContent  = s.overdue ?? '—';
+      // Update charts
+      if (s.by_category) updateCategoryChart(s.by_category);
+      if (s.by_status) updateResolutionChart(s.by_status);
     }
-  } catch { /* API offline — static demo data stays */ }
+    if (orgsRes.ok) {
+      orgsList = await orgsRes.json();
+      populateOrgDropdowns();
+    }
+  } catch { /* offline — keep static data */ }
+  populateFilterDropdowns();
   refreshReports();
 }
 
+function populateFilterDropdowns() {
+  const statusSel = document.getElementById('filter-status');
+  const catSel = document.getElementById('filter-category');
+  if (statusSel && statusSel.children.length <= 1) {
+    Object.entries(STATUS_LABEL).forEach(([k,v]) => {
+      statusSel.innerHTML += `<option value="${k}">${v}</option>`;
+    });
+  }
+  if (catSel && catSel.children.length <= 1) {
+    Object.entries(CATEGORY_LABEL).forEach(([k,v]) => {
+      catSel.innerHTML += `<option value="${k}">${v}</option>`;
+    });
+  }
+  // Map filter dropdowns
+  const mapCat = document.getElementById('map-filter-cat');
+  const mapSt = document.getElementById('map-filter-status');
+  if (mapCat && mapCat.children.length <= 1) {
+    Object.entries(CATEGORY_LABEL).forEach(([k,v]) => {
+      mapCat.innerHTML += `<option value="${k}">${v}</option>`;
+    });
+  }
+  if (mapSt && mapSt.children.length <= 1) {
+    Object.entries(STATUS_LABEL).forEach(([k,v]) => {
+      mapSt.innerHTML += `<option value="${k}">${v}</option>`;
+    });
+  }
+}
+
+function populateOrgDropdowns() {
+  const sel = document.getElementById('dp-org-select');
+  const orgSel = document.getElementById('filter-org');
+  if (sel) sel.innerHTML = '<option value="">Avtomatik</option>' + orgsList.map(o => `<option value="${o.key}">${o.name_az}</option>`).join('');
+  if (orgSel) orgSel.innerHTML = '<option value="">Bütün şöbələr</option>' + orgsList.map(o => `<option value="${o.key}">${o.name_az}</option>`).join('');
+}
+
+/* ===== Admin Actions ===== */
+async function approveCurrentIssue() {
+  if (!currentIssueId) return;
+  const fd = new FormData();
+  const sev = document.getElementById('dp-sev-select')?.value;
+  const cat = document.getElementById('dp-cat-select')?.value;
+  const org = document.getElementById('dp-org-select')?.value;
+  const notes = document.getElementById('dp-notes')?.value;
+  if (sev) fd.append('severity', sev);
+  if (cat) fd.append('category', cat);
+  if (org) fd.append('org_key', org);
+  if (notes) fd.append('operator_notes', notes);
+  try {
+    const res = await fetch(`${API}/admin/issues/${currentIssueId}/approve`, { method: 'POST', body: fd });
+    if (res.ok) {
+      alert('Müraciət təsdiqləndi və quruma yönləndirildi.');
+      closeDetailPanel();
+      loadIssues();
+    } else {
+      const e = await res.json();
+      alert('Xəta: ' + (e.detail || res.statusText));
+    }
+  } catch (e) { alert('API xətası: ' + e.message); }
+}
+
+async function advanceIssueStatus() {
+  if (!currentIssueId) return;
+  const newStatus = document.getElementById('dp-status-select')?.value;
+  if (!newStatus) return alert('Status seçin.');
+  const fd = new FormData();
+  fd.append('status', newStatus);
+  try {
+    const res = await fetch(`${API}/admin/issues/${currentIssueId}/status`, { method: 'POST', body: fd });
+    if (res.ok) {
+      alert('Status yeniləndi.');
+      closeDetailPanel();
+      loadIssues();
+    } else {
+      const e = await res.json();
+      alert('Xəta: ' + (e.detail || res.statusText));
+    }
+  } catch (e) { alert('API xətası: ' + e.message); }
+}
+
+async function rejectCurrentIssue() {
+  if (!currentIssueId) return;
+  const reason = prompt('İmtina səbəbini daxil edin (Azərbaycan dilində):');
+  if (!reason) return;
+  const fd = new FormData();
+  fd.append('rejection_reason_az', reason);
+  try {
+    const res = await fetch(`${API}/admin/issues/${currentIssueId}/reject`, { method: 'POST', body: fd });
+    if (res.ok) {
+      alert('Müraciət imtina edildi.');
+      closeDetailPanel();
+      loadIssues();
+    } else {
+      const e = await res.json();
+      alert('Xəta: ' + (e.detail || res.statusText));
+    }
+  } catch (e) { alert('API xətası: ' + e.message); }
+}
+
+/* ===== Detail Panel ===== */
+async function openDetailForIssue(report) {
+  currentIssueId = report._api_id;
+  document.getElementById('detail-overlay').classList.add('open');
+  document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('dp-desc').textContent = report.desc;
+  document.getElementById('dp-coords').textContent = report.location;
+  document.getElementById('dp-location').textContent = report.zone;
+  document.getElementById('dp-zone').textContent = report.zone;
+  document.getElementById('dp-report-count').textContent = report.report_count || '—';
+  document.getElementById('dp-deadline').textContent = report.date;
+  document.querySelector('.dp-api-id').textContent = '#' + report.id;
+  document.querySelector('.dp-api-cat').childNodes[0].textContent = report.cat;
+  document.querySelector('.dp-api-sev').childNodes[0].textContent = report.severity || '—';
+  document.getElementById('dp-priority-badge').innerHTML = `<span class="priority-badge ${report.priority}">${report.priority}</span>`;
+  document.getElementById('dp-status-badge').textContent = report.status;
+  document.getElementById('dp-status-badge').className = 'status-badge ' + report.mStatus;
+  document.getElementById('dp-notes').value = '';
+  // Fetch full issue detail for thread
+  try {
+    const res = await fetch(`${API}/issues/${currentIssueId}`);
+    if (res.ok) {
+      const issue = await res.json();
+      document.getElementById('dp-desc').textContent = issue.description_az || report.desc;
+      const threadEl = document.getElementById('dp-thread');
+      if (issue.reports) {
+        threadEl.innerHTML = issue.reports.map(r => `
+          <div class="timeline-item" ${r.is_root ? 'style="border-color:var(--accent);"' : ''}>
+            <div class="tl-content">
+              <div>${r.user_text || 'Müraciət əlavə edildi'}</div>
+              <div class="tl-time">${new Date(r.created_at).toLocaleDateString('az-AZ')}</div>
+            </div>
+          </div>`).join('');
+      }
+      // Populate override selects
+      const catSel = document.getElementById('dp-cat-select');
+      const sevSel = document.getElementById('dp-sev-select');
+      if (catSel) { catSel.style.display = 'inline-block'; catSel.innerHTML = Object.entries(CATEGORY_LABEL).map(([k,v]) => `<option value="${k}" ${k===issue.category?'selected':''}>${v}</option>`).join(''); }
+      if (sevSel) { sevSel.style.display = 'inline-block'; sevSel.innerHTML = Object.entries(SEVERITY_LABEL).map(([k,v]) => `<option value="${k}" ${k===issue.severity?'selected':''}>${v}</option>`).join(''); }
+      if (issue.org) {
+        document.getElementById('dp-org-select').value = issue.org.key || '';
+      }
+    }
+  } catch {}
+  // Render org quick-action buttons
+  const orgBtns = document.getElementById('dp-org-buttons');
+  if (orgBtns) {
+    orgBtns.innerHTML = orgsList.map(o => {
+      const colors = ['#B3001B','#D5505F','#C42032','#2563EB','#1E3A8A','#E0A100','#EA7317','#1F9D55','#64748B'];
+      const c = colors[orgsList.indexOf(o) % colors.length];
+      return `<button class="btn btn-xs" style="background:${c};color:#fff;" onclick="window.open('mailto:${o.key === 'azersu' || o.key === 'azeriqaz' ? '' : o.contact_hint || ''}?subject=' + encodeURIComponent('Nərimanov — Müraciət #${report.id}'),'_blank')" title="${o.contact_hint || o.name_az}">${o.name_az}</button>`;
+    }).join('');
+  }
+}
+
+function openDetailPanel() { closeDetailPanel(); /* replaced by openDetailForIssue */ }
+function closeDetailPanel() {
+  currentIssueId = null;
+  document.getElementById('detail-overlay').classList.remove('open');
+  document.getElementById('detail-panel').classList.remove('open');
+}
+
+/* ===== Map API Loading ===== */
 async function loadMapFromAPI() {
   try {
     const res = await fetch(`${API}/admin/map`);
@@ -843,33 +983,36 @@ async function loadMapFromAPI() {
       const marker = L.marker([item.lat, item.lng], { icon }).addTo(map);
       marker._reportData = {
         id: String(item.id), lat: item.lat, lng: item.lng,
+        _api_id: item.id,
         title: CATEGORY_LABEL[item.category] || item.category,
         desc: `${item.report_count} müraciət · Prioritet: ${item.priority?.toFixed(0)}`,
         cat: CATEGORY_LABEL[item.category] || item.category,
         location: `${item.lat.toFixed(4)}°N, ${item.lng.toFixed(4)}°E`,
         zone: assignZone(item.lat, item.lng).label,
-        date: '',
-        mStatus: item.color === '#b3001b' ? 'red' : item.color === '#e23b2e' ? 'orange' : item.color === '#f0833a' ? 'amber' : 'slate',
-        status: '',
+        date: '', mStatus: item.color === '#b3001b' ? 'red' : item.color === '#e23b2e' ? 'orange' : item.color === '#f0833a' ? 'amber' : 'slate', status: '',
       };
       markers.push(marker);
-      marker.on('click', () => showMapPanel(marker._reportData));
+      marker.on('click', () => {
+        if (marker._reportData._api_id) openDetailForIssue(marker._reportData);
+        else showMapPanel(marker._reportData);
+      });
     });
-  } catch { /* offline — static markers loaded by initMap */ }
+  } catch {}
 }
 
 function showMapPanel(d) {
+  window._currentMapData = d;
   const get = id => document.getElementById(id);
   if (d.img) { get('mp-img').src = d.img; get('mp-img').style.display = 'block'; }
-  else { get('mp-img').style.display = 'none'; }
+  else get('mp-img').style.display = 'none';
   get('mp-title').textContent = d.title;
-  get('mp-id').textContent    = 'ID: ' + d.id;
-  get('mp-desc').textContent  = d.desc;
-  get('mp-loc').textContent   = d.location;
-  get('mp-zone').textContent  = d.zone;
-  get('mp-date').textContent  = d.date;
+  get('mp-id').textContent = 'ID: ' + d.id;
+  get('mp-desc').textContent = d.desc;
+  get('mp-loc').textContent = d.location;
+  get('mp-zone').textContent = d.zone;
+  get('mp-date').textContent = d.date;
   const stMap = { orange:'İcradadır', green:'Həll edildi', blue:'Quruma yönləndirildi', amber:'Operator yoxlaması', slate:'Süni intellekt yoxlaması', red:'İmtina edildi' };
-  get('mp-status').innerHTML  = `<span class="status-badge ${d.mStatus}">${stMap[d.mStatus] || d.status || ''}</span>`;
+  get('mp-status').innerHTML = `<span class="status-badge ${d.mStatus}">${stMap[d.mStatus] || d.status || ''}</span>`;
   document.getElementById('map-panel').classList.add('open');
 }
 
@@ -887,31 +1030,6 @@ async function exportPDF() {
   } catch (e) { alert('PDF ixrac edilə bilmədi: ' + e.message); }
 }
 
-/* ===== NAVIGATION ===== */
-const pages = {
-  dashboard: 'page-dashboard',
-  reports: 'page-reports',
-  map: 'page-map',
-  analytics: 'page-analytics',
-  settings: 'page-settings'
-};
-
-document.querySelectorAll('.nav-item[data-page]').forEach(item => {
-  item.addEventListener('click', () => navigateTo(item.dataset.page));
-});
-
-function navigateTo(page) {
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
-  if (navItem) navItem.classList.add('active');
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  const pageEl = document.getElementById(pages[page]);
-  if (pageEl) {
-    pageEl.classList.add('active');
-    if (page === 'map') { setTimeout(() => { if (map) map.invalidateSize(); }, 100); }
-  }
-}
-
 /* ===== LIVE TIME ===== */
 function updateTime() {
   const now = new Date();
@@ -922,57 +1040,63 @@ function updateTime() {
 updateTime();
 setInterval(updateTime, 30000);
 
-/* ===== DASHBOARD CHARTS ===== */
-const trendsCtx = document.getElementById('trendsChart').getContext('2d');
-new Chart(trendsCtx, {
-  type: 'line',
-  data: {
-    labels: ['Yan','Fev','Mar','Apr','May','İyn'],
-    datasets: [
-      { label: 'Ümumi', data: [180,195,210,195,215,208], borderColor: '#B3001B', backgroundColor: 'rgba(179,0,27,0.06)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0 },
-      { label: 'Həll edildi', data: [120,135,155,140,160,155], borderColor: '#1F9D55', backgroundColor: 'rgba(31,157,85,0.05)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0 },
-      { label: 'Açıq', data: [50,48,42,44,40,38], borderColor: '#EA7317', backgroundColor: 'rgba(234,115,23,0.05)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0 }
-    ]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { labels: { color: '#4A5365', usePointStyle: true, padding: 16, font: { size: 11 } } } },
-    scales: {
-      x: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } } },
-      y: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } } }
-    }
-  }
-});
+/* ===== DASHBOARD CHARTS (dynamic) ===== */
+const COLORS = ['#B3001B','#DC2626','#EA7317','#1F9D55','#E0A100','#2563EB','#64748B','#D5505F','#F0833A','#F2C14E','#8F0016','#1E3A8A','#6B0011','#0D9488','#7C3AED','#DB2777'];
 
-const catCtx = document.getElementById('categoriesChart').getContext('2d');
-new Chart(catCtx, {
-  type: 'doughnut',
-  data: {
-    labels: ['Yol zədəsi','Zibil','İnfrastruktur','İşıqlandırma','Qanunsuz tullantı','Digər'],
-    datasets: [{ data: [320,245,210,180,165,127], backgroundColor: ['#B3001B','#DC2626','#EA7317','#1F9D55','#64748B','#2563EB'], borderWidth: 0 }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { position: 'right', labels: { color: '#4A5365', padding: 12, usePointStyle: true, font: { size: 11 } } } }
-  }
-});
+let trendsChart, catChart, resChart;
 
-const resCtx = document.getElementById('resolutionChart').getContext('2d');
-new Chart(resCtx, {
-  type: 'bar',
-  data: {
-    labels: ['< 24saat','1-3 gün','3-7 gün','1-2 həftə','> 2 həftə'],
-    datasets: [{ data: [45,28,15,8,4], backgroundColor: ['#1F9D55','#1F9D5580','#EA7317','#EA731780','#DC2626'], borderRadius: 4, borderSkipped: false }]
-  },
-  options: {
-    responsive: true, maintainAspectRatio: false,
-    plugins: { legend: { display: false } },
-    scales: {
-      x: { grid: { display: false }, ticks: { color: '#8C95A6', font: { size: 10 } } },
-      y: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 }, callback: v => v + '%' } }
-    }
+function initCharts() {
+  const trendsCtx = document.getElementById('trendsChart');
+  if (trendsCtx) {
+    trendsChart = new Chart(trendsCtx.getContext('2d'), {
+      type: 'line',
+      data: { labels: [], datasets: [
+        { label: 'Ümumi', data: [], borderColor: '#B3001B', backgroundColor: 'rgba(179,0,27,0.06)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0 },
+        { label: 'Açıq', data: [], borderColor: '#EA7317', backgroundColor: 'rgba(234,115,23,0.05)', fill: true, tension: 0.4, borderWidth: 2, pointRadius: 0 },
+      ]},
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { labels: { color: '#4A5365', usePointStyle: true, padding: 16, font: { size: 11 } } } },
+        scales: { x: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } } }, y: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } } } }
+      }
+    });
   }
-});
+  const catCtx = document.getElementById('categoriesChart');
+  if (catCtx) {
+    catChart = new Chart(catCtx.getContext('2d'), {
+      type: 'doughnut',
+      data: { labels: [], datasets: [{ data: [], backgroundColor: COLORS, borderWidth: 0 }] },
+      options: { responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { position: 'right', labels: { color: '#4A5365', padding: 12, usePointStyle: true, font: { size: 11 } } } }
+      }
+    });
+  }
+  const resCtx = document.getElementById('resolutionChart');
+  if (resCtx) {
+    resChart = new Chart(resCtx.getContext('2d'), {
+      type: 'bar',
+      data: { labels: [], datasets: [{ data: [], backgroundColor: COLORS, borderRadius: 4, borderSkipped: false }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+        scales: { x: { grid: { display: false }, ticks: { color: '#8C95A6', font: { size: 10 } } }, y: { grid: { color: '#EAEDF2' }, ticks: { color: '#8C95A6', font: { size: 11 } } } }
+      }
+    });
+  }
+}
+
+function updateCategoryChart(byCategory) {
+  if (!catChart) return;
+  const entries = Object.entries(byCategory).sort((a,b) => b[1] - a[1]);
+  catChart.data.labels = entries.map(([k]) => CATEGORY_LABEL[k] || k);
+  catChart.data.datasets[0].data = entries.map(([,v]) => v);
+  catChart.update();
+}
+
+function updateResolutionChart(byStatus) {
+  if (!resChart) return;
+  const entries = Object.entries(byStatus);
+  resChart.data.labels = entries.map(([k]) => STATUS_LABEL[k] || k);
+  resChart.data.datasets[0].data = entries.map(([,v]) => v);
+  resChart.update();
+}
 
 /* ===== ANALYTICS CHARTS ===== */
 function initAnalyticsCharts() {
@@ -1069,63 +1193,23 @@ function assignZone(lat, lng) {
 let map, mapInitialized = false, heatmapOn = false, markers = [], heatLayers = [];
 
 const heatColorMap = {
-  'Yol zədəsi':        ['#FF6B7A','#F43F5E','#E11D48','#9F1239'],
-  'Zibil':             ['#FFA726','#FB8C00','#EF6C00','#BF360C'],
-  'İnfrastruktur':     ['#60A5FA','#3B82F6','#1D4ED8','#1E3A8A'],
-  'İşıqlandırma':      ['#FACC15','#EAB308','#CA8A04','#713F12'],
-  'Qanunsuz tullantı': ['#4ADE80','#22C55E','#16A34A','#064E3B'],
-  'Digər':             ['#94A3B8','#64748B','#475569','#1E293B']
+  'Bina fasadı': ['#FF6B7A','#F43F5E','#E11D48','#9F1239'],
+  'Zibil konteynerləri': ['#FFA726','#FB8C00','#EF6C00','#BF360C'],
+  'Subasma': ['#60A5FA','#3B82F6','#1D4ED8','#1E3A8A'],
+  'İşıqlandırma': ['#FACC15','#EAB308','#CA8A04','#713F12'],
+  'Təmizlik': ['#4ADE80','#22C55E','#16A34A','#064E3B'],
+  'Digər': ['#94A3B8','#64748B','#475569','#1E293B']
 };
-
-const allReports = [
-  { id: '001252', lat: 40.4093, lng: 49.8671, title: 'Əsas yolda böyük çuxur', desc: 'İnşaatçılar prospekti ilə Koroğlu küçəsinin kəsişməsində dərin çuxur. Bir neçə avtomobil təkər və asqı zədəsi alıb.', cat: 'Yol zədəsi', location: 'İnşaatçılar prospekti, Nərimanov mərkəzi', date: '28 May 2026', status: 'İcradadır', priority: 'kritik', img: 'https://picsum.photos/seed/narimo1/400/300', mStatus: 'orange', zone: 'Nəriman Nərimanov', resolution: 18 },
-  { id: '001251', lat: 40.4120, lng: 49.8620, title: 'İşıq dirəyi sınıb', desc: 'Mirzə Fətəli küçəsində 3 ədəd işıq dirəyi iki həftədir işləmir. Gecə vaxtı piyadalar üçün təhlükə yaradır.', cat: 'İşıqlandırma', location: 'Mirzə Fətəli küç., Nərimanov mərkəzi', date: '27 May 2026', status: 'Quruma yönləndirildi', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo2/400/300', mStatus: 'blue', zone: 'Ulduz', resolution: 32 },
-  { id: '001250', lat: 40.4070, lng: 49.8700, title: 'Qanunsuz tikinti tullantısı', desc: 'Park küçəsi ilə Nərimanov prospekti arasında tikinti şirkəti tərəfindən atılmış inşaat tullantıları 1 aydır yığışdırılmır.', cat: 'Qanunsuz tullantı', location: 'Park küçəsi, Nərimanov mərkəzi', date: '26 May 2026', status: 'Həll edildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo3/400/300', mStatus: 'green', zone: 'Nəriman Nərimanov', resolution: 48 },
-  { id: '001249', lat: 40.4150, lng: 49.8580, title: 'İçməli su borusu partlayıb', desc: 'Əhməd Rəcəbli küçəsində magistral su xətti partlayıb, küçə su altında qalıb. Su təchizatı ətraf binalarda kəsilib.', cat: 'İnfrastruktur', location: 'Əhməd Rəcəbli küç., Nərimanov mərkəzi', date: '25 May 2026', status: 'Operator yoxlaması', priority: 'kritik', img: 'https://picsum.photos/seed/narimo4/400/300', mStatus: 'amber', zone: 'Atatürk Parkı', resolution: 6 },
-  { id: '001248', lat: 40.4040, lng: 49.8720, title: 'Zibil konteynerləri daşıb', desc: 'Gənclik metro stansiyası qarşısındakı zibil konteynerləri 5 gündür boşaldılmır. Üfunət ətrafa yayılır, siçovullar artıb.', cat: 'Zibil', location: 'Gənclik metro stansiyası, Nərimanov mərkəzi', date: '25 May 2026', status: 'Süni intellekt yoxlaması', priority: 'kritik', img: 'https://picsum.photos/seed/narimo5/400/300', mStatus: 'slate', zone: 'Gənclik', resolution: 12 },
-  { id: '001247', lat: 40.4180, lng: 49.8550, title: 'Səki plitələri dağılıb', desc: 'Atatürk prospekti boyu 150 metr məsafədə səki plitələri tamamilə dağılmış vəziyyətdə. Yaşlı sakinlər keçə bilmir.', cat: 'Yol zədəsi', location: 'Atatürk prospekti, Nərimanov mərkəzi', date: '24 May 2026', status: 'İcradadır', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo6/400/300', mStatus: 'orange', zone: 'Atatürk Parkı', resolution: 36 },
-  { id: '001246', lat: 40.4105, lng: 49.8650, title: 'Ağac yolun üstünə aşıb', desc: 'Mərkəzi Parkda külək nəticəsində böyük ağac aşıb, piyada keçidini bağlayıb. İnsanlar yoldan kənar keçməyə məcburdur.', cat: 'İnfrastruktur', location: 'Mərkəzi Park, Nərimanov mərkəzi', date: '24 May 2026', status: 'Həll edildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo7/400/300', mStatus: 'green', zone: 'Nəriman Nərimanov', resolution: 8 },
-  { id: '001245', lat: 40.4020, lng: 49.8780, title: 'Məktəb divarında qraffiti', desc: 'Təbriz küçəsindəki 45 nömrəli məktəbin fasadında nalayiq yazılar və şəkillər çəkilib. Valideynlər narahatdır.', cat: 'Digər', location: 'Təbriz küç., Nərimanov mərkəzi', date: '23 May 2026', status: 'İmtina edildi', priority: 'asagi', img: 'https://picsum.photos/seed/narimo8/400/300', mStatus: 'red', zone: 'Gənclik', resolution: 2 },
-  { id: '001244', lat: 40.4200, lng: 49.8600, title: 'Elektrik transformatoru partlayıb', desc: 'Cavad Xan küçəsində transformator partlaması nəticəsində 3 gündür ətraf binalar işıqsızdır. Sakinlər soyuducularda qida qalmasından şikayətlənir.', cat: 'İnfrastruktur', location: 'Cavad Xan küç., Nərimanov mərkəzi', date: '23 May 2026', status: 'Quruma yönləndirildi', priority: 'kritik', img: 'https://picsum.photos/seed/narimo9/400/300', mStatus: 'blue', zone: 'Ulduz', resolution: 72 },
-  { id: '001243', lat: 40.4080, lng: 49.8750, title: 'Yağış drenajı tıxanıb', desc: 'Gənclik prospektində yağış suyu drenajı yarpaq və zibillə tıxanıb. Hər yağışda yol bağlanır, suyun dərinliyi 30 sm-ə çatır.', cat: 'İnfrastruktur', location: 'Gənclik prospekti, Nərimanov mərkəzi', date: '22 May 2026', status: 'Operator yoxlaması', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo10/400/300', mStatus: 'amber', zone: 'Mərkəzi prospektlər', resolution: 24 },
-  { id: '001242', lat: 40.4135, lng: 49.8680, title: 'Kanalizasiya qapağı yoxdur', desc: 'Koroğlu küçəsində kanalizasiya lyukunun qapağı oğurlanıb. Dərin quyu tamamilə açıqdır — piyadalar, xüsusilə uşaqlar üçün həyati təhlükə.', cat: 'Yol zədəsi', location: 'Koroğlu küç., Nərimanov mərkəzi', date: '22 May 2026', status: 'İcradadır', priority: 'kritik', img: 'https://picsum.photos/seed/narimo11/400/300', mStatus: 'orange', zone: 'Nəriman Nərimanov', resolution: 4 },
-  { id: '001241', lat: 40.4055, lng: 49.8640, title: 'İctimai bağda basılmış otlar', desc: 'Nərimanov qəsəbəsi bağında otlar 1 metr hündürlüyə çatıb. İlan və həşərat yuvaları əmələ gəlib.', cat: 'Digər', location: 'Nərimanov qəsəbə bağı, Nərimanov mərkəzi', date: '21 May 2026', status: 'Həll edildi', priority: 'asagi', img: 'https://picsum.photos/seed/narimo12/400/300', mStatus: 'green', zone: 'Mərkəzi prospektlər', resolution: 36 },
-  { id: '001240', lat: 40.4110, lng: 49.8560, title: 'Yol nişanı əyilib', desc: 'Atatürk parkı girişində "Dayan" yol nişanı zərbədən 45 dərəcə əyilib. Sürücülər görmür, qəza riski yüksəkdir.', cat: 'Yol zədəsi', location: 'Atatürk parkı girişi, Nərimanov mərkəzi', date: '21 May 2026', status: 'Quruma yönləndirildi', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo13/400/300', mStatus: 'blue', zone: 'Atatürk Parkı', resolution: 5 },
-  { id: '001239', lat: 40.4175, lng: 49.8690, title: 'Dayanacaqda zibil yığını', desc: 'Nərimanov MTK ərazisində avtobus dayanacağı arxasında qanunsuz zibil yığını əmələ gəlib.', cat: 'Zibil', location: 'Nərimanov MTK dayanacağı, Nərimanov mərkəzi', date: '20 May 2026', status: 'Süni intellekt yoxlaması', priority: 'orta', img: 'https://picsum.photos/seed/narimo14/400/300', mStatus: 'slate', zone: 'Nəriman Nərimanov', resolution: 8 },
-  { id: '001238', lat: 40.4000, lng: 49.8800, title: 'Uşaq meydançası sınıb', desc: 'Gənclik yaşayış massivindəki uşaq meydançasında yelləncək qırılıb, sürüşmə qülləsi paslanıb.', cat: 'İnfrastruktur', location: 'Gənclik yaşayış massivi, Nərimanov mərkəzi', date: '20 May 2026', status: 'Operator yoxlaması', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo15/400/300', mStatus: 'amber', zone: 'Gənclik', resolution: 28 },
-  { id: '001237', lat: 40.4220, lng: 49.8530, title: 'Asfalt örtüyü qopub', desc: 'Ulduz metro stansiyası yaxınlığında yol asfaltı tamamilə qopub, çınqıl açılıb. Avtomobillər zədələnir.', cat: 'Yol zədəsi', location: 'Ulduz metro ətrafı, Nərimanov mərkəzi', date: '19 May 2026', status: 'İcradadır', priority: 'yuksek', img: 'https://picsum.photos/seed/narimo16/400/300', mStatus: 'orange', zone: 'Ulduz', resolution: 16 },
-  { id: '001236', lat: 40.4035, lng: 49.8550, title: 'Su xətti sızır', desc: 'Gənclik ərazisində içməli su xətti sızır — su boş yerə axır, ətraf evlərdə təzyiq aşağı düşüb.', cat: 'İnfrastruktur', location: 'Gənclik yaşayış massivi, Nərimanov mərkəzi', date: '19 May 2026', status: 'İmtina edildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo17/400/300', mStatus: 'red', zone: 'Gənclik', resolution: 1 },
-  { id: '001235', lat: 40.4090, lng: 49.8800, title: 'Avtobus pavilyonu sınıb', desc: 'Ş. İ. Xətai prospektindəki avtobus pavilyonunun şüşələri sınıb, dam örtüyü qopub.', cat: 'İnfrastruktur', location: 'Ş. İ. Xətai prospekti, Nərimanov mərkəzi', date: '18 May 2026', status: 'Quruma yönləndirildi', priority: 'orta', img: 'https://picsum.photos/seed/narimo18/400/300', mStatus: 'blue', zone: 'Respublika Stadionu', resolution: 14 },
-  { id: '001234', lat: 40.4140, lng: 49.8730, title: 'Küçə itləri sürüsü', desc: 'Nərimanov parkının yaxınlığında sahibsiz it sürüsü toplaşıb. Bir neçə sakin dişlənmə hadisəsi bildirib.', cat: 'Digər', location: 'Nərimanov parkı ətrafı, Nərimanov mərkəzi', date: '18 May 2026', status: 'İcradadır', priority: 'kritik', img: 'https://picsum.photos/seed/narimo19/400/300', mStatus: 'orange', zone: 'Nəriman Nərimanov', resolution: 48 },
-  { id: '001233', lat: 40.4250, lng: 49.8480, title: 'Körpü məhəccəri qırılıb', desc: 'Montin yaşayış massivi yaxınlığında piyada keçidinin metal məhəccəri tamamilə qırılıb. 5 metr hündürlük — böyük təhlükə.', cat: 'İnfrastruktur', location: 'Montin yaşayış massivi, Nərimanov mərkəzi', date: '17 May 2026', status: 'Quruma yönləndirildi', priority: 'kritik', img: 'https://picsum.photos/seed/narimo20/400/300', mStatus: 'blue', zone: 'Montin', resolution: 10 }
-];
-
-function getStatusColor(mStatus) {
-  const map = { red: '#DC2626', orange: '#EA7317', green: '#1F9D55', blue: '#2563EB', amber: '#E0A100', slate: '#64748B' };
-  return map[mStatus] || '#8C95A6';
-}
 
 function initMap() {
   if (mapInitialized) return;
   mapInitialized = true;
   map = L.map('map', { center: [40.4093, 49.8671], zoom: 14, zoomControl: true });
   L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+    attribution: '&copy; OpenStreetMap',
     maxZoom: 19
   }).addTo(map);
-
-  allReports.forEach((r, i) => {
-    const icon = L.divIcon({
-      className: '',
-      html: `<div style="width:14px;height:14px;border-radius:50%;background:${getStatusColor(r.mStatus)};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
-      iconSize: [14,14], iconAnchor: [7,7]
-    });
-    const marker = L.marker([r.lat, r.lng], { icon }).addTo(map);
-    marker._reportData = r;
-    markers.push(marker);
-
-    marker.on('click', () => showMapPanel(marker._reportData));
-  });
+  // API-live markers are loaded by loadMapFromAPI after data arrives
 }
 
 function toggleHeatmap() {
@@ -1137,98 +1221,36 @@ function toggleHeatmap() {
     heatmapOn = false;
   } else {
     markers.forEach(m => map.removeLayer(m));
-
-    const categories = [...new Set(allReports.map(r => r.cat))];
+    const categories = [...new Set(markers.map(m => m._reportData?.cat || 'Digər'))];
     categories.forEach(cat => {
-      const points = allReports
-        .filter(r => r.cat === cat)
-        .map(r => [r.lat, r.lng, r.priority === 'kritik' ? 1.0 : r.priority === 'yuksek' ? 0.75 : r.priority === 'orta' ? 0.50 : 0.35]);
-
+      const points = markers
+        .filter(m => m._reportData?.cat === cat)
+        .map(m => [m._reportData.lat, m._reportData.lng, 0.5]);
       if (points.length === 0) return;
-
       const baseColors = heatColorMap[cat] || ['#F1F5F9','#CBD5E1','#64748B','#334155'];
       const layer = L.heatLayer(points, {
-        radius: 35,
-        blur: 20,
-        maxZoom: 17,
-        max: 0.7,
-        gradient: {
-          0.20: baseColors[0],
-          0.45: baseColors[1],
-          0.65: baseColors[2],
-          0.85: baseColors[3]
-        }
+        radius: 35, blur: 20, maxZoom: 17, max: 0.7,
+        gradient: { 0.20: baseColors[0], 0.45: baseColors[1], 0.65: baseColors[2], 0.85: baseColors[3] }
       }).addTo(map);
       heatLayers.push(layer);
     });
-
     document.querySelector('.map-filters .btn.btn-sm').textContent = 'Markerlərə qayıt';
     heatmapOn = true;
   }
 }
 
 /* ===== REPORTS TABLE / CARD RENDERING ===== */
-// Maps the display label (STATUS_LABEL value) → badge CSS class
-// This is the same mapping as STATUS_BADGE but keyed by the AZ label
-const statusMap = {
-  'Süni intellekt yoxlaması': 'slate',
-  'Operator yoxlaması':       'amber',
-  'Quruma yönləndirildi':     'blue',
-  'İcradadır':                'orange',
-  'Həll edildi':              'green',
-  'İmtina edildi':            'red',
-  // Legacy labels from static demo data (kept so static rows still render)
-  'AI yoxlaması':  'slate',
-  'Yönləndirildi': 'blue',
-};
-const authorities = [
-  { key: 'mktb',         name_az: 'MKT Birliyi',                        scope: 'district',      contact_hint: 'nerimanov-mktb@mail.gov.az' },
-  { key: 'abadliq',      name_az: 'RİH — Abadlıq şöbəsi',               scope: 'district',      contact_hint: 'abadliq@nerimanov-ih.gov.az' },
-  { key: 'tikinti',      name_az: 'RİH — Tikinti şöbəsi',               scope: 'district',      contact_hint: 'tikinti@nerimanov-ih.gov.az' },
-  { key: 'azersu',       name_az: '"Azərsu" ASC',                       scope: 'city_utility',  contact_hint: '104' },
-  { key: 'azeriqaz',     name_az: '"Azəriqaz" İB',                      scope: 'city_utility',  contact_hint: '104' },
-  { key: 'azerisiq',     name_az: '"Azərişıq" ASC',                     scope: 'city_utility',  contact_hint: '920' },
-  { key: 'bakiisiq',     name_az: '"Bakıişıq" MMC',                     scope: 'city_service',  contact_hint: 'bakiisiq@mail.gov.az' },
-  { key: 'temiz_seher',  name_az: '"Təmiz Şəhər" ASC',                  scope: 'city_service',  contact_hint: 'temizseher@mail.gov.az' },
-  { key: 'yasilliq',     name_az: 'Yaşıllaşdırma Birliyi',              scope: 'city_service',  contact_hint: 'Xan Şuşinski 63' }
-];
-
-const categoryAuthorityMap = {
-  'Yol zədəsi':        ['abadliq', 'tikinti'],
-  'Zibil':             ['temiz_seher', 'mktb'],
-  'İnfrastruktur':     ['azersu', 'azeriqaz', 'mktb'],
-  'İşıqlandırma':      ['bakiisiq', 'azerisiq'],
-  'Qanunsuz tullantı': ['temiz_seher', 'abadliq'],
-  'Digər':             ['mktb', 'abadliq']
-};
-
-function getAuthority(key) { return authorities.find(a => a.key === key); }
-
-const authorityMap = {
-  'Yol zədəsi':        { name: 'MKT Birliyi', mail: 'nerimanov-mktb@mail.gov.az' },
-  'Zibil':             { name: 'Təmiz Şəhər', mail: 'temizseher@mail.gov.az' },
-  'İnfrastruktur':     { name: 'Azərsu', mail: '104' },
-  'İşıqlandırma':      { name: 'Bakıişıq', mail: 'bakiisiq@mail.gov.az' },
-  'Qanunsuz tullantı': { name: 'Təmiz Şəhər', mail: 'temizseher@mail.gov.az' },
-  'Digər':             { name: 'MKT Birliyi', mail: 'nerimanov-mktb@mail.gov.az' }
-};
-
 function getFilteredReports() {
   const searchTerm = (document.querySelector('#page-reports .search-input')?.value || '').toLowerCase();
-  const filters = document.querySelectorAll('#page-reports .filter-select');
-  const statusFilter = filters[0]?.value || '';
-  const catFilter = filters[1]?.value || '';
-  const priorityFilter = filters[2]?.value || '';
-  const zoneFilter = filters[3]?.value || '';
-
-  const priorityNorm = (p) => p === 'Kritik' ? 'kritik' : p === 'Yüksək' ? 'yuksek' : p === 'Orta' ? 'orta' : p === 'Aşağı' ? 'asagi' : '';
+  const statusFilter = document.getElementById('filter-status')?.value || '';
+  const catFilter = document.getElementById('filter-category')?.value || '';
+  const orgFilter = document.getElementById('filter-org')?.value || '';
 
   return allReports.filter(r => {
     if (searchTerm && !r.title.toLowerCase().includes(searchTerm) && !r.location.toLowerCase().includes(searchTerm) && !r.id.includes(searchTerm)) return false;
-    if (statusFilter && statusFilter !== 'Bütün statuslar' && r.status !== statusFilter) return false;
-    if (catFilter && catFilter !== 'Bütün kateqoriyalar' && r.cat !== catFilter) return false;
-    if (priorityFilter && priorityFilter !== 'Bütün prioritetlər' && r.priority !== priorityNorm(priorityFilter)) return false;
-    if (zoneFilter && zoneFilter !== 'Bütün zonalar' && r.zone !== zoneFilter) return false;
+    if (statusFilter && r._status !== statusFilter) return false;
+    if (catFilter && r._cat !== catFilter) return false;
+    if (orgFilter && r.org_key !== orgFilter) return false;
     return true;
   });
 }
@@ -1236,104 +1258,63 @@ function getFilteredReports() {
 function renderReportsTable() {
   const tbody = document.getElementById('reports-tbody');
   const filtered = getFilteredReports();
-  tbody.innerHTML = filtered.map(r => {
-    const auth = authorityMap[r.cat] || authorityMap['Digər'];
-    return `
-    <tr style="${r.status === 'Həll edildi' ? 'background:rgba(31,157,85,0.04);' : ''}">
-      <td><img src="${r.img}" alt="" style="width:48px;height:48px;border-radius:6px;object-fit:cover;background:var(--slate-100);" loading="lazy" /></td>
-      <td><div class="td-title" style="${r.status === 'Həll edildi' ? 'text-decoration:line-through;opacity:0.6;' : ''}">${r.title}</div><div class="td-meta">ID: REP-2024-${r.id}</div></td>
+  tbody.innerHTML = filtered.map(r => `
+    <tr style="${r._status === 'resolved' ? 'background:rgba(31,157,85,0.04);' : ''}">
+      <td><div style="width:48px;height:48px;border-radius:6px;background:var(--slate-100);display:flex;align-items:center;justify-content:center;font-size:20px;">📍</div></td>
+      <td><div class="td-title" style="cursor:pointer;" onclick="openDetailForIssue(allReports.find(x=>x.id==='${r.id}'))">${r.title}</div><div class="td-meta">ID: #${r.id}</div></td>
       <td>${r.cat}</td>
       <td>${r.location}</td>
       <td>${r.zone}</td>
       <td>${r.date}</td>
-      <td><span class="status-badge ${statusMap[r.status]}">${r.status}</span></td>
-      <td><span class="priority-badge ${r.priority}">${r.priority.charAt(0).toUpperCase()+r.priority.slice(1)}</span></td>
+      <td><span class="status-badge ${r.mStatus}">${r.status}</span></td>
+      <td><span class="priority-badge ${r.priority}">${r.priority}</span></td>
       <td>
         <div class="row-actions" style="display:flex;flex-wrap:wrap;gap:4px;">
-          <button class="btn btn-secondary btn-xs" onclick="openDetailPanel()">Bax</button>
-          <button class="btn btn-secondary btn-xs" onclick="resolveReport('${r.id}')" ${r.status === 'Həll edildi' ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>${r.status === 'Həll edildi' ? '✓ Həll edildi' : 'Həll et'}</button>
-          <button class="btn btn-xs" style="background:var(--brand-500);color:#fff;" onclick="sendToAuthority('${r.id}')" title="${auth.name}-ə şikayət">${auth.name}</button>
+          <button class="btn btn-secondary btn-xs" onclick="openDetailForIssue(allReports.find(x=>x.id==='${r.id}'))">Bax</button>
+          <button class="btn btn-secondary btn-xs" onclick="quickResolve(${r._api_id})" ${r._status === 'resolved' ? 'disabled style="opacity:0.3;"' : ''}>${r._status === 'resolved' ? '✓ Həll edildi' : 'Həll et'}</button>
         </div>
       </td>
-    </tr>`;
-  }).join('');
+    </tr>`).join('');
   if (filtered.length === 0) {
-    tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:32px;color:var(--text-muted);">Heç bir nəticə tapılmadı</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:32px;color:var(--text-muted);">Heç bir nəticə tapılmadı</td></tr>';
   }
 }
 
 function renderReportsCards() {
   const container = document.getElementById('reports-card-view');
   const filtered = getFilteredReports();
-  container.innerHTML = filtered.map(r => {
-    const auth = authorityMap[r.cat] || authorityMap['Digər'];
-    return `
-    <div class="report-card" style="${r.status === 'Həll edildi' ? 'border-left:3px solid #1F9D55;' : ''}">
-      <img src="${r.img}" alt="" class="report-card-img" loading="lazy" style="${r.status === 'Həll edildi' ? 'opacity:0.7;' : ''}" />
+  container.innerHTML = filtered.map(r => `
+    <div class="report-card" style="${r._status === 'resolved' ? 'border-left:3px solid #1F9D55;' : ''}">
+      <div style="height:150px;background:var(--slate-50);display:flex;align-items:center;justify-content:center;font-size:40px;">📍</div>
       <div class="report-card-body">
-        <h4 style="${r.status === 'Həll edildi' ? 'text-decoration:line-through;opacity:0.5;' : ''}">${r.title}</h4>
-        <div class="rc-meta">ID: REP-2024-${r.id} &middot; ${r.cat} &middot; ${r.zone}</div>
+        <h4 style="cursor:pointer;" onclick="openDetailForIssue(allReports.find(x=>x.id==='${r.id}'))">${r.title}</h4>
+        <div class="rc-meta">ID: #${r.id} &middot; ${r.cat} &middot; ${r.zone}</div>
         <div class="rc-footer">
           <div style="display:flex;gap:6px;align-items:center;">
-            <span class="status-badge ${statusMap[r.status]}">${r.status}</span>
-            <span class="priority-badge ${r.priority}">${r.priority.charAt(0).toUpperCase()+r.priority.slice(1)}</span>
+            <span class="status-badge ${r.mStatus}">${r.status}</span>
+            <span class="priority-badge ${r.priority}">${r.priority}</span>
           </div>
           <div class="rc-meta">${r.date}</div>
         </div>
         <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
-          <button class="btn btn-secondary btn-xs" onclick="openDetailPanel()">Bax</button>
-          <button class="btn btn-secondary btn-xs" onclick="resolveReport('${r.id}')" ${r.status === 'Həll edildi' ? 'disabled style="opacity:0.3;pointer-events:none;"' : ''}>${r.status === 'Həll edildi' ? '✓ Həll edildi' : 'Həll et'}</button>
-          <button class="btn btn-xs" style="background:var(--brand-500);color:#fff;" onclick="sendToAuthority('${r.id}')">${auth.name}</button>
+          <button class="btn btn-secondary btn-xs" onclick="openDetailForIssue(allReports.find(x=>x.id==='${r.id}'))">Bax</button>
+          <button class="btn btn-secondary btn-xs" onclick="quickResolve(${r._api_id})" ${r._status === 'resolved' ? 'disabled style="opacity:0.3;"' : ''}>${r._status === 'resolved' ? '✓ Həll edildi' : 'Həll et'}</button>
         </div>
       </div>
-    </div>`;
-  }).join('');
+    </div>`).join('');
   if (filtered.length === 0) {
     container.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:32px;color:var(--text-muted);">Heç bir nəticə tapılmadı</div>';
   }
 }
 
-async function resolveReport(id) {
-  const report = allReports.find(r => r.id === id);
-  if (!report || report.status === 'Həll edildi') return;
-
-  if (report._api_id) {
-    try {
-      const fd = new FormData();
-      fd.append('status', 'resolved');
-      await fetch(`${API}/admin/issues/${report._api_id}/status`, { method: 'POST', body: fd });
-    } catch { /* offline — update locally anyway */ }
-  }
-
-  report.status  = 'Həll edildi';
-  report._status = 'resolved';
-  report.mStatus = 'green';
-  refreshReports();
-}
-
-function sendToAuthority(id) {
-  const report = allReports.find(r => r.id === id);
-  if (!report) return;
-  const auth = authorityMap[report.cat] || authorityMap['Digər'];
-  const subject = encodeURIComponent(`Nərimanov rayonu — ${report.cat}: ${report.title}`);
-  const body = encodeURIComponent(
-    `Hörmətli ${auth.name},\n\n` +
-    `Nərimanov rayonu ərazisində aşkar edilmiş problem barədə məlumat:\n\n` +
-    `— Müraciət ID: REP-2024-${report.id}\n` +
-    `— Kateqoriya: ${report.cat}\n` +
-    `— Ünvan: ${report.location}\n` +
-    `— Statistik zona: ${report.zone}\n` +
-    `— Təsvir: ${report.desc}\n` +
-    `— Tarix: ${report.date}\n` +
-    `— Status: ${report.status}\n\n` +
-    `Xahiş edirik məsələyə baxıb tədbir görəsiniz.\n\n` +
-    `Təşəkkürlər,\nNərimanov Rayon Admini`
-  );
-  if (auth.mail === '104' || auth.mail === '920') {
-    alert(`${auth.name} ilə əlaqə: ${auth.mail}`);
-  } else {
-    window.open(`mailto:${auth.mail}?subject=${subject}&body=${body}`, '_blank');
-  }
+async function quickResolve(issueId) {
+  if (!issueId) return;
+  const fd = new FormData();
+  fd.append('status', 'resolved');
+  try {
+    await fetch(`${API}/admin/issues/${issueId}/status`, { method: 'POST', body: fd });
+  } catch {}
+  loadIssues();
 }
 
 function refreshReports() {
@@ -1355,19 +1336,29 @@ function switchView(view) {
   }
 }
 
-/* ===== DETAIL PANEL ===== */
-function openDetailPanel() {
-  document.getElementById('detail-overlay').classList.add('open');
-  document.getElementById('detail-panel').classList.add('open');
-}
-function closeDetailPanel() {
-  document.getElementById('detail-overlay').classList.remove('open');
-  document.getElementById('detail-panel').classList.remove('open');
+const pages = {
+  dashboard: 'page-dashboard',
+  reports: 'page-reports',
+  map: 'page-map',
+  analytics: 'page-analytics',
+  settings: 'page-settings'
+};
+
+function navigateTo(page) {
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const navItem = document.querySelector(`.nav-item[data-page="${page}"]`);
+  if (navItem) navItem.classList.add('active');
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  const pageEl = document.getElementById(pages[page]);
+  if (pageEl) {
+    pageEl.classList.add('active');
+    if (page === 'map') { setTimeout(() => { if (map) map.invalidateSize(); }, 100); }
+  }
 }
 
 /* ===== INIT ===== */
 document.addEventListener('DOMContentLoaded', () => {
-  // Try to load live data from the backend; static demo data is the fallback
+  initCharts();
   loadIssues();
 
   const searchInput = document.querySelector('#page-reports .search-input');
@@ -1378,12 +1369,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
   setTimeout(() => {
     initMap();
-    // After the static markers are placed, overlay live API markers (if server is up)
     setTimeout(loadMapFromAPI, 600);
   }, 300);
 
   initAnalyticsCharts();
   updateTime();
+});
+
+document.querySelectorAll('.nav-item[data-page]').forEach(item => {
+  item.addEventListener('click', () => navigateTo(item.dataset.page));
 });
 </script>
 </body>

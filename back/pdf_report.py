@@ -19,7 +19,7 @@ Usage:
 from __future__ import annotations
 
 import io
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Sequence
 
 
@@ -113,7 +113,7 @@ def build_pdf(issues: Sequence) -> bytes:
         ),
     }
 
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc).replace(tzinfo=None)
     story = []
 
     # ── Title ─────────────────────────────────────────────────────────────────
