@@ -160,10 +160,9 @@ body {
     width: 390px;
     height: min(844px, calc(100vh - 76px));
     border-radius: 44px;
-    overflow: hidden auto;
+    overflow: hidden;
     position: relative;
     background-color: #fff8f7;
-    scrollbar-width: none;
 
     /* Phone hardware border + shadow */
     box-shadow:
@@ -173,28 +172,13 @@ body {
       inset 0 0 0 1px rgba(255, 255, 255, 0.05);
   }
 
-  #root::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* min-h-screen inside the frame should fill the frame, not the viewport */
-  #root .min-h-screen {
-    min-height: 100%;
-  }
-
   /*
-    Fixed headers/nav/footers are viewport-relative by default.
-    On desktop we re-anchor them to the phone frame by centering
-    them at the phone width so they sit exactly over the frame.
+    The App root div must exactly fill the frame so flex children
+    (header, scrollable content, nav) can divide the height properly.
   */
-  #shell-header,
-  #shell-nav,
-  #detail-header,
-  #detail-footer {
-    left: 50% !important;
-    transform: translateX(-50%) !important;
-    width: 390px !important;
-    max-width: 390px !important;
+  #root .phone-root {
+    height: 100%;
+    min-height: 100%;
   }
 }
 

@@ -1077,9 +1077,9 @@ export default function App() {
       {currentScreen === AppScreen.REPORT_DETAIL && selectedReportId && (
         <div className="flex-grow flex flex-col bg-brand-surface">
           {/* Header */}
-          <header className="bg-white/90 backdrop-blur-md border-b border-[#e5bdba]/30 shadow-sm fixed top-0 left-0 w-full h-16 z-40 flex items-center justify-between px-6">
+          <header id="detail-header" className="bg-white/90 backdrop-blur-md border-b border-[#e5bdba]/30 shadow-sm fixed top-0 left-0 w-full h-16 z-40 flex items-center justify-between px-6">
             <div className="flex items-center">
-              <button 
+              <button
                 onClick={() => navigateTo(previousScreen || AppScreen.FEED)}
                 className="p-2 -ml-2 text-brand-primary hover:bg-[#ffe9e7] rounded-full transition-all active:scale-95 shrink-0"
               >
@@ -1290,7 +1290,7 @@ export default function App() {
           ))}
 
           {/* Sticky Bottom Action Action block */}
-          <div className="fixed bottom-0 left-0 w-full p-4 bg-white/90 backdrop-blur-xl border-t border-[#e5bdba]/20 z-40 flex justify-center">
+          <div id="detail-footer" className="fixed bottom-0 left-0 w-full p-4 bg-white/90 backdrop-blur-xl border-t border-[#e5bdba]/20 z-40 flex justify-center">
             <button 
               onClick={() => navigateTo(AppScreen.FEED)}
               className="w-full max-w-md h-12 border-2 border-brand-primary text-brand-primary font-bold bg-white rounded-full text-xs active:scale-95 transition-all flex items-center justify-center gap-2 cursor-pointer hover:bg-brand-low/50"
@@ -1306,7 +1306,7 @@ export default function App() {
         <div className="flex-grow flex flex-col pt-16 pb-28">
           
           {/* Top persistent navigation bar */}
-          <header className="bg-white/90 backdrop-blur-md border-b border-[#e5bdba]/30 shadow-sm fixed top-0 left-0 w-full h-16 z-40 flex items-center justify-between px-6">
+          <header id="shell-header" className="bg-white/90 backdrop-blur-md border-b border-[#e5bdba]/30 shadow-sm fixed top-0 left-0 w-full h-16 z-40 flex items-center justify-between px-6">
             <div className="flex items-center gap-2">
               <span className="p-1.5 bg-[#fff0ef] rounded-xl text-brand-primary shrink-0 animate-pulse">
                 <MapPin size={20} />
@@ -1830,7 +1830,7 @@ export default function App() {
           )}
 
           {/* Bottom Persistent Navigation Bar (The Semantic Shell) */}
-          <nav className="fixed bottom-0 left-0 w-full flex justify-around items-end pb-5 pt-3 px-2 bg-white/80 backdrop-blur-xl border-t border-brand-outline-variant/30 shadow-[0px_-4px_22px_rgba(135,0,18,0.04)] z-40 rounded-t-3xl">
+          <nav id="shell-nav" className="fixed bottom-0 left-0 w-full flex justify-around items-end pb-5 pt-3 px-2 bg-white/80 backdrop-blur-xl border-t border-brand-outline-variant/30 shadow-[0px_-4px_22px_rgba(135,0,18,0.04)] z-40 rounded-t-3xl">
             {/* Compass - FEED */}
             <a 
               onClick={(e) => { e.preventDefault(); navigateTo(AppScreen.FEED); }}
