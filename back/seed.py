@@ -43,12 +43,12 @@ print(f"Registered {len(users)} citizens.")
 # Format: ?auto=format&fit=crop&w=800&h=450 keeps aspect ratio and quality.
 # Each cluster gets its own photo series (r1, r2 …) for visual variety.
 IMGS = {
-    # Road / pothole cluster
-    "road1":   "https://images.unsplash.com/photo-1558618047-3e9b3e0c3aba?auto=format&fit=crop&w=800&h=450",
-    "road2":   "https://images.unsplash.com/photo-1579613832111-ac7dfcc4723f?auto=format&fit=crop&w=800&h=450",
-    "road3":   "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&h=450",
-    "road4":   "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&h=450",
-    "road5":   "https://images.unsplash.com/photo-1531171074112-91f7d13f0562?auto=format&fit=crop&w=800&h=450",
+    # Road / pothole cluster — local upload
+    "road1":   "/uploads/potholes.png",
+    "road2":   "/uploads/potholes.png",
+    "road3":   "/uploads/potholes.png",
+    "road4":   "/uploads/potholes.png",
+    "road5":   "/uploads/potholes.png",
 
     # Waste / trash cluster
     "waste1":  "https://images.unsplash.com/photo-1604187351574-c75ca79f5807?auto=format&fit=crop&w=800&h=450",
@@ -57,39 +57,39 @@ IMGS = {
     "waste4":  "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?auto=format&fit=crop&w=800&h=450",
     "waste5":  "https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&h=450",
 
-    # Lighting cluster
-    "light1":  "https://images.unsplash.com/photo-1543599723-d76e2b97c7f2?auto=format&fit=crop&w=800&h=450",
-    "light2":  "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=800&h=450",
-    "light3":  "https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=800&h=450",
-    "light4":  "https://images.unsplash.com/photo-1508094573783-5cf30b30e4d9?auto=format&fit=crop&w=800&h=450",
+    # Lighting cluster — local upload
+    "light1":  "/uploads/streetlights.png",
+    "light2":  "/uploads/streetlights.png",
+    "light3":  "/uploads/streetlights.png",
+    "light4":  "/uploads/streetlights.png",
 
-    # Sidewalk cluster
-    "side1":   "https://images.unsplash.com/photo-1558981852-426c349a3b9e?auto=format&fit=crop&w=800&h=450",
-    "side2":   "https://images.unsplash.com/photo-1473186505569-9c61870c11f9?auto=format&fit=crop&w=800&h=450",
-    "side3":   "https://images.unsplash.com/photo-1484101403633-562f891dc89a?auto=format&fit=crop&w=800&h=450",
-    "side4":   "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=800&h=450",
+    # Sidewalk cluster — local upload
+    "side1":   "/uploads/sidewalk.png",
+    "side2":   "/uploads/sidewalk.png",
+    "side3":   "/uploads/sidewalk.png",
+    "side4":   "/uploads/sidewalk.png",
 
-    # Flooding / drainage cluster
-    "flood1":  "https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&h=450",
-    "flood2":  "https://images.unsplash.com/photo-1559827291-72ebf439f15b?auto=format&fit=crop&w=800&h=450",
-    "flood3":  "https://images.unsplash.com/photo-1523580846011-d3a5bc25702b?auto=format&fit=crop&w=800&h=450",
+    # Flooding / drainage cluster — local upload
+    "flood1":  "/uploads/drainage.png",
+    "flood2":  "/uploads/drainage.png",
+    "flood3":  "/uploads/drainage.png",
 
     # Green zone / park
     "green1":  "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=800&h=450",
     "green2":  "https://images.unsplash.com/photo-1500534314209-a157d0e30ede?auto=format&fit=crop&w=800&h=450",
     "green3":  "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=800&h=450",
 
-    # Park equipment
-    "play1":   "https://images.unsplash.com/photo-1575783970733-1aaedde1db74?auto=format&fit=crop&w=800&h=450",
-    "play2":   "https://images.unsplash.com/photo-1519331582073-283f174e3ed4?auto=format&fit=crop&w=800&h=450",
+    # Park equipment — local upload
+    "play1":   "/uploads/swing.png",
+    "play2":   "/uploads/swing.png",
 
     # Fountain
     "fount1":  "https://images.unsplash.com/photo-1564502952-d05fa4da66e9?auto=format&fit=crop&w=800&h=450",
     "fount2":  "https://images.unsplash.com/photo-1569949381669-ecf31ae8e613?auto=format&fit=crop&w=800&h=450",
 
-    # Road excavation
-    "excav1":  "https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&h=450",
-    "excav2":  "https://images.unsplash.com/photo-1531171074112-91f7d13f0562?auto=format&fit=crop&w=800&h=450",
+    # Road excavation — local upload
+    "excav1":  "/uploads/potholes.png",
+    "excav2":  "/uploads/potholes.png",
 
     # Ice / slip
     "ice1":    "https://images.unsplash.com/photo-1491002052546-bf38f186af56?auto=format&fit=crop&w=800&h=450",

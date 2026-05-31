@@ -1,7 +1,6 @@
 import {
   ArrowLeft,
   Check,
-  ChevronUp,
   Flame,
   ImagePlus,
   MapPin,
@@ -67,11 +66,6 @@ export default function ReportDetailScreen() {
   const report = reports.find(r => r.id === selectedReportId);
   if (!report) return null;
 
-  function upvote() {
-    if (report!.hasUserReacted) { toast('Artıq dəstəkləmisiniz.', 'info'); return; }
-    dispatch({ type: 'SUPPORT_REPORT', id: report!.id, userName: user.name, avatar: user.avatar });
-    toast('Dəstəyiniz qeydə alındı! +5 Coin', 'success');
-  }
 
   function addComment() {
     if (!commentText.trim() && !commentImage) return;
@@ -196,23 +190,6 @@ export default function ReportDetailScreen() {
                   <span className="text-[12px] text-[#8a6260]">{location}</span>
                 </div>
 
-                {/* Upvote button */}
-                <button
-                  onClick={upvote}
-                  className={`w-full h-11 rounded-full border-2 font-bold text-[13px] flex items-center justify-center gap-2 transition-all active:scale-95 cursor-pointer ${
-                    report.hasUserReacted
-                      ? 'bg-brand-primary border-brand-primary text-white'
-                      : 'border-brand-primary text-brand-primary hover:bg-brand-primary/5'
-                  }`}
-                >
-                  <ChevronUp size={18} strokeWidth={2.5} />
-                  <span>{report.hasUserReacted ? 'Dəstəklədiniz' : 'Mən də görürəm'}</span>
-                  <span className={`ml-1 px-2 py-0.5 rounded-full text-[11px] font-extrabold ${
-                    report.hasUserReacted ? 'bg-white/20 text-white' : 'bg-brand-highest text-brand-primary'
-                  }`}>
-                    {report.reactionsCount}
-                  </span>
-                </button>
               </div>
             </div>
 

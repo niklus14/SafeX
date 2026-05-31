@@ -1,4 +1,4 @@
-import { ChevronUp, MapPin, MessageCircle, Users } from 'lucide-react';
+import { MapPin, MessageCircle, Users } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useApp } from '../store';
 import { api } from '../api';
@@ -30,12 +30,10 @@ function TweetCard({
   report,
   onOpenThread,
   onOpenComments,
-  onUpvote,
 }: {
   report: Report;
   onOpenThread: () => void;
   onOpenComments: () => void;
-  onUpvote: () => void;
 }) {
   const [imgError, setImgError] = useState(false);
 
@@ -126,23 +124,6 @@ function TweetCard({
             >
               <MessageCircle size={16} />
               <span className="text-[12px] font-medium tabular-nums">{report.comments.length}</span>
-            </button>
-
-            {/* Upvote — triggers support */}
-            <button
-              onClick={e => { e.stopPropagation(); onUpvote(); }}
-              className={`flex items-center gap-1.5 transition-colors active:scale-95 ${
-                report.hasUserReacted
-                  ? 'text-brand-primary'
-                  : 'text-[#a08280] hover:text-brand-primary'
-              }`}
-            >
-              <ChevronUp
-                size={18}
-                className={report.hasUserReacted ? 'fill-brand-primary/20' : ''}
-                strokeWidth={report.hasUserReacted ? 2.5 : 2}
-              />
-              <span className="text-[12px] font-medium tabular-nums">{report.reactionsCount}</span>
             </button>
 
             {/* Thread/cluster count */}
@@ -263,14 +244,6 @@ export default function FeedScreen() {
             onOpenComments={() => {
               dispatch({ type: 'SELECT_REPORT', id: report.id, view: 'comments' });
               navigate('report-detail');
-            }}
-            onUpvote={() => {
-              if (report.hasUserReacted) {
-                dispatch({ type: 'TOAST', message: 'Artıq dəstəkləmisiniz.', toastType: 'info' });
-                return;
-              }
-              dispatch({ type: 'SUPPORT_REPORT', id: report.id, userName: '', avatar: '' });
-              dispatch({ type: 'TOAST', message: '+5 Coin — dəstəyiniz qeydə alındı!', toastType: 'success' });
             }}
           />
         ))}

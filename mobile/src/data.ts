@@ -23,17 +23,17 @@ const AV = {
   nermin:  'https://picsum.photos/seed/u-nermin/40/40',
 };
 
-// ── Shared image pool — Unsplash topic-matched ───────────────────────────────
+// ── Shared image pool ────────────────────────────────────────────────────────
 const IMG = {
-  road1:    'https://images.unsplash.com/photo-1558618047-3e9b3e0c3aba?auto=format&fit=crop&w=800&h=450',
-  road2:    'https://images.unsplash.com/photo-1579613832111-ac7dfcc4723f?auto=format&fit=crop&w=800&h=450',
-  road3:    'https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=800&h=450',
+  road1:    '/img/potholes.png',
+  road2:    '/img/potholes.png',
+  road3:    '/img/potholes.png',
   trash1:   'https://images.unsplash.com/photo-1604187351574-c75ca79f5807?auto=format&fit=crop&w=800&h=450',
   trash2:   'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&h=450',
-  light1:   'https://images.unsplash.com/photo-1543599723-d76e2b97c7f2?auto=format&fit=crop&w=800&h=450',
-  sidewalk1:'https://images.unsplash.com/photo-1558981852-426c349a3b9e?auto=format&fit=crop&w=800&h=450',
-  flood1:   'https://images.unsplash.com/photo-1547683905-f686c993aae5?auto=format&fit=crop&w=800&h=450',
-  park1:    'https://images.unsplash.com/photo-1416879595882-3373a0480b5b?auto=format&fit=crop&w=800&h=450',
+  light1:   '/img/streetlights.png',
+  sidewalk1:'/img/sidewalk.png',
+  flood1:   '/img/drainage.png',
+  park1:    '/img/swing.png',
 };
 
 export const INITIAL_REPORTS: Report[] = [

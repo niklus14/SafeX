@@ -436,6 +436,100 @@ input, select { font-family: inherit; outline: none; border: none; }
 /* ===== FAB ===== */
 .fab { position: fixed; bottom: 28px; right: 28px; z-index: 150; width: 52px; height: 52px; border-radius: 50%; background: var(--brand-500); color: #fff; font-size: 26px; line-height: 1; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 16px rgba(179,0,27,0.4); transition: all var(--transition); cursor: pointer; border: none; }
 .fab:hover { background: var(--brand-600); transform: scale(1.05); }
+
+/* ===== HESABATLAR PAGE ===== */
+.hesabat-layout { display: flex; gap: 18px; min-height: 0; }
+.hesabat-filters { width: 268px; min-width: 268px; overflow-y: auto; flex-shrink: 0; }
+.hesabat-preview { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.hesabat-preview-top { display: flex; align-items: center; justify-content: space-between; }
+.preview-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; color: var(--text-muted); text-transform: uppercase; }
+.form-group { margin-bottom: 12px; }
+.form-label { display: block; font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+.filter-input { width: 100%; padding: 8px 10px; border-radius: 6px; background: var(--card-bg); border: 0.5px solid var(--border); color: var(--text-primary); font-size: 12px; font-family: inherit; }
+.filter-input:focus { border-color: var(--brand-500); outline: none; }
+.import-drop-zone { border: 1.5px dashed var(--border); border-radius: var(--radius); padding: 18px 12px; text-align: center; cursor: pointer; transition: all var(--transition); margin-bottom: 14px; }
+.import-drop-zone:hover { border-color: var(--brand-500); background: var(--accent-muted); }
+.drop-text { font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 3px; }
+.drop-note { font-size: 10px; color: var(--text-muted); }
+.map-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
+.map-row-label { font-size: 11px; color: var(--text-muted); width: 80px; flex-shrink: 0; }
+.form-divider { border: none; border-top: 0.5px solid var(--border); margin: 16px 0; }
+.filter-panel-section-title { font-size: 11px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px; }
+
+/* Report document */
+.report-doc { background: #fff; border: 0.5px solid #d8d8d8; border-radius: var(--radius-lg); padding: 28px 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); color: #1a1a1a; }
+.report-doc-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 14px; border-bottom: 2px solid #B3001B; margin-bottom: 18px; }
+.report-doc-org { font-size: 12px; font-weight: 800; color: #B3001B; letter-spacing: 0.4px; text-transform: uppercase; }
+.report-doc-addr { font-size: 11px; color: #666; margin-top: 3px; line-height: 1.5; }
+.doc-id-badge { font-size: 11px; font-weight: 700; color: #B3001B; font-family: 'JetBrains Mono', monospace; text-align: right; }
+.doc-dates { font-size: 10px; color: #888; margin-top: 4px; text-align: right; line-height: 1.6; }
+.report-stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 18px; }
+.report-stat-box { border: 1px solid #e8e8e8; border-radius: 6px; padding: 10px 8px; text-align: center; }
+.rsb-label { font-size: 8px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #999; margin-bottom: 4px; }
+.rsb-value { font-size: 20px; font-weight: 700; color: #1a1a1a; line-height: 1; }
+.rsb-value.accent { color: #B3001B; }
+.report-section-title { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #B3001B; margin-bottom: 8px; border-bottom: 1px solid #efefef; padding-bottom: 5px; }
+.report-cat-table { width: 100%; border-collapse: collapse; font-size: 11px; margin-bottom: 18px; }
+.report-cat-table th { text-align: left; padding: 5px 8px; background: #f8f8f8; font-size: 9px; font-weight: 700; text-transform: uppercase; color: #888; }
+.report-cat-table td { padding: 6px 8px; border-bottom: 0.5px solid #f0f0f0; color: #333; }
+.report-cat-table td:not(:first-child) { text-align: center; }
+.report-bottom-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.report-ai-box { background: #fff8f7; border: 1px solid #fbd5d0; border-radius: 6px; padding: 10px 12px; font-size: 11px; color: #555; line-height: 1.6; }
+.report-sig { display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 0.5px solid #efefef; }
+.report-sig-name { font-size: 12px; font-weight: 600; color: #1a1a1a; }
+.report-sig-title { font-size: 10px; color: #888; }
+.report-stamp { width: 54px; height: 54px; border-radius: 50%; border: 2px solid #B3001B; display: flex; align-items: center; justify-content: center; text-align: center; font-size: 6.5px; font-weight: 700; color: #B3001B; text-transform: uppercase; line-height: 1.3; padding: 4px; flex-shrink: 0; }
+
+/* ===== QURUMLAR PAGE ===== */
+.org-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+.org-card { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 16px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
+.org-card-top { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+.org-card-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; color: #fff; flex-shrink: 0; }
+.org-card-name { font-size: 13px; font-weight: 600; color: var(--text-primary); }
+.org-card-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-top: 1px; }
+.org-stats-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+.org-stat-label { font-size: 10px; color: var(--text-muted); font-weight: 500; margin-bottom: 2px; }
+.org-stat-val { font-size: 22px; font-weight: 700; color: var(--text-primary); line-height: 1; }
+.org-prog-bar { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 5px; overflow: hidden; }
+.org-prog-fill { height: 100%; border-radius: 2px; }
+.org-prog-label { display: flex; justify-content: space-between; font-size: 10px; color: var(--text-muted); margin-bottom: 12px; }
+.org-card-footer { display: flex; justify-content: space-between; align-items: center; margin-top: auto; font-size: 11px; color: var(--text-muted); }
+.org-card-footer a { color: var(--accent); font-weight: 600; font-size: 11px; }
+.org-card.ai-card { background: var(--brand-500); border-color: var(--brand-600); }
+.org-card.ai-card .org-card-name,.org-card.ai-card .org-stat-val { color: #fff; }
+.org-card.ai-card .org-card-tag,.org-card.ai-card .org-stat-label,.org-card.ai-card .org-prog-label,.org-card.ai-card .org-card-footer { color: rgba(255,255,255,0.65); }
+.org-card.ai-card .org-prog-bar { background: rgba(255,255,255,0.2); }
+.org-ai-text { font-size: 11px; color: rgba(255,255,255,0.85); line-height: 1.55; margin-bottom: 12px; }
+.perf-wrap { background: var(--card-bg); border: 0.5px solid var(--border); border-radius: var(--radius-lg); padding: 18px 20px; box-shadow: var(--shadow-sm); }
+.perf-wrap h3 { font-size: 14px; font-weight: 600; margin-bottom: 14px; color: var(--text-primary); }
+.perf-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.perf-table th { text-align: left; padding: 8px 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--text-muted); border-bottom: 0.5px solid var(--border); }
+.perf-table td { padding: 10px 12px; border-bottom: 0.5px solid var(--border); vertical-align: middle; }
+.perf-table tr:last-child td { border-bottom: none; }
+.perf-table tr:hover td { background: var(--brand-50); }
+.rating { color: #E0A100; font-weight: 600; font-size: 12px; }
+.pill-active { display: inline-flex; padding: 3px 9px; border-radius: 20px; font-size: 10px; font-weight: 700; background: rgba(31,157,85,0.1); color: #1F9D55; }
+.fin-bar { width: 72px; height: 5px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.fin-fill { height: 100%; border-radius: 3px; }
+
+/* ===== IMPORT MODAL ===== */
+.import-overlay { position: fixed; inset: 0; background: rgba(20,25,35,0.65); z-index: 300; display: none; align-items: center; justify-content: center; }
+.import-overlay.open { display: flex; }
+.import-modal { background: var(--card-bg); border-radius: var(--radius-lg); width: 700px; max-width: 96vw; max-height: 88vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(20,25,35,0.25); }
+.import-modal-head { padding: 20px 24px 16px; border-bottom: 0.5px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
+.import-modal-title { font-size: 16px; font-weight: 700; }
+.import-modal-sub { font-size: 12px; color: var(--text-muted); margin-top: 3px; }
+.import-modal-body { padding: 20px 24px; }
+.import-modal-foot { padding: 14px 24px; border-top: 0.5px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; }
+.import-drop-lg { border: 2px dashed var(--border); border-radius: var(--radius-lg); padding: 36px 20px; text-align: center; cursor: pointer; margin-bottom: 16px; transition: all var(--transition); }
+.import-drop-lg:hover { border-color: var(--brand-500); background: var(--accent-muted); }
+.import-preview { border: 0.5px solid var(--border); border-radius: var(--radius); overflow: hidden; margin-bottom: 12px; overflow-x: auto; }
+.import-tbl { width: 100%; border-collapse: collapse; font-size: 11px; white-space: nowrap; }
+.import-tbl th { padding: 7px 10px; background: var(--slate-50); font-weight: 600; color: var(--text-secondary); border-bottom: 0.5px solid var(--border); text-align: left; font-size: 10px; text-transform: uppercase; letter-spacing: 0.3px; }
+.import-tbl td { padding: 7px 10px; border-bottom: 0.5px solid var(--border); color: var(--text-primary); }
+.import-tbl tr:last-child td { border-bottom: none; }
+.import-ok { display: flex; align-items: center; gap: 8px; font-size: 12px; color: #1F9D55; background: rgba(31,157,85,0.08); padding: 10px 14px; border-radius: var(--radius); margin-bottom: 8px; }
+.import-count-row { font-size: 12px; color: var(--text-muted); display: flex; align-items: center; gap: 6px; }
 </style>
 </head>
 <body>
@@ -492,7 +586,7 @@ input, select { font-family: inherit; outline: none; border: none; }
       <span>Müraciətlər</span>
       <span class="nav-badge" id="nav-badge-reports">342</span>
     </div>
-    <div class="nav-item" data-page="settings">
+    <div class="nav-item" data-page="orgs">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span>Qurumlar</span>
     </div>
@@ -570,7 +664,7 @@ input, select { font-family: inherit; outline: none; border: none; }
         </div>
         <div>
           <div class="recent-item">
-            <div class="recent-thumb" style="background:#374151;">🛣️</div>
+            <img class="recent-thumb" src="img/potholes.png" alt="Yol" style="object-fit:cover;" onerror="this.style.background='#374151';this.removeAttribute('src');">
             <div class="recent-body">
               <div class="recent-title">Yol örtüyünün təmiri</div>
               <div class="recent-desc">Atatürk pr. 45 ünvanında çuxur...</div>
@@ -582,7 +676,7 @@ input, select { font-family: inherit; outline: none; border: none; }
             <div class="recent-time">2 dəq əvvəl</div>
           </div>
           <div class="recent-item">
-            <div class="recent-thumb" style="background:#1F2937;">💡</div>
+            <img class="recent-thumb" src="img/streetlights.png" alt="İşıq" style="object-fit:cover;" onerror="this.style.background='#1F2937';this.removeAttribute('src');">
             <div class="recent-body">
               <div class="recent-title">Küçə işıqlandırması</div>
               <div class="recent-desc">Fətəli Xan Xoyski küçəsində sönük...</div>
@@ -594,7 +688,7 @@ input, select { font-family: inherit; outline: none; border: none; }
             <div class="recent-time">15 dəq əvvəl</div>
           </div>
           <div class="recent-item">
-            <div class="recent-thumb" style="background:#111827;">🗑️</div>
+            <img class="recent-thumb" src="img/sidewalk.png" alt="Tullantı" style="object-fit:cover;" onerror="this.style.background='#111827';this.removeAttribute('src');">
             <div class="recent-body">
               <div class="recent-title">Tullantıların daşınması</div>
               <div class="recent-desc">Ağa Nematulla küçəsi, bina 12 qarşısı...</div>
@@ -606,7 +700,7 @@ input, select { font-family: inherit; outline: none; border: none; }
             <div class="recent-time">42 dəq əvvəl</div>
           </div>
           <div class="recent-item">
-            <div class="recent-thumb" style="background:#1E3A5F;">💧</div>
+            <img class="recent-thumb" src="img/drainage.png" alt="Su" style="object-fit:cover;" onerror="this.style.background='#1E3A5F';this.removeAttribute('src');">
             <div class="recent-body">
               <div class="recent-title">Su sızması</div>
               <div class="recent-desc">Təbriz küçəsi, su xəttində qəza...</div>
@@ -733,19 +827,261 @@ input, select { font-family: inherit; outline: none; border: none; }
     </div>
   </section>
 
-  <!-- ANALYTICS -->
+  <!-- HESABATLAR -->
   <section class="page" id="page-analytics">
-    <div class="page-header">
-      <div><h1>Analitika</h1><p>Nərimanov rayonu üzrə məlumat təhlili</p></div>
-      <select class="filter-select"><option>Son 30 gün</option><option>Son 90 gün</option><option>Bu il</option></select>
+    <div class="hesabat-layout">
+
+      <!-- Left: filter panel -->
+      <div class="hesabat-filters chart-card" style="padding:18px;">
+        <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Hesabat parametrləri</div>
+
+        <div class="form-group">
+          <label class="form-label">Tarix aralığı</label>
+          <div style="display:flex;align-items:center;gap:5px;">
+            <input type="date" class="filter-input" value="2023-10-01" style="flex:1;">
+            <span style="color:var(--text-muted);font-size:12px;">—</span>
+            <input type="date" class="filter-input" value="2023-10-24" style="flex:1;">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Müraciət statusu</label>
+          <select class="filter-select" style="width:100%;"><option>Bütün statuslar</option><option>Həll edildi</option><option>İcradadır</option><option>Gecikmiş</option></select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Kateqoriya</label>
+          <select class="filter-select" style="width:100%;"><option>Bütün kateqoriyalar</option><option>Yol</option><option>İşıqlandırma</option><option>Tullantı</option><option>Su</option></select>
+        </div>
+        <div class="form-group" style="margin-bottom:16px;">
+          <label class="form-label">İcra qurumu</label>
+          <select class="filter-select" style="width:100%;"><option>Bütün qurumlar</option><option>Azərsu ASC</option><option>Tamiz Şəhər ASC</option><option>Bakışıq MMC</option></select>
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;gap:6px;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+          Ön baxışı yenilə
+        </button>
+
+        <hr class="form-divider">
+        <div class="filter-panel-section-title">Köhnə platformadan idxal</div>
+        <div class="import-drop-zone" onclick="openImportModal()">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);margin:0 auto 8px;display:block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          <span class="drop-text">Faylı bura sürükləyin ya da <span style="color:var(--accent);">seçin</span></span>
+          <span class="drop-note">Yalnız CSV ya XLSX (Maks. 10MB)</span>
+        </div>
+
+        <div class="filter-panel-section-title">Sütun xəritələnməsi</div>
+        <div class="map-row"><span class="map-row-label">Başlıq</span><select class="filter-select" style="flex:1;font-size:11px;padding:5px 8px;"><option>title</option></select></div>
+        <div class="map-row"><span class="map-row-label">Kateqoriya</span><select class="filter-select" style="flex:1;font-size:11px;padding:5px 8px;"><option>category</option></select></div>
+        <div class="map-row"><span class="map-row-label">Tarix</span><select class="filter-select" style="flex:1;font-size:11px;padding:5px 8px;"><option>created_at</option></select></div>
+        <div class="map-row"><span class="map-row-label">Koordinat</span><select class="filter-select" style="flex:1;font-size:11px;padding:5px 8px;"><option>lat_lng</option></select></div>
+      </div>
+
+      <!-- Right: preview -->
+      <div class="hesabat-preview">
+        <div class="hesabat-preview-top">
+          <span class="preview-eyebrow">ÖN BAXIŞ</span>
+          <button class="btn btn-primary btn-sm" onclick="exportPDF()" style="gap:6px;">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            PDF İxrac et
+          </button>
+        </div>
+
+        <div class="report-doc">
+          <!-- Doc header -->
+          <div class="report-doc-header">
+            <div>
+              <div class="report-doc-org">Nərimanov Rayon İcra Hakimiyyəti</div>
+              <div class="report-doc-addr">Bakı şəhəri, Nərimanov rayonu, Fətəli Xan Xoyski küçəsi 124</div>
+              <div class="report-doc-addr">Dövr: 01.10.2023 — 24.10.2023 &nbsp;|&nbsp; Tarix: 25.10.2023</div>
+            </div>
+            <div>
+              <div class="doc-id-badge">HESABAT#2023/10-042</div>
+              <div class="doc-dates">Dövriyyə: 01.10.2023<br>Bağlama: 25.10.2023</div>
+            </div>
+          </div>
+
+          <!-- Stats -->
+          <div class="report-stats-grid">
+            <div class="report-stat-box"><div class="rsb-label">Ümumi müraciətlər</div><div class="rsb-value">1,248</div></div>
+            <div class="report-stat-box"><div class="rsb-label">Həll olunan</div><div class="rsb-value">942</div></div>
+            <div class="report-stat-box"><div class="rsb-label">Həll dərəcəsi</div><div class="rsb-value accent">75.4%</div></div>
+            <div class="report-stat-box"><div class="rsb-label">Orta icra müddəti</div><div class="rsb-value" style="font-size:17px;">2.4 <span style="font-size:12px;font-weight:500;color:#999;">gün</span></div></div>
+          </div>
+
+          <!-- Category table -->
+          <div class="report-section-title">Kateqoriya üzrə bölgü</div>
+          <table class="report-cat-table">
+            <thead><tr><th>Kateqoriya</th><th>Cəmi</th><th>Həll olundu</th><th>Gecikir</th><th>Faiz</th></tr></thead>
+            <tbody>
+              <tr><td>Yol təsərrüfatı</td><td>412</td><td>310</td><td>12</td><td><strong>75.2%</strong></td></tr>
+              <tr><td>Mənzil kommunal</td><td>265</td><td>240</td><td>4</td><td><strong>84.2%</strong></td></tr>
+              <tr><td>Sanitar təmizlik</td><td>198</td><td>182</td><td>0</td><td><strong>91.9%</strong></td></tr>
+              <tr><td>İşıqlandırma</td><td>187</td><td>134</td><td>8</td><td><strong>71.7%</strong></td></tr>
+              <tr><td>Yaşıllıq</td><td>142</td><td>76</td><td>3</td><td><strong>53.5%</strong></td></tr>
+              <tr style="background:#f9f9f9;"><td><em style="color:#999;">Digər</em></td><td>44</td><td>—</td><td>—</td><td>—</td></tr>
+            </tbody>
+          </table>
+
+          <!-- Bottom grid -->
+          <div class="report-bottom-grid">
+            <div>
+              <div class="report-section-title">Status statistikası</div>
+              <div style="font-size:11px;color:#555;line-height:1;display:flex;flex-direction:column;gap:6px;">
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #f0f0f0;"><span>Həll olundu (Yaxşı)</span><strong>942</strong></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #f0f0f0;"><span>İcrada</span><strong>204</strong></div>
+                <div style="display:flex;justify-content:space-between;padding:5px 0;"><span>Ləğv edildi</span><strong>102</strong></div>
+              </div>
+            </div>
+            <div>
+              <div class="report-section-title">Qısa xülasə</div>
+              <div class="report-ai-box">"Oktyabr ayı ərzində müraciətlərin sayında əvvəlki aya nisbətən 12% artım müşahidə olunmuşdur. İkiqat artım 'Yol təsərrüfatı' kateqoriyası üzrə qeyd olundu. İcra dairəsi 7/4 günlük göstəricisi ilə (79%) ümumi məmnuniyyət səviyyəsini qoruyur.</div>
+            </div>
+          </div>
+
+          <!-- Signature -->
+          <div class="report-sig">
+            <div>
+              <div class="report-sig-name">A.H. Məmmədov</div>
+              <div class="report-sig-title">İcra başçısı</div>
+            </div>
+            <div class="report-stamp">NƏRİMANOV<br>RİH<br>2023</div>
+          </div>
+        </div>
+      </div>
+
     </div>
-    <div class="charts-grid">
-      <div class="chart-card"><h3>Həftəlik Müraciət Həcmi</h3><div class="chart-wrap"><canvas id="analyticsBar"></canvas></div></div>
-      <div class="chart-card"><h3>Status Paylanması</h3><div class="chart-wrap"><canvas id="analyticsDoughnut"></canvas></div></div>
+  </section>
+
+  <!-- QURUMLAR -->
+  <section class="page" id="page-orgs">
+    <div class="page-header" style="margin-bottom:18px;">
+      <div>
+        <h1>Məsul Qurumlar</h1>
+        <p>Nərimanov rayonu üzrə fəaliyyət göstərən əsas sahələrin monitorinqi</p>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px;">
+        <div class="search-input-wrap" style="flex:0 0 240px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          <input class="search-input" type="text" placeholder="Qurum və ya xidmət axtar...">
+        </div>
+        <div class="view-toggle">
+          <button class="active">Grid Görünüşü</button>
+          <button>Siyahı Görünüşü</button>
+        </div>
+        <button class="btn btn-primary" style="gap:5px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          Yeni Qurum
+        </button>
+      </div>
     </div>
-    <div class="charts-grid" style="margin-top:14px;">
-      <div class="chart-card"><h3>Zonalar üzrə Həll Müddəti</h3><div class="chart-wrap"><canvas id="analyticsResolution"></canvas></div></div>
-      <div class="chart-card"><h3>Statistik Zonalar — Müraciətlər</h3><div class="chart-wrap"><canvas id="analyticsGeo"></canvas></div></div>
+
+    <div class="org-grid">
+      <!-- Azərsu ASC -->
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-card-icon" style="background:#2563EB;">A</div>
+          <div><div class="org-card-name">Azərsu ASC</div><div class="org-card-tag">Su Təchizatı</div></div>
+        </div>
+        <div class="org-stats-row">
+          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">42</div></div>
+          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">1,284</div></div>
+        </div>
+        <div class="org-prog-bar"><div class="org-prog-fill" style="width:84%;background:#2563EB;"></div></div>
+        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>84%</span></div>
+        <div class="org-card-footer"><span>⊙ Ortalama həll: 3.4 gün</span><a href="#">Detallar →</a></div>
+      </div>
+
+      <!-- Tamiz Şəhər ASC -->
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-card-icon" style="background:#1F9D55;">T</div>
+          <div><div class="org-card-name">Tamiz Şəhər ASC</div><div class="org-card-tag">Şəhər Təmizliyi</div></div>
+        </div>
+        <div class="org-stats-row">
+          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">18</div></div>
+          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">3,512</div></div>
+        </div>
+        <div class="org-prog-bar"><div class="org-prog-fill" style="width:52%;background:#1F9D55;"></div></div>
+        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>52%</span></div>
+        <div class="org-card-footer"><span>⊙ Ortalama həll: 1.2 gün</span><a href="#">Detallar →</a></div>
+      </div>
+
+      <!-- Bakışıq MMC -->
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-card-icon" style="background:#EA7317;">B</div>
+          <div><div class="org-card-name">Bakışıq MMC</div><div class="org-card-tag">Yol Tikintisi</div></div>
+        </div>
+        <div class="org-stats-row">
+          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">59</div></div>
+          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">894</div></div>
+        </div>
+        <div class="org-prog-bar"><div class="org-prog-fill" style="width:93%;background:#EA7317;"></div></div>
+        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span style="color:var(--status-red);font-weight:600;">93%</span></div>
+        <div class="org-card-footer"><span>⊙ Ortalama həll: 4.8 gün</span><a href="#">Detallar →</a></div>
+      </div>
+
+      <!-- Abadlıq Şöbəsi -->
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-card-icon" style="background:#0D9488;">A</div>
+          <div><div class="org-card-name">Abadlıq Şöbəsi</div><div class="org-card-tag">Rayon Dairəsi</div></div>
+        </div>
+        <div class="org-stats-row">
+          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">24</div></div>
+          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">2,105</div></div>
+        </div>
+        <div class="org-prog-bar"><div class="org-prog-fill" style="width:61%;background:#0D9488;"></div></div>
+        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>61%</span></div>
+        <div class="org-card-footer"><span>⊙ Ortalama həll: 2.5 gün</span><a href="#">Detallar →</a></div>
+      </div>
+
+      <!-- MKTB -->
+      <div class="org-card">
+        <div class="org-card-top">
+          <div class="org-card-icon" style="background:#7C3AED;">M</div>
+          <div><div class="org-card-name">MKTB</div><div class="org-card-tag">Rayon Dairəsi</div></div>
+        </div>
+        <div class="org-stats-row">
+          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">112</div></div>
+          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">14,290</div></div>
+        </div>
+        <div class="org-prog-bar"><div class="org-prog-fill" style="width:78%;background:#7C3AED;"></div></div>
+        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>78%</span></div>
+        <div class="org-card-footer"><span>⊙ Ortalama həll: 3.1 gün</span><a href="#">Detallar →</a></div>
+      </div>
+
+      <!-- AI Analysis -->
+      <div class="org-card ai-card">
+        <div class="org-card-top">
+          <div class="org-card-icon" style="background:rgba(255,255,255,0.2);font-size:18px;">✦</div>
+          <div><div class="org-card-name">AI ANALİZ</div><div class="org-card-tag">Rayon Dairəsi</div></div>
+        </div>
+        <div class="org-ai-text">Bakışıq MMC son 48 saatda eyni açıq müraciətlər 15% artıb. Resurs bölüşdürməsi tövsiyə olunur.</div>
+        <div class="org-stats-row">
+          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">112</div></div>
+          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">14,290</div></div>
+        </div>
+        <div class="org-prog-bar"><div class="org-prog-fill" style="width:78%;background:rgba(255,255,255,0.7);"></div></div>
+        <div class="org-prog-label"><span>% yüklü</span><span>78%</span></div>
+        <button class="btn" style="width:100%;justify-content:center;background:rgba(255,255,255,0.15);color:#fff;margin-top:auto;">Hesabat Göndər</button>
+      </div>
+    </div>
+
+    <!-- Performance table -->
+    <div class="perf-wrap">
+      <h3>Performans Analitikası</h3>
+      <table class="perf-table">
+        <thead>
+          <tr><th>Qurum</th><th>Xidmət Sahəsi</th><th>Məmnuniyyət</th><th>Status</th><th>Finans</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>Azərsu ASC</strong></td><td style="color:var(--text-muted);">Su Təchizatı və Kanalizasiya</td><td><span class="rating">★</span> 4.2</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:68%;background:#2563EB;"></div></div></td></tr>
+          <tr><td><strong>Tamiz Şəhər ASC</strong></td><td style="color:var(--text-muted);">Şəhər Sanitariyası</td><td><span class="rating">★</span> 4.7</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:85%;background:#1F9D55;"></div></div></td></tr>
+          <tr><td><strong>Bakışıq MMC</strong></td><td style="color:var(--text-muted);">Yol Tikintisi və Təmiri</td><td><span class="rating">★</span> 3.8</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:92%;background:#EA7317;"></div></div></td></tr>
+          <tr><td><strong>Abadlıq Şöbəsi</strong></td><td style="color:var(--text-muted);">Yaşıllıq və Abadlaşdırma</td><td><span class="rating">★</span> 4.1</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:55%;background:#0D9488;"></div></div></td></tr>
+          <tr><td><strong>MKTB</strong></td><td style="color:var(--text-muted);">Kommunal Xidmətlər</td><td><span class="rating">★</span> 3.5</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:78%;background:#7C3AED;"></div></div></td></tr>
+        </tbody>
+      </table>
     </div>
   </section>
 
@@ -848,6 +1184,82 @@ input, select { font-family: inherit; outline: none; border: none; }
     <div class="dp-section">
       <h4>Müraciət ipliyi</h4>
       <div class="dp-timeline" id="dp-thread"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== IMPORT MODAL ===== -->
+<div class="import-overlay" id="import-overlay" onclick="if(event.target===this)closeImportModal()">
+  <div class="import-modal">
+    <div class="import-modal-head">
+      <div>
+        <div class="import-modal-title">Müraciətləri idxal et</div>
+        <div class="import-modal-sub">CSV və ya TXT faylından kütləvi müraciət yükləməsi</div>
+      </div>
+      <button onclick="closeImportModal()" style="background:none;color:var(--text-muted);padding:4px;border-radius:4px;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="import-modal-body">
+      <div class="import-drop-lg" onclick="document.getElementById('import-file').click()">
+        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--brand-500);margin:0 auto 10px;display:block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        <div style="font-size:14px;font-weight:500;margin-bottom:4px;color:var(--text-primary);">Faylı bura sürükləyin ya da <span style="color:var(--accent);">seçin</span></div>
+        <div style="font-size:12px;color:var(--text-muted);">Yalnız .csv, .txt formatları uyğun gəlir. Max: 50MB</div>
+        <input id="import-file" type="file" accept=".csv,.txt" style="display:none;">
+      </div>
+
+      <div class="import-preview">
+        <table class="import-tbl">
+          <thead>
+            <tr><th>external_id</th><th>kateqoriya</th><th>ciddilik</th><th>başlıq</th><th>koordinatlar</th><th>status</th><th>tarix</th><th>qurum</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9821</td>
+              <td>Yol tamiri</td>
+              <td><span class="priority-badge kritik" style="font-size:9px;padding:1px 6px;">CİDDİ</span></td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Asfalt örtüyün d...</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4093, 49.8671</td>
+              <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
+              <td>12.10.2023</td>
+              <td>Azərsu</td>
+            </tr>
+            <tr>
+              <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9822</td>
+              <td>İşıqlandırma</td>
+              <td><span class="priority-badge orta" style="font-size:9px;padding:1px 6px;">ORTA</span></td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Fənarlərin sönmə...</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4100, 49.8700</td>
+              <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
+              <td>12.10.2023</td>
+              <td>Bakışıq</td>
+            </tr>
+            <tr>
+              <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9823</td>
+              <td>Təmizlik</td>
+              <td><span class="priority-badge asagi" style="font-size:9px;padding:1px 6px;">Aşağı</span></td>
+              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Tullantıların yığın...</td>
+              <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4090, 49.8600</td>
+              <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
+              <td>11.10.2023</td>
+              <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;">Rayon Təmizlat...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="import-ok">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Məlumatların validasiyası tamamlandı
+      </div>
+      <div class="import-count-row">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        8 müraciət hazırdır
+      </div>
+    </div>
+    <div class="import-modal-foot">
+      <button class="btn btn-secondary" onclick="closeImportModal()">Ləğv et</button>
+      <button class="btn btn-primary" onclick="closeImportModal()">İdxal et →</button>
     </div>
   </div>
 </div>
@@ -1099,6 +1511,8 @@ async function openDetailForIssue(report) {
   }
 }
 
+function openImportModal() { document.getElementById('import-overlay').classList.add('open'); }
+function closeImportModal() { document.getElementById('import-overlay').classList.remove('open'); }
 function openDetailPanel() { closeDetailPanel(); /* replaced by openDetailForIssue */ }
 function closeDetailPanel() {
   currentIssueId = null;
@@ -1154,18 +1568,50 @@ function showMapPanel(d) {
   document.getElementById('map-panel').classList.add('open');
 }
 
-async function exportPDF() {
-  try {
-    const res = await fetch(`${API}/admin/export.pdf`);
-    if (!res.ok) throw new Error('PDF endpoint returned ' + res.status);
-    const blob = await res.blob();
-    const url  = URL.createObjectURL(blob);
-    const a    = Object.assign(document.createElement('a'), { href: url, download: `myregion-${new Date().toISOString().slice(0,10)}.pdf` });
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  } catch (e) { alert('PDF ixrac edilə bilmədi: ' + e.message); }
+function exportPDF() {
+  const docEl = document.querySelector('.report-doc');
+  if (!docEl) return;
+  const win = window.open('', '_blank');
+  win.document.write(`<!DOCTYPE html><html lang="az"><head>
+<meta charset="UTF-8">
+<title>Hesabat — MyRegion</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:'Inter',sans-serif;background:#fff;color:#1a1a1a;padding:32px;font-size:12px;}
+  @media print{body{padding:0;}@page{margin:20mm;size:A4;}}
+  .report-doc-header{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:12px;border-bottom:2px solid #B3001B;margin-bottom:16px;}
+  .report-doc-org{font-size:12px;font-weight:800;color:#B3001B;letter-spacing:0.4px;text-transform:uppercase;}
+  .report-doc-addr{font-size:10px;color:#666;margin-top:3px;line-height:1.5;}
+  .doc-id-badge{font-size:11px;font-weight:700;color:#B3001B;font-family:'JetBrains Mono',monospace;text-align:right;}
+  .doc-dates{font-size:10px;color:#888;margin-top:4px;text-align:right;line-height:1.6;}
+  .report-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px;}
+  .report-stat-box{border:1px solid #e8e8e8;border-radius:6px;padding:10px 8px;text-align:center;}
+  .rsb-label{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#999;margin-bottom:4px;}
+  .rsb-value{font-size:20px;font-weight:700;line-height:1;}
+  .rsb-value.accent{color:#B3001B;}
+  .report-section-title{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#B3001B;margin-bottom:8px;border-bottom:1px solid #efefef;padding-bottom:5px;}
+  .report-cat-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:16px;}
+  .report-cat-table th{text-align:left;padding:5px 8px;background:#f8f8f8;font-size:9px;font-weight:700;text-transform:uppercase;color:#888;}
+  .report-cat-table td{padding:6px 8px;border-bottom:0.5px solid #f0f0f0;color:#333;}
+  .report-cat-table td:not(:first-child){text-align:center;}
+  .report-bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+  .report-ai-box{background:#fff8f7;border:1px solid #fbd5d0;border-radius:6px;padding:10px 12px;font-size:11px;color:#555;line-height:1.6;}
+  .report-sig{display:flex;align-items:center;justify-content:space-between;margin-top:18px;padding-top:14px;border-top:0.5px solid #efefef;}
+  .report-sig-name{font-size:12px;font-weight:600;}
+  .report-sig-title{font-size:10px;color:#888;}
+  .report-stamp{width:54px;height:54px;border-radius:50%;border:2px solid #B3001B;display:flex;align-items:center;justify-content:center;text-align:center;font-size:6.5px;font-weight:700;color:#B3001B;text-transform:uppercase;line-height:1.3;padding:4px;flex-shrink:0;}
+  .priority-badge{padding:2px 6px;border-radius:4px;font-size:9px;font-weight:600;}
+  .priority-badge.kritik{background:rgba(179,0,27,0.08);color:#B3001B;}
+  .status-badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600;}
+  .status-badge.slate{background:rgba(100,116,139,0.1);color:#64748B;}
+</style>
+</head><body>`);
+  win.document.write(docEl.outerHTML);
+  win.document.write(`</body></html>`);
+  win.document.close();
+  win.onload = () => { win.focus(); win.print(); };
 }
 
 /* ===== LIVE TIME ===== */
@@ -1489,6 +1935,7 @@ const pages = {
   reports: 'page-reports',
   map: 'page-map',
   analytics: 'page-analytics',
+  orgs: 'page-orgs',
   settings: 'page-settings'
 };
 
