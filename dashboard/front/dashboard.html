@@ -1,741 +1,1078 @@
 <!DOCTYPE html>
 <html lang="az">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MyRegion — Admin Panel</title>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="dashboard.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MyRegion — Admin Panel</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="dashboard.css">
 </head>
+
 <body>
 
-<!-- ===== TOP BAR ===== -->
-<header class="topbar">
-  <div class="topbar-brand">
-    <span class="tb-logo">MyRegion</span>
-    <span class="tb-divider"></span>
-    <span class="tb-sub">Nərimanov Rayonu &middot; Admin Panel</span>
-  </div>
-  <div class="topbar-right">
-    <span class="tb-time" id="live-time"></span>
-    <button style="background:none;color:var(--slate-300);position:relative;padding:4px;" title="Bildirişlər">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
-      <span style="position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:var(--brand-500);border:1.5px solid var(--chrome);"></span>
-    </button>
-    <div style="display:flex;align-items:center;gap:10px;">
-      <div style="text-align:right;">
-        <div style="font-size:12px;font-weight:600;color:#fff;">Operator #021</div>
-        <div style="font-size:11px;color:var(--slate-400);">Nərimanov RİH</div>
-      </div>
-      <div class="topbar-avatar">AR</div>
+  <!-- ===== TOP BAR ===== -->
+  <header class="topbar">
+    <div class="topbar-brand">
+      <span class="tb-logo">MyRegion</span>
+      <span class="tb-divider"></span>
+      <span class="tb-sub">Nərimanov Rayonu &middot; Admin Panel</span>
     </div>
-  </div>
-</header>
-
-<div class="app-body">
-
-<!-- ===== SIDEBAR ===== -->
-<aside class="sidebar">
-  <div class="sidebar-header">
-    <div class="sidebar-brand">
-      <div class="sidebar-brand-icon">
-        <svg viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
-      </div>
-      <div>
-        <div class="sb-name">Nərimanov</div>
-        <div class="sb-role">Operator Console</div>
-      </div>
-    </div>
-  </div>
-  <nav class="sidebar-nav">
-    <div class="nav-item active" data-page="dashboard">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-      <span>İcmal</span>
-    </div>
-    <div class="nav-item" data-page="map">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
-      <span>Xəritə</span>
-    </div>
-    <div class="nav-item" data-page="reports">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-      <span>Müraciətlər</span>
-      <span class="nav-badge" id="nav-badge-reports">342</span>
-    </div>
-    <div class="nav-item" data-page="orgs">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-      <span>Qurumlar</span>
-    </div>
-    <div class="nav-item" data-page="analytics">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
-      <span>Hesabatlar</span>
-    </div>
-    <div class="nav-item" data-page="settings">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-      <span>Tənzimləmələr</span>
-    </div>
-  </nav>
-  <div class="sidebar-footer">
-    <div class="nav-item" style="margin-bottom:2px;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <span>Dəstək</span>
-    </div>
-    <div class="nav-item">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-      <span>Çıxış</span>
-    </div>
-  </div>
-</aside>
-
-<!-- ===== MAIN CONTENT ===== -->
-<main class="main-content">
-
-  <!-- DASHBOARD -->
-  <section class="page active" id="page-dashboard">
-
-    <!-- Alert Banner -->
-    <div class="alert-banner">
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-      <span class="alert-text">Gecikmiş müraciətlər: Diqqət tələb edən <strong>9 müraciət</strong> mövcuddur.</span>
-      <a class="alert-link" href="#" onclick="navigateTo('reports'); return false;">Bax →</a>
-    </div>
-
-    <!-- Stats Row -->
-    <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
-      <div class="stat-card-v2">
-        <div class="stat-label-top">AÇIQ MÜRACİƏTLƏR</div>
-        <div class="stat-num" id="stat-open">73</div>
-        <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg></div>
-      </div>
-      <div class="stat-card-v2">
-        <div class="stat-label-top">İCRADADIR</div>
-        <div class="stat-num" id="stat-inprogress">37</div>
-        <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1"/><line x1="9" y1="12" x2="15" y2="12"/><line x1="9" y1="16" x2="13" y2="16"/></svg></div>
-      </div>
-      <div class="stat-card-v2 overdue">
-        <div class="stat-label-top">GECİKMİŞ</div>
-        <div class="stat-num red" id="stat-overdue">9</div>
-        <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
-      </div>
-      <div class="stat-card-v2">
-        <div class="stat-label-top">ORTA HƏLL MÜDDƏTİ</div>
-        <div class="stat-num" id="stat-avgtime">6.2 <span style="font-size:15px;font-weight:500;color:var(--text-secondary);">gün</span></div>
-        <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
-      </div>
-    </div>
-
-    <!-- Middle: category bar + recent reports -->
-    <div class="dash-grid">
-      <div class="chart-card">
-        <div class="cc-header">
-          <h3>Kateqoriya üzrə müraciətlər</h3>
-          <button class="cc-dots">···</button>
+    <div class="topbar-right">
+      <span class="tb-time" id="live-time"></span>
+      <button style="background:none;color:var(--slate-300);position:relative;padding:4px;" title="Bildirişlər">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+          <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+        </svg>
+        <span
+          style="position:absolute;top:2px;right:2px;width:7px;height:7px;border-radius:50%;background:var(--brand-500);border:1.5px solid var(--chrome);"></span>
+      </button>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <div style="text-align:right;">
+          <div style="font-size:12px;font-weight:600;color:#fff;">Operator #021</div>
+          <div style="font-size:11px;color:var(--slate-400);">Nərimanov RİH</div>
         </div>
-        <div class="chart-wrap"><canvas id="catBarChart"></canvas></div>
+        <div class="topbar-avatar">AR</div>
       </div>
-      <div class="chart-card">
-        <div class="cc-header">
-          <h3>Son müraciətlər</h3>
-          <a class="cc-link" href="#" onclick="navigateTo('reports');return false;">Hamısına bax</a>
+    </div>
+  </header>
+
+  <div class="app-body">
+
+    <!-- ===== SIDEBAR ===== -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-brand">
+          <div class="sidebar-brand-icon">
+            <svg viewBox="0 0 24 24" fill="currentColor">
+              <rect x="3" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="3" width="7" height="7" rx="1" />
+              <rect x="14" y="14" width="7" height="7" rx="1" />
+              <rect x="3" y="14" width="7" height="7" rx="1" />
+            </svg>
+          </div>
+          <div>
+            <div class="sb-name">Nərimanov</div>
+            <div class="sb-role">Operator Console</div>
+          </div>
         </div>
-        <div>
-          <div class="recent-item">
-            <img class="recent-thumb" src="img/potholes.png" alt="Yol" style="object-fit:cover;" onerror="this.style.background='#374151';this.removeAttribute('src');">
-            <div class="recent-body">
-              <div class="recent-title">Yol örtüyünün təmiri</div>
-              <div class="recent-desc">Atatürk pr. 45 ünvanında çuxur...</div>
-              <div class="recent-meta">
-                <span class="status-badge slate" style="font-size:10px;padding:2px 8px;">Yeni</span>
-                <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Nərimanov</span>
-              </div>
+      </div>
+      <nav class="sidebar-nav">
+        <div class="nav-item active" data-page="dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" />
+            <rect x="14" y="3" width="7" height="7" />
+            <rect x="14" y="14" width="7" height="7" />
+            <rect x="3" y="14" width="7" height="7" />
+          </svg>
+          <span>İcmal</span>
+        </div>
+        <div class="nav-item" data-page="map">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6" />
+            <line x1="8" y1="2" x2="8" y2="18" />
+            <line x1="16" y1="6" x2="16" y2="22" />
+          </svg>
+          <span>Xəritə</span>
+        </div>
+        <div class="nav-item" data-page="reports">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+            <polyline points="14 2 14 8 20 8" />
+            <line x1="16" y1="13" x2="8" y2="13" />
+            <line x1="16" y1="17" x2="8" y2="17" />
+          </svg>
+          <span>Müraciətlər</span>
+          <span class="nav-badge" id="nav-badge-reports">342</span>
+        </div>
+        <div class="nav-item" data-page="orgs">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span>Qurumlar</span>
+        </div>
+        <div class="nav-item" data-page="analytics">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10" />
+            <line x1="12" y1="20" x2="12" y2="4" />
+            <line x1="6" y1="20" x2="6" y2="14" />
+          </svg>
+          <span>Hesabatlar</span>
+        </div>
+        <div class="nav-item" data-page="settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3" />
+            <path
+              d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+          <span>Tənzimləmələr</span>
+        </div>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="nav-item" style="margin-bottom:2px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <circle cx="12" cy="12" r="10" />
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span>Dəstək</span>
+        </div>
+        <div class="nav-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+            <polyline points="16 17 21 12 16 7" />
+            <line x1="21" y1="12" x2="9" y2="12" />
+          </svg>
+          <span>Çıxış</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ===== MAIN CONTENT ===== -->
+    <main class="main-content">
+
+      <!-- DASHBOARD -->
+      <section class="page active" id="page-dashboard">
+
+        <!-- Alert Banner -->
+        <div class="alert-banner">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+            <line x1="12" y1="9" x2="12" y2="13" />
+            <line x1="12" y1="17" x2="12.01" y2="17" />
+          </svg>
+          <span class="alert-text">Gecikmiş müraciətlər: Diqqət tələb edən <strong>9 müraciət</strong> mövcuddur.</span>
+          <a class="alert-link" href="#" onclick="navigateTo('reports'); return false;">Bax →</a>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="stats-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:16px;">
+          <div class="stat-card-v2">
+            <div class="stat-label-top">AÇIQ MÜRACİƏTLƏR</div>
+            <div class="stat-num" id="stat-open">73</div>
+            <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+              </svg></div>
+          </div>
+          <div class="stat-card-v2">
+            <div class="stat-label-top">İCRADADIR</div>
+            <div class="stat-num" id="stat-inprogress">37</div>
+            <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                <rect x="8" y="2" width="8" height="4" rx="1" />
+                <line x1="9" y1="12" x2="15" y2="12" />
+                <line x1="9" y1="16" x2="13" y2="16" />
+              </svg></div>
+          </div>
+          <div class="stat-card-v2 overdue">
+            <div class="stat-label-top">GECİKMİŞ</div>
+            <div class="stat-num red" id="stat-overdue">9</div>
+            <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg></div>
+          </div>
+          <div class="stat-card-v2">
+            <div class="stat-label-top">ORTA HƏLL MÜDDƏTİ</div>
+            <div class="stat-num" id="stat-avgtime">6.2 <span
+                style="font-size:15px;font-weight:500;color:var(--text-secondary);">gün</span></div>
+            <div class="stat-icon-r"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
+              </svg></div>
+          </div>
+        </div>
+
+        <!-- Middle: category bar + recent reports -->
+        <div class="dash-grid">
+          <div class="chart-card">
+            <div class="cc-header">
+              <h3>Kateqoriya üzrə müraciətlər</h3>
+              <button class="cc-dots">···</button>
             </div>
-            <div class="recent-time">8 dəq əvvəl</div>
+            <div class="chart-wrap"><canvas id="catBarChart"></canvas></div>
           </div>
-          <div class="recent-item">
-            <img class="recent-thumb" src="img/lighting.png" alt="İşıq" style="object-fit:cover;" onerror="this.style.background='#713F12';this.removeAttribute('src');">
-            <div class="recent-body">
-              <div class="recent-title">Küçə işıqlandırması</div>
-              <div class="recent-desc">Fətəli Xan Xoyski, fənar sıradan...</div>
-              <div class="recent-meta">
-                <span class="status-badge amber" style="font-size:10px;padding:2px 8px;">Yoxlamada</span>
-                <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Nərimanov</span>
-              </div>
-            </div>
-            <div class="recent-time">42 dəq əvvəl</div>
-          </div>
-          <div class="recent-item">
-            <img class="recent-thumb" src="img/drainage.png" alt="Su" style="object-fit:cover;" onerror="this.style.background='#1E3A5F';this.removeAttribute('src');">
-            <div class="recent-body">
-              <div class="recent-title">Su sızması</div>
-              <div class="recent-desc">Təbriz küçəsi, su xəttində qəza...</div>
-              <div class="recent-meta">
-                <span class="status-badge orange" style="font-size:10px;padding:2px 8px;">İcrada</span>
-                <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>Nərimanov</span>
-              </div>
-            </div>
-            <div class="recent-time">1 saat əvvəl</div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Bottom: problem categories donut + AI insight -->
-    <div class="dash-grid" style="margin-bottom:0;">
-      <div class="chart-card">
-        <div class="cc-header"><h3>Problem Kateqoriyaları</h3></div>
-        <div class="donut-layout">
-          <div class="donut-legend" id="dash-donut-legend">
-            <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#B3001B;"></span><span class="donut-legend-label">Yol</span><span class="donut-legend-pct">38%</span></div>
-            <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#E0A100;"></span><span class="donut-legend-label">Tullantı</span><span class="donut-legend-pct">24%</span></div>
-            <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#EA7317;"></span><span class="donut-legend-label">İşıq</span><span class="donut-legend-pct">21%</span></div>
-            <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#2563EB;"></span><span class="donut-legend-label">Su</span><span class="donut-legend-pct">17%</span></div>
-          </div>
-          <div class="donut-chart-wrap">
-            <canvas id="categoriesChart"></canvas>
-            <div class="donut-center">
-              <span class="dc-num" id="donut-total">119</span>
-              <span class="dc-label">CƏMİ</span>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div class="ai-insight-card">
-        <div class="ai-insight-bubble">
-          <span class="ai-icon">✦</span>
-          Al: Bu gün yol təmiri ilə bağlı müraciətlər 15% artıb.
-        </div>
-      </div>
-    </div>
-
-  </section>
-
-  <!-- REPORTS -->
-  <section class="page" id="page-reports">
-    <div class="page-header">
-      <div>
-        <h1>Müraciət İdarəetməsi</h1>
-        <p>Bütün müraciətləri idarə edin və izləyin</p>
-      </div>
-      <div style="display:flex;gap:8px;">
-        <button class="btn btn-primary" onclick="openDetailPanel()">+ Yeni müraciət</button>
-        <button class="btn btn-secondary" onclick="exportPDF()">PDF ixrac et</button>
-      </div>
-    </div>
-
-    <div class="controls-bar">
-      <div class="search-input-wrap">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input class="search-input" type="text" placeholder="Müraciət axtar...">
-      </div>
-      <select class="filter-select" id="filter-status"><option value="">Bütün statuslar</option></select>
-      <select class="filter-select" id="filter-category"><option value="">Bütün kateqoriyalar</option></select>
-      <select class="filter-select" id="filter-org"><option value="">Bütün şöbələr</option></select>
-      <div class="view-toggle" style="margin-left:auto;">
-        <button class="active" onclick="switchView('table')" id="btn-table-view">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>
-        </button>
-        <button onclick="switchView('card')" id="btn-card-view">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-        </button>
-      </div>
-    </div>
-
-    <div class="table-wrap" id="reports-table-view">
-      <table>
-        <thead>
-          <tr><th style="width:56px;"></th><th>Müraciət</th><th>Kateqoriya</th><th>Ünvan</th><th>Zona</th><th>Tarix</th><th>Status</th><th>Prioritet</th><th style="width:120px;">Əməliyyat</th></tr>
-        </thead>
-        <tbody id="reports-tbody"></tbody>
-      </table>
-    </div>
-
-    <div class="cards-grid" id="reports-card-view" style="display:none;"></div>
-  </section>
-
-  <!-- MAP -->
-  <section class="page" id="page-map" style="padding:0;">
-    <div class="map-page-wrap">
-      <div class="map-container" id="map-container">
-        <div class="map-filters">
-          <select class="filter-select" id="map-filter-cat" style="min-width:140px;"><option value="">Bütün problem növləri</option></select>
-          <select class="filter-select" id="map-filter-status" style="min-width:120px;"><option value="">Bütün statuslar</option></select>
-          <button class="btn btn-secondary btn-sm" onclick="toggleHeatmap()">İstilik xəritəsi</button>
-        </div>
-        <div id="map"></div>
-        <div class="map-legend">
-          <div class="legend-item"><span class="legend-dot" style="background:var(--status-red);"></span> Kritik (58)</div>
-          <div class="legend-item"><span class="legend-dot" style="background:var(--status-orange);"></span> Gözləmədə (342)</div>
-          <div class="legend-item"><span class="legend-dot" style="background:var(--status-green);"></span> Həll edildi (847)</div>
-        </div>
-      </div>
-      <div class="map-panel" id="map-panel">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
-          <h4 style="font-size:14px;font-weight:600;">Müraciətə baxış</h4>
-          <button style="background:none;color:var(--text-muted);font-size:20px;cursor:pointer;line-height:1;" onclick="document.getElementById('map-panel').classList.remove('open')">&times;</button>
-        </div>
-        <img class="mp-image" src="" alt="Müraciət şəkli" id="mp-img" onerror="this.style.display='none'" />
-        <div class="mp-title" id="mp-title">Marker seçin</div>
-        <div class="mp-id" id="mp-id"></div>
-        <div class="mp-desc" id="mp-desc"></div>
-        <div class="info-row"><span class="ir-label">Ünvan</span><span class="ir-value" id="mp-loc"></span></div>
-        <div class="info-row"><span class="ir-label">Zona</span><span class="ir-value" id="mp-zone"></span></div>
-        <div class="info-row"><span class="ir-label">Tarix</span><span class="ir-value" id="mp-date"></span></div>
-        <div class="info-row"><span class="ir-label">Status</span><span class="ir-value" id="mp-status"></span></div>
-        <div class="info-row"><span class="ir-label">Şöbə</span><span class="ir-value" id="mp-dept">Təyin edilməyib</span></div>
-        <div class="mp-actions">
-          <button class="btn btn-primary btn-sm" onclick="if(window._currentMapData) openDetailForIssue(window._currentMapData)">Ətraflı bax</button>
-          <button class="btn btn-secondary btn-sm">Təyin et</button>
-          <button class="btn btn-secondary btn-sm">Statusu yenilə</button>
-        </div>
-      </div>
-    </div>
-  </section>
-
-  <!-- HESABATLAR -->
-  <section class="page" id="page-analytics">
-    <div class="hesabat-layout">
-
-      <!-- Left: filter panel -->
-      <div class="hesabat-filters chart-card" style="padding:18px;">
-        <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Hesabat parametrləri</div>
-
-        <div class="form-group">
-          <label class="form-label">Tarix aralığı</label>
-          <div style="display:flex;align-items:center;gap:5px;">
-            <input type="date" class="filter-input" value="2023-10-01" style="flex:1;">
-            <span style="color:var(--text-muted);font-size:12px;">—</span>
-            <input type="date" class="filter-input" value="2023-10-24" style="flex:1;">
-          </div>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Müraciət statusu</label>
-          <select class="filter-select" style="width:100%;"><option>Bütün statuslar</option><option>Həll edildi</option><option>İcradadır</option><option>Gecikmiş</option></select>
-        </div>
-        <div class="form-group">
-          <label class="form-label">Kateqoriya</label>
-          <select class="filter-select" style="width:100%;"><option>Bütün kateqoriyalar</option><option>Yol</option><option>İşıqlandırma</option><option>Tullantı</option><option>Su</option></select>
-        </div>
-        <div class="form-group" style="margin-bottom:16px;">
-          <label class="form-label">İcra qurumu</label>
-          <select class="filter-select" style="width:100%;"><option>Bütün qurumlar</option><option>Azərsu ASC</option><option>Tamiz Şəhər ASC</option><option>Bakışıq MMC</option></select>
-        </div>
-        <button class="btn btn-primary" style="width:100%;justify-content:center;gap:6px;">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-          Ön baxışı yenilə
-        </button>
-
-        <hr class="form-divider">
-        <div class="filter-panel-section-title">Köhnə platformadan idxal</div>
-        <div class="import-drop-zone" onclick="openImportModal()">
-          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--text-muted);margin:0 auto 8px;display:block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-          <span class="drop-text">Faylı bura sürükləyin ya da <span style="color:var(--accent);">seçin</span></span>
-          <span class="drop-note">Yalnız CSV ya XLSX (Maks. 10MB)</span>
-        </div>
-
-        <div class="filter-panel-section-title">Sütun xəritələnməsi</div>
-        <div class="map-row"><span class="map-row-label">Başlıq</span><select class="filter-select" style="flex:1;font-size:11px;padding:5px 8px;"><option>title</option></select></div>
-        <div class="map-row"><span class="map-row-label">Kateqoriya</span><select class="filter-select" style="flex:1;font-size:11px;padding:5px 8px;"><option>category</option></select></div>
-        <div class="map-row"><span class="map-row-label">Tarix</span><select class="filter-select" style="flex:1;font-size:11px;padding:5px 8px;"><option>created_at</option></select></div>
-        <div class="map-row"><span class="map-row-label">Koordinat</span><select class="filter-select" style="flex:1;font-size:11px;padding:5px 8px;"><option>lat_lng</option></select></div>
-      </div>
-
-      <!-- Right: preview -->
-      <div class="hesabat-preview">
-        <div class="hesabat-preview-top">
-          <span class="preview-eyebrow">ÖN BAXIŞ</span>
-          <button class="btn btn-primary btn-sm" onclick="exportPDF()" style="gap:6px;">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            PDF İxrac et
-          </button>
-        </div>
-
-        <div class="report-doc">
-          <!-- Doc header -->
-          <div class="report-doc-header">
-            <div>
-              <div class="report-doc-org">Nərimanov Rayon İcra Hakimiyyəti</div>
-              <div class="report-doc-addr">Bakı şəhəri, Nərimanov rayonu, Fətəli Xan Xoyski küçəsi 124</div>
-              <div class="report-doc-addr">Dövr: 01.10.2023 — 24.10.2023 &nbsp;|&nbsp; Tarix: 25.10.2023</div>
+          <div class="chart-card">
+            <div class="cc-header">
+              <h3>Son müraciətlər</h3>
+              <a class="cc-link" href="#" onclick="navigateTo('reports');return false;">Hamısına bax</a>
             </div>
             <div>
-              <div class="doc-id-badge">HESABAT#2023/10-042</div>
-              <div class="doc-dates">Dövriyyə: 01.10.2023<br>Bağlama: 25.10.2023</div>
+              <div class="recent-item">
+                <img class="recent-thumb" src="img/potholes.png" alt="Yol" style="object-fit:cover;"
+                  onerror="this.style.background='#374151';this.removeAttribute('src');">
+                <div class="recent-body">
+                  <div class="recent-title">Yol örtüyünün təmiri</div>
+                  <div class="recent-desc">Atatürk pr. 45 ünvanında çuxur...</div>
+                  <div class="recent-meta">
+                    <span class="status-badge slate" style="font-size:10px;padding:2px 8px;">Yeni</span>
+                    <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>Nərimanov</span>
+                  </div>
+                </div>
+                <div class="recent-time">8 dəq əvvəl</div>
+              </div>
+              <div class="recent-item">
+                <img class="recent-thumb" src="img/lighting.png" alt="İşıq" style="object-fit:cover;"
+                  onerror="this.style.background='#713F12';this.removeAttribute('src');">
+                <div class="recent-body">
+                  <div class="recent-title">Küçə işıqlandırması</div>
+                  <div class="recent-desc">Fətəli Xan Xoyski, fənar sıradan...</div>
+                  <div class="recent-meta">
+                    <span class="status-badge amber" style="font-size:10px;padding:2px 8px;">Yoxlamada</span>
+                    <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>Nərimanov</span>
+                  </div>
+                </div>
+                <div class="recent-time">42 dəq əvvəl</div>
+              </div>
+              <div class="recent-item">
+                <img class="recent-thumb" src="img/drainage.png" alt="Su" style="object-fit:cover;"
+                  onerror="this.style.background='#1E3A5F';this.removeAttribute('src');">
+                <div class="recent-body">
+                  <div class="recent-title">Su sızması</div>
+                  <div class="recent-desc">Təbriz küçəsi, su xəttində qəza...</div>
+                  <div class="recent-meta">
+                    <span class="status-badge orange" style="font-size:10px;padding:2px 8px;">İcrada</span>
+                    <span class="recent-loc"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2">
+                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z" />
+                        <circle cx="12" cy="10" r="3" />
+                      </svg>Nərimanov</span>
+                  </div>
+                </div>
+                <div class="recent-time">1 saat əvvəl</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom: problem categories donut + AI insight -->
+        <div class="dash-grid" style="margin-bottom:0;">
+          <div class="chart-card">
+            <div class="cc-header">
+              <h3>Problem Kateqoriyaları</h3>
+            </div>
+            <div class="donut-layout">
+              <div class="donut-legend" id="dash-donut-legend">
+                <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#B3001B;"></span><span
+                    class="donut-legend-label">Yol</span><span class="donut-legend-pct">38%</span></div>
+                <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#E0A100;"></span><span
+                    class="donut-legend-label">Tullantı</span><span class="donut-legend-pct">24%</span></div>
+                <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#EA7317;"></span><span
+                    class="donut-legend-label">İşıq</span><span class="donut-legend-pct">21%</span></div>
+                <div class="donut-legend-item"><span class="donut-legend-dot" style="background:#2563EB;"></span><span
+                    class="donut-legend-label">Su</span><span class="donut-legend-pct">17%</span></div>
+              </div>
+              <div class="donut-chart-wrap">
+                <canvas id="categoriesChart"></canvas>
+                <div class="donut-center">
+                  <span class="dc-num" id="donut-total">119</span>
+                  <span class="dc-label">CƏMİ</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="ai-insight-card">
+            <div class="ai-insight-bubble">
+              <span class="ai-icon">✦</span>
+              Al: Bu gün yol təmiri ilə bağlı müraciətlər 15% artıb.
+            </div>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- REPORTS -->
+      <section class="page" id="page-reports">
+        <div class="page-header">
+          <div>
+            <h1>Müraciət İdarəetməsi</h1>
+            <p>Bütün müraciətləri idarə edin və izləyin</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-primary" onclick="openDetailPanel()">+ Yeni müraciət</button>
+            <button class="btn btn-secondary" onclick="exportPDF()">PDF ixrac et</button>
+          </div>
+        </div>
+
+        <div class="controls-bar">
+          <div class="search-input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input class="search-input" type="text" placeholder="Müraciət axtar...">
+          </div>
+          <select class="filter-select" id="filter-status">
+            <option value="">Bütün statuslar</option>
+          </select>
+          <select class="filter-select" id="filter-category">
+            <option value="">Bütün kateqoriyalar</option>
+          </select>
+          <select class="filter-select" id="filter-org">
+            <option value="">Bütün şöbələr</option>
+          </select>
+          <div class="view-toggle" style="margin-left:auto;">
+            <button class="active" onclick="switchView('table')" id="btn-table-view">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="18" height="18" rx="2" />
+                <line x1="3" y1="9" x2="21" y2="9" />
+                <line x1="3" y1="15" x2="21" y2="15" />
+                <line x1="9" y1="3" x2="9" y2="21" />
+              </svg>
+            </button>
+            <button onclick="switchView('card')" id="btn-card-view">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7" />
+                <rect x="14" y="3" width="7" height="7" />
+                <rect x="14" y="14" width="7" height="7" />
+                <rect x="3" y="14" width="7" height="7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="table-wrap" id="reports-table-view">
+          <table>
+            <thead>
+              <tr>
+                <th style="width:56px;"></th>
+                <th>Müraciət</th>
+                <th>Kateqoriya</th>
+                <th>Ünvan</th>
+                <th>Zona</th>
+                <th>Tarix</th>
+                <th>Status</th>
+                <th>Prioritet</th>
+                <th style="width:120px;">Əməliyyat</th>
+              </tr>
+            </thead>
+            <tbody id="reports-tbody"></tbody>
+          </table>
+        </div>
+
+        <div class="cards-grid" id="reports-card-view" style="display:none;"></div>
+      </section>
+
+      <!-- MAP -->
+      <section class="page" id="page-map" style="padding:0;">
+        <div class="map-page-wrap">
+          <div class="map-container" id="map-container">
+            <div class="map-filters">
+              <select class="filter-select" id="map-filter-cat" style="min-width:140px;">
+                <option value="">Bütün problem növləri</option>
+              </select>
+              <select class="filter-select" id="map-filter-status" style="min-width:120px;">
+                <option value="">Bütün statuslar</option>
+              </select>
+              <button class="btn btn-secondary btn-sm" onclick="toggleHeatmap()">İstilik xəritəsi</button>
+            </div>
+            <div id="map"></div>
+            <div class="map-legend">
+              <div class="legend-item"><span class="legend-dot" style="background:var(--status-red);"></span> Kritik
+                (58)</div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--status-orange);"></span>
+                Gözləmədə (342)</div>
+              <div class="legend-item"><span class="legend-dot" style="background:var(--status-green);"></span> Həll
+                edildi (847)</div>
+            </div>
+          </div>
+          <div class="map-panel" id="map-panel">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;">
+              <h4 style="font-size:14px;font-weight:600;">Müraciətə baxış</h4>
+              <button style="background:none;color:var(--text-muted);font-size:20px;cursor:pointer;line-height:1;"
+                onclick="document.getElementById('map-panel').classList.remove('open')">&times;</button>
+            </div>
+            <img class="mp-image" src="" alt="Müraciət şəkli" id="mp-img" onerror="this.style.display='none'" />
+            <div class="mp-title" id="mp-title">Marker seçin</div>
+            <div class="mp-id" id="mp-id"></div>
+            <div class="mp-desc" id="mp-desc"></div>
+            <div class="info-row"><span class="ir-label">Ünvan</span><span class="ir-value" id="mp-loc"></span></div>
+            <div class="info-row"><span class="ir-label">Zona</span><span class="ir-value" id="mp-zone"></span></div>
+            <div class="info-row"><span class="ir-label">Tarix</span><span class="ir-value" id="mp-date"></span></div>
+            <div class="info-row"><span class="ir-label">Status</span><span class="ir-value" id="mp-status"></span>
+            </div>
+            <div class="info-row"><span class="ir-label">Şöbə</span><span class="ir-value" id="mp-dept">Təyin
+                edilməyib</span></div>
+            <div class="mp-actions">
+              <button class="btn btn-primary btn-sm"
+                onclick="if(window._currentMapData) openDetailForIssue(window._currentMapData)">Ətraflı bax</button>
+              <button class="btn btn-secondary btn-sm">Təyin et</button>
+              <button class="btn btn-secondary btn-sm">Statusu yenilə</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- HESABATLAR -->
+      <section class="page" id="page-analytics">
+        <div class="hesabat-layout">
+
+          <!-- Left: filter panel -->
+          <div class="hesabat-filters chart-card" style="padding:18px;">
+            <div style="font-size:14px;font-weight:600;color:var(--text-primary);margin-bottom:16px;">Hesabat
+              parametrləri</div>
+
+            <div class="form-group">
+              <label class="form-label">Tarix aralığı</label>
+              <div style="display:flex;align-items:center;gap:5px;">
+                <input type="date" class="filter-input" value="2023-10-01" style="flex:1;">
+                <span style="color:var(--text-muted);font-size:12px;">—</span>
+                <input type="date" class="filter-input" value="2023-10-24" style="flex:1;">
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Müraciət statusu</label>
+              <select class="filter-select" style="width:100%;">
+                <option>Bütün statuslar</option>
+                <option>Həll edildi</option>
+                <option>İcradadır</option>
+                <option>Gecikmiş</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Kateqoriya</label>
+              <select class="filter-select" style="width:100%;">
+                <option>Bütün kateqoriyalar</option>
+                <option>Yol</option>
+                <option>İşıqlandırma</option>
+                <option>Tullantı</option>
+                <option>Su</option>
+              </select>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+              <label class="form-label">İcra qurumu</label>
+              <select class="filter-select" style="width:100%;">
+                <option>Bütün qurumlar</option>
+                <option>Azərsu ASC</option>
+                <option>Tamiz Şəhər ASC</option>
+                <option>Bakışıq MMC</option>
+              </select>
+            </div>
+            <button class="btn btn-primary" style="width:100%;justify-content:center;gap:6px;">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10" />
+                <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+              </svg>
+              Ön baxışı yenilə
+            </button>
+
+            <hr class="form-divider">
+            <div class="filter-panel-section-title">Köhnə platformadan idxal</div>
+            <div class="import-drop-zone" onclick="openImportModal()">
+              <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                style="color:var(--text-muted);margin:0 auto 8px;display:block;">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                <polyline points="17 8 12 3 7 8" />
+                <line x1="12" y1="3" x2="12" y2="15" />
+              </svg>
+              <span class="drop-text">Faylı bura sürükləyin ya da <span style="color:var(--accent);">seçin</span></span>
+              <span class="drop-note">Yalnız CSV ya XLSX (Maks. 10MB)</span>
+            </div>
+
+            <div class="filter-panel-section-title">Sütun xəritələnməsi</div>
+            <div class="map-row"><span class="map-row-label">Başlıq</span><select class="filter-select"
+                style="flex:1;font-size:11px;padding:5px 8px;">
+                <option>title</option>
+              </select></div>
+            <div class="map-row"><span class="map-row-label">Kateqoriya</span><select class="filter-select"
+                style="flex:1;font-size:11px;padding:5px 8px;">
+                <option>category</option>
+              </select></div>
+            <div class="map-row"><span class="map-row-label">Tarix</span><select class="filter-select"
+                style="flex:1;font-size:11px;padding:5px 8px;">
+                <option>created_at</option>
+              </select></div>
+            <div class="map-row"><span class="map-row-label">Koordinat</span><select class="filter-select"
+                style="flex:1;font-size:11px;padding:5px 8px;">
+                <option>lat_lng</option>
+              </select></div>
+          </div>
+
+          <!-- Right: preview -->
+          <div class="hesabat-preview">
+            <div class="hesabat-preview-top">
+              <span class="preview-eyebrow">ÖN BAXIŞ</span>
+              <button class="btn btn-primary btn-sm" onclick="exportPDF()" style="gap:6px;">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                  <polyline points="7 10 12 15 17 10" />
+                  <line x1="12" y1="15" x2="12" y2="3" />
+                </svg>
+                PDF İxrac et
+              </button>
+            </div>
+
+            <div class="report-doc">
+              <!-- Doc header -->
+              <div class="report-doc-header">
+                <div>
+                  <div class="report-doc-org">Nərimanov Rayon İcra Hakimiyyəti</div>
+                  <div class="report-doc-addr">Bakı şəhəri, Nərimanov rayonu, Fətəli Xan Xoyski küçəsi 124</div>
+                  <div class="report-doc-addr">Dövr: 01.10.2023 — 24.10.2023 &nbsp;|&nbsp; Tarix: 25.10.2023</div>
+                </div>
+                <div>
+                  <div class="doc-id-badge">HESABAT#2023/10-042</div>
+                  <div class="doc-dates">Dövriyyə: 01.10.2023<br>Bağlama: 25.10.2023</div>
+                </div>
+              </div>
+
+              <!-- Stats -->
+              <div class="report-stats-grid">
+                <div class="report-stat-box">
+                  <div class="rsb-label">Ümumi müraciətlər</div>
+                  <div class="rsb-value">1,248</div>
+                </div>
+                <div class="report-stat-box">
+                  <div class="rsb-label">Həll olunan</div>
+                  <div class="rsb-value">942</div>
+                </div>
+                <div class="report-stat-box">
+                  <div class="rsb-label">Həll dərəcəsi</div>
+                  <div class="rsb-value accent">75.4%</div>
+                </div>
+                <div class="report-stat-box">
+                  <div class="rsb-label">Orta icra müddəti</div>
+                  <div class="rsb-value" style="font-size:17px;">2.4 <span
+                      style="font-size:12px;font-weight:500;color:#999;">gün</span></div>
+                </div>
+              </div>
+
+              <!-- Category table -->
+              <div class="report-section-title">Kateqoriya üzrə bölgü</div>
+              <table class="report-cat-table">
+                <thead>
+                  <tr>
+                    <th>Kateqoriya</th>
+                    <th>Cəmi</th>
+                    <th>Həll olundu</th>
+                    <th>Gecikir</th>
+                    <th>Faiz</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Yol təsərrüfatı</td>
+                    <td>412</td>
+                    <td>310</td>
+                    <td>12</td>
+                    <td><strong>75.2%</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Mənzil kommunal</td>
+                    <td>265</td>
+                    <td>240</td>
+                    <td>4</td>
+                    <td><strong>84.2%</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Sanitar təmizlik</td>
+                    <td>198</td>
+                    <td>182</td>
+                    <td>0</td>
+                    <td><strong>91.9%</strong></td>
+                  </tr>
+                  <tr>
+                    <td>İşıqlandırma</td>
+                    <td>187</td>
+                    <td>134</td>
+                    <td>8</td>
+                    <td><strong>71.7%</strong></td>
+                  </tr>
+                  <tr>
+                    <td>Yaşıllıq</td>
+                    <td>142</td>
+                    <td>76</td>
+                    <td>3</td>
+                    <td><strong>53.5%</strong></td>
+                  </tr>
+                  <tr style="background:#f9f9f9;">
+                    <td><em style="color:#999;">Digər</em></td>
+                    <td>44</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <!-- Bottom grid -->
+              <div class="report-bottom-grid">
+                <div>
+                  <div class="report-section-title">Status statistikası</div>
+                  <div style="font-size:11px;color:#555;line-height:1;display:flex;flex-direction:column;gap:6px;">
+                    <div
+                      style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #f0f0f0;">
+                      <span>Həll olundu (Yaxşı)</span><strong>942</strong></div>
+                    <div
+                      style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #f0f0f0;">
+                      <span>İcrada</span><strong>204</strong></div>
+                    <div style="display:flex;justify-content:space-between;padding:5px 0;"><span>Ləğv
+                        edildi</span><strong>102</strong></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="report-section-title">Qısa xülasə</div>
+                  <div class="report-ai-box">"Oktyabr ayı ərzində müraciətlərin sayında əvvəlki aya nisbətən 12% artım
+                    müşahidə olunmuşdur. İkiqat artım 'Yol təsərrüfatı' kateqoriyası üzrə qeyd olundu. İcra dairəsi 7/4
+                    günlük göstəricisi ilə (79%) ümumi məmnuniyyət səviyyəsini qoruyur.</div>
+                </div>
+              </div>
+
+              <!-- Signature -->
+              <div class="report-sig">
+                <div>
+                  <div class="report-sig-name">A.H. Məmmədov</div>
+                  <div class="report-sig-title">İcra başçısı</div>
+                </div>
+                <div class="report-stamp">NƏRİMANOV<br>RİH<br>2023</div>
+              </div>
             </div>
           </div>
 
-          <!-- Stats -->
-          <div class="report-stats-grid">
-            <div class="report-stat-box"><div class="rsb-label">Ümumi müraciətlər</div><div class="rsb-value">1,248</div></div>
-            <div class="report-stat-box"><div class="rsb-label">Həll olunan</div><div class="rsb-value">942</div></div>
-            <div class="report-stat-box"><div class="rsb-label">Həll dərəcəsi</div><div class="rsb-value accent">75.4%</div></div>
-            <div class="report-stat-box"><div class="rsb-label">Orta icra müddəti</div><div class="rsb-value" style="font-size:17px;">2.4 <span style="font-size:12px;font-weight:500;color:#999;">gün</span></div></div>
+        </div>
+      </section>
+
+      <!-- QURUMLAR -->
+      <section class="page" id="page-orgs">
+        <div class="page-header" style="margin-bottom:18px;">
+          <div>
+            <h1>Məsul Qurumlar</h1>
+            <p>Nərimanov rayonu üzrə fəaliyyət göstərən əsas sahələrin monitorinqi</p>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="search-input-wrap" style="flex:0 0 240px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" y1="21" x2="16.65" y2="16.65" />
+              </svg>
+              <input class="search-input" type="text" placeholder="Qurum və ya xidmət axtar...">
+            </div>
+            <div class="view-toggle">
+              <button class="active">Grid Görünüşü</button>
+              <button>Siyahı Görünüşü</button>
+            </div>
+            <button class="btn btn-primary" style="gap:5px;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="12" y1="5" x2="12" y2="19" />
+                <line x1="5" y1="12" x2="19" y2="12" />
+              </svg>
+              Yeni Qurum
+            </button>
+          </div>
+        </div>
+
+        <div class="org-grid">
+          <!-- Azərsu ASC -->
+          <div class="org-card">
+            <div class="org-card-top">
+              <div class="org-card-icon" style="background:#2563EB;">A</div>
+              <div>
+                <div class="org-card-name">Azərsu ASC</div>
+                <div class="org-card-tag">Su Təchizatı</div>
+              </div>
+            </div>
+            <div class="org-stats-row">
+              <div>
+                <div class="org-stat-label">Açıq</div>
+                <div class="org-stat-val">42</div>
+              </div>
+              <div>
+                <div class="org-stat-label">Həll edilmiş</div>
+                <div class="org-stat-val">1,284</div>
+              </div>
+            </div>
+            <div class="org-prog-bar">
+              <div class="org-prog-fill" style="width:84%;background:#2563EB;"></div>
+            </div>
+            <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>84%</span></div>
+            <div class="org-card-footer"><span>⊙ Ortalama həll: 3.4 gün</span><a href="#">Detallar →</a></div>
           </div>
 
-          <!-- Category table -->
-          <div class="report-section-title">Kateqoriya üzrə bölgü</div>
-          <table class="report-cat-table">
-            <thead><tr><th>Kateqoriya</th><th>Cəmi</th><th>Həll olundu</th><th>Gecikir</th><th>Faiz</th></tr></thead>
+          <!-- Tamiz Şəhər ASC -->
+          <div class="org-card">
+            <div class="org-card-top">
+              <div class="org-card-icon" style="background:#1F9D55;">T</div>
+              <div>
+                <div class="org-card-name">Tamiz Şəhər ASC</div>
+                <div class="org-card-tag">Şəhər Təmizliyi</div>
+              </div>
+            </div>
+            <div class="org-stats-row">
+              <div>
+                <div class="org-stat-label">Açıq</div>
+                <div class="org-stat-val">18</div>
+              </div>
+              <div>
+                <div class="org-stat-label">Həll edilmiş</div>
+                <div class="org-stat-val">3,512</div>
+              </div>
+            </div>
+            <div class="org-prog-bar">
+              <div class="org-prog-fill" style="width:52%;background:#1F9D55;"></div>
+            </div>
+            <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>52%</span></div>
+            <div class="org-card-footer"><span>⊙ Ortalama həll: 1.2 gün</span><a href="#">Detallar →</a></div>
+          </div>
+
+          <!-- Bakışıq MMC -->
+          <div class="org-card">
+            <div class="org-card-top">
+              <div class="org-card-icon" style="background:#EA7317;">B</div>
+              <div>
+                <div class="org-card-name">Bakışıq MMC</div>
+                <div class="org-card-tag">Yol Tikintisi</div>
+              </div>
+            </div>
+            <div class="org-stats-row">
+              <div>
+                <div class="org-stat-label">Açıq</div>
+                <div class="org-stat-val">59</div>
+              </div>
+              <div>
+                <div class="org-stat-label">Həll edilmiş</div>
+                <div class="org-stat-val">894</div>
+              </div>
+            </div>
+            <div class="org-prog-bar">
+              <div class="org-prog-fill" style="width:93%;background:#EA7317;"></div>
+            </div>
+            <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span
+                style="color:var(--status-red);font-weight:600;">93%</span></div>
+            <div class="org-card-footer"><span>⊙ Ortalama həll: 4.8 gün</span><a href="#">Detallar →</a></div>
+          </div>
+
+          <!-- Abadlıq Şöbəsi -->
+          <div class="org-card">
+            <div class="org-card-top">
+              <div class="org-card-icon" style="background:#0D9488;">A</div>
+              <div>
+                <div class="org-card-name">Abadlıq Şöbəsi</div>
+                <div class="org-card-tag">Rayon Dairəsi</div>
+              </div>
+            </div>
+            <div class="org-stats-row">
+              <div>
+                <div class="org-stat-label">Açıq</div>
+                <div class="org-stat-val">24</div>
+              </div>
+              <div>
+                <div class="org-stat-label">Həll edilmiş</div>
+                <div class="org-stat-val">2,105</div>
+              </div>
+            </div>
+            <div class="org-prog-bar">
+              <div class="org-prog-fill" style="width:61%;background:#0D9488;"></div>
+            </div>
+            <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>61%</span></div>
+            <div class="org-card-footer"><span>⊙ Ortalama həll: 2.5 gün</span><a href="#">Detallar →</a></div>
+          </div>
+
+          <!-- MKTB -->
+          <div class="org-card">
+            <div class="org-card-top">
+              <div class="org-card-icon" style="background:#7C3AED;">M</div>
+              <div>
+                <div class="org-card-name">MKTB</div>
+                <div class="org-card-tag">Rayon Dairəsi</div>
+              </div>
+            </div>
+            <div class="org-stats-row">
+              <div>
+                <div class="org-stat-label">Açıq</div>
+                <div class="org-stat-val">112</div>
+              </div>
+              <div>
+                <div class="org-stat-label">Həll edilmiş</div>
+                <div class="org-stat-val">14,290</div>
+              </div>
+            </div>
+            <div class="org-prog-bar">
+              <div class="org-prog-fill" style="width:78%;background:#7C3AED;"></div>
+            </div>
+            <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>78%</span></div>
+            <div class="org-card-footer"><span>⊙ Ortalama həll: 3.1 gün</span><a href="#">Detallar →</a></div>
+          </div>
+
+          <!-- AI Analysis -->
+          <div class="org-card ai-card">
+            <div class="org-card-top">
+              <div class="org-card-icon" style="background:rgba(255,255,255,0.2);font-size:18px;">✦</div>
+              <div>
+                <div class="org-card-name">AI ANALİZ</div>
+                <div class="org-card-tag">Rayon Dairəsi</div>
+              </div>
+            </div>
+            <div class="org-ai-text">Bakışıq MMC son 48 saatda eyni açıq müraciətlər 15% artıb. Resurs bölüşdürməsi
+              tövsiyə olunur.</div>
+            <div class="org-stats-row">
+              <div>
+                <div class="org-stat-label">Açıq</div>
+                <div class="org-stat-val">112</div>
+              </div>
+              <div>
+                <div class="org-stat-label">Həll edilmiş</div>
+                <div class="org-stat-val">14,290</div>
+              </div>
+            </div>
+            <div class="org-prog-bar">
+              <div class="org-prog-fill" style="width:78%;background:rgba(255,255,255,0.7);"></div>
+            </div>
+            <div class="org-prog-label"><span>% yüklü</span><span>78%</span></div>
+            <button class="btn"
+              style="width:100%;justify-content:center;background:rgba(255,255,255,0.15);color:#fff;margin-top:auto;">Hesabat
+              Göndər</button>
+          </div>
+        </div>
+
+        <!-- Performance table -->
+        <div class="perf-wrap">
+          <h3>Performans Analitikası</h3>
+          <table class="perf-table">
+            <thead>
+              <tr>
+                <th>Qurum</th>
+                <th>Xidmət Sahəsi</th>
+                <th>Məmnuniyyət</th>
+                <th>Status</th>
+                <th>Finans</th>
+              </tr>
+            </thead>
             <tbody>
-              <tr><td>Yol təsərrüfatı</td><td>412</td><td>310</td><td>12</td><td><strong>75.2%</strong></td></tr>
-              <tr><td>Mənzil kommunal</td><td>265</td><td>240</td><td>4</td><td><strong>84.2%</strong></td></tr>
-              <tr><td>Sanitar təmizlik</td><td>198</td><td>182</td><td>0</td><td><strong>91.9%</strong></td></tr>
-              <tr><td>İşıqlandırma</td><td>187</td><td>134</td><td>8</td><td><strong>71.7%</strong></td></tr>
-              <tr><td>Yaşıllıq</td><td>142</td><td>76</td><td>3</td><td><strong>53.5%</strong></td></tr>
-              <tr style="background:#f9f9f9;"><td><em style="color:#999;">Digər</em></td><td>44</td><td>—</td><td>—</td><td>—</td></tr>
+              <tr>
+                <td><strong>Azərsu ASC</strong></td>
+                <td style="color:var(--text-muted);">Su Təchizatı və Kanalizasiya</td>
+                <td><span class="rating">★</span> 4.2</td>
+                <td><span class="pill-active">Aktiv</span></td>
+                <td>
+                  <div class="fin-bar">
+                    <div class="fin-fill" style="width:68%;background:#2563EB;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Tamiz Şəhər ASC</strong></td>
+                <td style="color:var(--text-muted);">Şəhər Sanitariyası</td>
+                <td><span class="rating">★</span> 4.7</td>
+                <td><span class="pill-active">Aktiv</span></td>
+                <td>
+                  <div class="fin-bar">
+                    <div class="fin-fill" style="width:85%;background:#1F9D55;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Bakışıq MMC</strong></td>
+                <td style="color:var(--text-muted);">Yol Tikintisi və Təmiri</td>
+                <td><span class="rating">★</span> 3.8</td>
+                <td><span class="pill-active">Aktiv</span></td>
+                <td>
+                  <div class="fin-bar">
+                    <div class="fin-fill" style="width:92%;background:#EA7317;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>Abadlıq Şöbəsi</strong></td>
+                <td style="color:var(--text-muted);">Yaşıllıq və Abadlaşdırma</td>
+                <td><span class="rating">★</span> 4.1</td>
+                <td><span class="pill-active">Aktiv</span></td>
+                <td>
+                  <div class="fin-bar">
+                    <div class="fin-fill" style="width:55%;background:#0D9488;"></div>
+                  </div>
+                </td>
+              </tr>
+              <tr>
+                <td><strong>MKTB</strong></td>
+                <td style="color:var(--text-muted);">Kommunal Xidmətlər</td>
+                <td><span class="rating">★</span> 3.5</td>
+                <td><span class="pill-active">Aktiv</span></td>
+                <td>
+                  <div class="fin-bar">
+                    <div class="fin-fill" style="width:78%;background:#7C3AED;"></div>
+                  </div>
+                </td>
+              </tr>
             </tbody>
           </table>
+        </div>
+      </section>
 
-          <!-- Bottom grid -->
-          <div class="report-bottom-grid">
-            <div>
-              <div class="report-section-title">Status statistikası</div>
-              <div style="font-size:11px;color:#555;line-height:1;display:flex;flex-direction:column;gap:6px;">
-                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #f0f0f0;"><span>Həll olundu (Yaxşı)</span><strong>942</strong></div>
-                <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid #f0f0f0;"><span>İcrada</span><strong>204</strong></div>
-                <div style="display:flex;justify-content:space-between;padding:5px 0;"><span>Ləğv edildi</span><strong>102</strong></div>
+      <!-- SETTINGS -->
+      <section class="page" id="page-settings">
+        <div class="page-header">
+          <div>
+            <h1>Tənzimləmələr</h1>
+            <p>Platforma konfiqurasiyasını idarə edin</p>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+          <div class="chart-card">
+            <h3>Bildiriş Tənzimləmələri</h3>
+            <div class="settings-row">
+              <label><input type="checkbox" checked style="accent-color:var(--accent);"> Yeni müraciətlər üçün e-poçt
+                bildirişi</label>
+              <label><input type="checkbox" checked style="accent-color:var(--accent);"> Kritik müraciətlər üçün push
+                bildiriş</label>
+              <label><input type="checkbox" style="accent-color:var(--accent);"> Həftəlik icmal hesabatı</label>
+              <label><input type="checkbox" checked style="accent-color:var(--accent);"> Status dəyişikliyi
+                xəbərdarlığı</label>
+            </div>
+          </div>
+          <div class="chart-card">
+            <h3>Hesab Məlumatı</h3>
+            <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
+              <div><label
+                  style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Ad</label><input
+                  class="search-input" value="Admin Rəhimov" style="width:100%;"></div>
+              <div><label
+                  style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">E-poçt</label><input
+                  class="search-input" value="admin@narimanov.gov.az" style="width:100%;"></div>
+              <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Şöbə</label>
+                <select class="filter-select" style="width:100%;">
+                  <option>Bələdiyyə Xidmətləri</option>
+                  <option>Yol Təmiri</option>
+                  <option>Sanitariya</option>
+                  <option>İnfrastruktur</option>
+                </select>
               </div>
-            </div>
-            <div>
-              <div class="report-section-title">Qısa xülasə</div>
-              <div class="report-ai-box">"Oktyabr ayı ərzində müraciətlərin sayında əvvəlki aya nisbətən 12% artım müşahidə olunmuşdur. İkiqat artım 'Yol təsərrüfatı' kateqoriyası üzrə qeyd olundu. İcra dairəsi 7/4 günlük göstəricisi ilə (79%) ümumi məmnuniyyət səviyyəsini qoruyur.</div>
+              <button class="btn btn-primary" style="align-self:flex-start;">Yadda saxla</button>
             </div>
           </div>
-
-          <!-- Signature -->
-          <div class="report-sig">
-            <div>
-              <div class="report-sig-name">A.H. Məmmədov</div>
-              <div class="report-sig-title">İcra başçısı</div>
-            </div>
-            <div class="report-stamp">NƏRİMANOV<br>RİH<br>2023</div>
-          </div>
         </div>
-      </div>
+      </section>
 
-    </div>
-  </section>
+    </main>
+  </div>
 
-  <!-- QURUMLAR -->
-  <section class="page" id="page-orgs">
-    <div class="page-header" style="margin-bottom:18px;">
-      <div>
-        <h1>Məsul Qurumlar</h1>
-        <p>Nərimanov rayonu üzrə fəaliyyət göstərən əsas sahələrin monitorinqi</p>
-      </div>
-      <div style="display:flex;align-items:center;gap:8px;">
-        <div class="search-input-wrap" style="flex:0 0 240px;">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input class="search-input" type="text" placeholder="Qurum və ya xidmət axtar...">
+  <!-- ===== IMPORT MODAL ===== -->
+  <div class="import-overlay" id="import-overlay" onclick="if(event.target===this)closeImportModal()">
+    <div class="import-modal">
+      <div class="import-modal-head">
+        <div>
+          <div class="import-modal-title">Müraciətləri idxal et</div>
+          <div class="import-modal-sub">CSV və ya TXT faylından kütləvi müraciət yükləməsi</div>
         </div>
-        <div class="view-toggle">
-          <button class="active">Grid Görünüşü</button>
-          <button>Siyahı Görünüşü</button>
-        </div>
-        <button class="btn btn-primary" style="gap:5px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Yeni Qurum
+        <button onclick="closeImportModal()"
+          style="background:none;color:var(--text-muted);padding:4px;border-radius:4px;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
         </button>
       </div>
-    </div>
+      <div class="import-modal-body">
+        <div class="import-drop-lg" onclick="document.getElementById('import-file').click()">
+          <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+            style="color:var(--brand-500);margin:0 auto 10px;display:block;">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="17 8 12 3 7 8" />
+            <line x1="12" y1="3" x2="12" y2="15" />
+          </svg>
+          <div style="font-size:14px;font-weight:500;margin-bottom:4px;color:var(--text-primary);">Faylı bura sürükləyin
+            ya da <span style="color:var(--accent);">seçin</span></div>
+          <div style="font-size:12px;color:var(--text-muted);">Yalnız .csv, .txt formatları uyğun gəlir. Max: 50MB</div>
+          <input id="import-file" type="file" accept=".csv,.txt" style="display:none;">
+        </div>
 
-    <div class="org-grid">
-      <!-- Azərsu ASC -->
-      <div class="org-card">
-        <div class="org-card-top">
-          <div class="org-card-icon" style="background:#2563EB;">A</div>
-          <div><div class="org-card-name">Azərsu ASC</div><div class="org-card-tag">Su Təchizatı</div></div>
+        <div class="import-preview">
+          <table class="import-tbl">
+            <thead>
+              <tr>
+                <th>external_id</th>
+                <th>kateqoriya</th>
+                <th>ciddilik</th>
+                <th>başlıq</th>
+                <th>koordinatlar</th>
+                <th>status</th>
+                <th>tarix</th>
+                <th>qurum</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9821</td>
+                <td>Yol tamiri</td>
+                <td><span class="priority-badge kritik" style="font-size:9px;padding:1px 6px;">CİDDİ</span></td>
+                <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Asfalt örtüyün d...</td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4093,
+                  49.8671</td>
+                <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
+                <td>12.10.2023</td>
+                <td>Azərsu</td>
+              </tr>
+              <tr>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9822</td>
+                <td>İşıqlandırma</td>
+                <td><span class="priority-badge orta" style="font-size:9px;padding:1px 6px;">ORTA</span></td>
+                <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Fənarlərin sönmə...</td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4100,
+                  49.8700</td>
+                <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
+                <td>12.10.2023</td>
+                <td>Bakışıq</td>
+              </tr>
+              <tr>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9823</td>
+                <td>Təmizlik</td>
+                <td><span class="priority-badge asagi" style="font-size:9px;padding:1px 6px;">Aşağı</span></td>
+                <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Tullantıların yığın...</td>
+                <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4090,
+                  49.8600</td>
+                <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
+                <td>11.10.2023</td>
+                <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;">Rayon Təmizlat...</td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-        <div class="org-stats-row">
-          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">42</div></div>
-          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">1,284</div></div>
-        </div>
-        <div class="org-prog-bar"><div class="org-prog-fill" style="width:84%;background:#2563EB;"></div></div>
-        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>84%</span></div>
-        <div class="org-card-footer"><span>⊙ Ortalama həll: 3.4 gün</span><a href="#">Detallar →</a></div>
-      </div>
 
-      <!-- Tamiz Şəhər ASC -->
-      <div class="org-card">
-        <div class="org-card-top">
-          <div class="org-card-icon" style="background:#1F9D55;">T</div>
-          <div><div class="org-card-name">Tamiz Şəhər ASC</div><div class="org-card-tag">Şəhər Təmizliyi</div></div>
+        <div class="import-ok">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12" />
+          </svg>
+          Məlumatların validasiyası tamamlandı
         </div>
-        <div class="org-stats-row">
-          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">18</div></div>
-          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">3,512</div></div>
-        </div>
-        <div class="org-prog-bar"><div class="org-prog-fill" style="width:52%;background:#1F9D55;"></div></div>
-        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>52%</span></div>
-        <div class="org-card-footer"><span>⊙ Ortalama həll: 1.2 gün</span><a href="#">Detallar →</a></div>
-      </div>
-
-      <!-- Bakışıq MMC -->
-      <div class="org-card">
-        <div class="org-card-top">
-          <div class="org-card-icon" style="background:#EA7317;">B</div>
-          <div><div class="org-card-name">Bakışıq MMC</div><div class="org-card-tag">Yol Tikintisi</div></div>
-        </div>
-        <div class="org-stats-row">
-          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">59</div></div>
-          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">894</div></div>
-        </div>
-        <div class="org-prog-bar"><div class="org-prog-fill" style="width:93%;background:#EA7317;"></div></div>
-        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span style="color:var(--status-red);font-weight:600;">93%</span></div>
-        <div class="org-card-footer"><span>⊙ Ortalama həll: 4.8 gün</span><a href="#">Detallar →</a></div>
-      </div>
-
-      <!-- Abadlıq Şöbəsi -->
-      <div class="org-card">
-        <div class="org-card-top">
-          <div class="org-card-icon" style="background:#0D9488;">A</div>
-          <div><div class="org-card-name">Abadlıq Şöbəsi</div><div class="org-card-tag">Rayon Dairəsi</div></div>
-        </div>
-        <div class="org-stats-row">
-          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">24</div></div>
-          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">2,105</div></div>
-        </div>
-        <div class="org-prog-bar"><div class="org-prog-fill" style="width:61%;background:#0D9488;"></div></div>
-        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>61%</span></div>
-        <div class="org-card-footer"><span>⊙ Ortalama həll: 2.5 gün</span><a href="#">Detallar →</a></div>
-      </div>
-
-      <!-- MKTB -->
-      <div class="org-card">
-        <div class="org-card-top">
-          <div class="org-card-icon" style="background:#7C3AED;">M</div>
-          <div><div class="org-card-name">MKTB</div><div class="org-card-tag">Rayon Dairəsi</div></div>
-        </div>
-        <div class="org-stats-row">
-          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">112</div></div>
-          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">14,290</div></div>
-        </div>
-        <div class="org-prog-bar"><div class="org-prog-fill" style="width:78%;background:#7C3AED;"></div></div>
-        <div class="org-prog-label"><span>% yüklü (kapasitə)</span><span>78%</span></div>
-        <div class="org-card-footer"><span>⊙ Ortalama həll: 3.1 gün</span><a href="#">Detallar →</a></div>
-      </div>
-
-      <!-- AI Analysis -->
-      <div class="org-card ai-card">
-        <div class="org-card-top">
-          <div class="org-card-icon" style="background:rgba(255,255,255,0.2);font-size:18px;">✦</div>
-          <div><div class="org-card-name">AI ANALİZ</div><div class="org-card-tag">Rayon Dairəsi</div></div>
-        </div>
-        <div class="org-ai-text">Bakışıq MMC son 48 saatda eyni açıq müraciətlər 15% artıb. Resurs bölüşdürməsi tövsiyə olunur.</div>
-        <div class="org-stats-row">
-          <div><div class="org-stat-label">Açıq</div><div class="org-stat-val">112</div></div>
-          <div><div class="org-stat-label">Həll edilmiş</div><div class="org-stat-val">14,290</div></div>
-        </div>
-        <div class="org-prog-bar"><div class="org-prog-fill" style="width:78%;background:rgba(255,255,255,0.7);"></div></div>
-        <div class="org-prog-label"><span>% yüklü</span><span>78%</span></div>
-        <button class="btn" style="width:100%;justify-content:center;background:rgba(255,255,255,0.15);color:#fff;margin-top:auto;">Hesabat Göndər</button>
-      </div>
-    </div>
-
-    <!-- Performance table -->
-    <div class="perf-wrap">
-      <h3>Performans Analitikası</h3>
-      <table class="perf-table">
-        <thead>
-          <tr><th>Qurum</th><th>Xidmət Sahəsi</th><th>Məmnuniyyət</th><th>Status</th><th>Finans</th></tr>
-        </thead>
-        <tbody>
-          <tr><td><strong>Azərsu ASC</strong></td><td style="color:var(--text-muted);">Su Təchizatı və Kanalizasiya</td><td><span class="rating">★</span> 4.2</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:68%;background:#2563EB;"></div></div></td></tr>
-          <tr><td><strong>Tamiz Şəhər ASC</strong></td><td style="color:var(--text-muted);">Şəhər Sanitariyası</td><td><span class="rating">★</span> 4.7</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:85%;background:#1F9D55;"></div></div></td></tr>
-          <tr><td><strong>Bakışıq MMC</strong></td><td style="color:var(--text-muted);">Yol Tikintisi və Təmiri</td><td><span class="rating">★</span> 3.8</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:92%;background:#EA7317;"></div></div></td></tr>
-          <tr><td><strong>Abadlıq Şöbəsi</strong></td><td style="color:var(--text-muted);">Yaşıllıq və Abadlaşdırma</td><td><span class="rating">★</span> 4.1</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:55%;background:#0D9488;"></div></div></td></tr>
-          <tr><td><strong>MKTB</strong></td><td style="color:var(--text-muted);">Kommunal Xidmətlər</td><td><span class="rating">★</span> 3.5</td><td><span class="pill-active">Aktiv</span></td><td><div class="fin-bar"><div class="fin-fill" style="width:78%;background:#7C3AED;"></div></div></td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <!-- SETTINGS -->
-  <section class="page" id="page-settings">
-    <div class="page-header">
-      <div><h1>Tənzimləmələr</h1><p>Platforma konfiqurasiyasını idarə edin</p></div>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-      <div class="chart-card">
-        <h3>Bildiriş Tənzimləmələri</h3>
-        <div class="settings-row">
-          <label><input type="checkbox" checked style="accent-color:var(--accent);"> Yeni müraciətlər üçün e-poçt bildirişi</label>
-          <label><input type="checkbox" checked style="accent-color:var(--accent);"> Kritik müraciətlər üçün push bildiriş</label>
-          <label><input type="checkbox" style="accent-color:var(--accent);"> Həftəlik icmal hesabatı</label>
-          <label><input type="checkbox" checked style="accent-color:var(--accent);"> Status dəyişikliyi xəbərdarlığı</label>
+        <div class="import-count-row">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10" />
+            <line x1="12" y1="8" x2="12" y2="12" />
+            <line x1="12" y1="16" x2="12.01" y2="16" />
+          </svg>
+          8 müraciət hazırdır
         </div>
       </div>
-      <div class="chart-card">
-        <h3>Hesab Məlumatı</h3>
-        <div style="display:flex;flex-direction:column;gap:10px;margin-top:12px;">
-          <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Ad</label><input class="search-input" value="Admin Rəhimov" style="width:100%;"></div>
-          <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">E-poçt</label><input class="search-input" value="admin@narimanov.gov.az" style="width:100%;"></div>
-          <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Şöbə</label>
-            <select class="filter-select" style="width:100%;"><option>Bələdiyyə Xidmətləri</option><option>Yol Təmiri</option><option>Sanitariya</option><option>İnfrastruktur</option></select>
-          </div>
-          <button class="btn btn-primary" style="align-self:flex-start;">Yadda saxla</button>
-        </div>
+      <div class="import-modal-foot">
+        <button class="btn btn-secondary" onclick="closeImportModal()">Ləğv et</button>
+        <button class="btn btn-primary" onclick="closeImportModal()">İdxal et →</button>
       </div>
-    </div>
-  </section>
-
-</main>
-</div>
-
-<!-- ===== DETAIL PANEL ===== -->
-<div class="detail-overlay" id="detail-overlay" onclick="closeDetailPanel()"></div>
-<div class="detail-panel" id="detail-panel">
-  <div class="dp-header">
-    <h4 style="font-size:16px;font-weight:600;">Müraciət Ətraflı</h4>
-    <button class="dp-close" onclick="closeDetailPanel()">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-  <div class="dp-body">
-    <div class="dp-image" style="background:var(--slate-50);display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px;">
-      <div style="text-align:center"><svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 8px;opacity:0.4;"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>Müraciət Şəkli</div>
-    </div>
-
-    <div class="dp-section">
-      <h4>Müraciət Məlumatı</h4>
-      <div class="dp-grid" id="dp-meta-grid">
-        <div class="dp-item"><div class="dp-label">Müraciət ID</div><div class="dp-value dp-api-id" style="font-family:'JetBrains Mono',monospace;color:var(--accent);">—</div></div>
-        <div class="dp-item"><div class="dp-label">Kateqoriya</div><div class="dp-value dp-api-cat">—<br><select class="filter-select" id="dp-cat-select" style="margin-top:4px;display:none;width:100%;"></select></div></div>
-        <div class="dp-item"><div class="dp-label">Ciddilik</div><div class="dp-value dp-api-sev">—<br><select class="filter-select" id="dp-sev-select" style="margin-top:4px;display:none;width:100%;"></select></div></div>
-        <div class="dp-item"><div class="dp-label">Prioritet</div><div class="dp-value" id="dp-priority-badge">—</div></div>
-        <div class="dp-item"><div class="dp-label">Status</div><div class="dp-value"><span class="status-badge slate" id="dp-status-badge">—</span></div></div>
-        <div class="dp-item"><div class="dp-label">Son tarix</div><div class="dp-value" id="dp-deadline">—</div></div>
-      </div>
-    </div>
-
-    <div class="dp-section">
-      <h4>Təsvir</h4>
-      <p id="dp-desc" style="font-size:13px;color:var(--text-secondary);line-height:1.6;">Müraciət seçin...</p>
-    </div>
-
-    <div class="dp-section">
-      <h4>Ünvan</h4>
-      <div class="dp-grid">
-        <div class="dp-item"><div class="dp-label">Koordinatlar</div><div class="dp-value" id="dp-coords" style="font-family:'JetBrains Mono',monospace;">—</div></div>
-        <div class="dp-item"><div class="dp-label">Ünvan</div><div class="dp-value" id="dp-location">—</div></div>
-        <div class="dp-item"><div class="dp-label">Statistik Zona</div><div class="dp-value" id="dp-zone">—</div></div>
-        <div class="dp-item"><div class="dp-label">Müraciət sayı</div><div class="dp-value" id="dp-report-count">—</div></div>
-      </div>
-    </div>
-
-    <div class="dp-section">
-      <h4>İdarəetmə</h4>
-      <div class="dp-actions">
-        <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Statusu yenilə</label>
-        <select id="dp-status-select"><option value="">Dəyişmə</option><option value="routed">Quruma yönləndirildi</option><option value="in_progress">İcradadır</option><option value="resolved">Həll edildi</option><option>İmtina edildi</option></select></div>
-        <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Şöbə təyin et</label>
-        <select id="dp-org-select"><option value="">Avtomatik</option></select></div>
-        <div><label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:4px;">Qeyd əlavə et</label>
-        <textarea id="dp-notes" placeholder="İnzibati qeyd daxil edin..."></textarea></div>
-        <div style="display:flex;gap:8px;margin-top:4px;">
-          <button class="btn btn-primary" onclick="approveCurrentIssue()">Təsdiqlə və yönləndir</button>
-          <button class="btn btn-secondary" onclick="advanceIssueStatus()">Statusu irəlilət</button>
-        </div>
-        <div style="margin-top:8px;display:flex;gap:8px;">
-          <button class="btn btn-secondary btn-sm" onclick="rejectCurrentIssue()" style="color:var(--status-red);border-color:var(--status-red);">İmtina et</button>
-        </div>
-        <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid var(--border);">
-          <label style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:6px;">Aidiyyəti qurumlar</label>
-          <div style="display:flex;flex-wrap:wrap;gap:6px;" id="dp-org-buttons"></div>
-        </div>
-      </div>
-    </div>
-
-    <div class="dp-section">
-      <h4>Müraciət ipliyi</h4>
-      <div class="dp-timeline" id="dp-thread"></div>
     </div>
   </div>
-</div>
 
-<!-- ===== IMPORT MODAL ===== -->
-<div class="import-overlay" id="import-overlay" onclick="if(event.target===this)closeImportModal()">
-  <div class="import-modal">
-    <div class="import-modal-head">
-      <div>
-        <div class="import-modal-title">Müraciətləri idxal et</div>
-        <div class="import-modal-sub">CSV və ya TXT faylından kütləvi müraciət yükləməsi</div>
-      </div>
-      <button onclick="closeImportModal()" style="background:none;color:var(--text-muted);padding:4px;border-radius:4px;">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
-    </div>
-    <div class="import-modal-body">
-      <div class="import-drop-lg" onclick="document.getElementById('import-file').click()">
-        <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color:var(--brand-500);margin:0 auto 10px;display:block;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        <div style="font-size:14px;font-weight:500;margin-bottom:4px;color:var(--text-primary);">Faylı bura sürükləyin ya da <span style="color:var(--accent);">seçin</span></div>
-        <div style="font-size:12px;color:var(--text-muted);">Yalnız .csv, .txt formatları uyğun gəlir. Max: 50MB</div>
-        <input id="import-file" type="file" accept=".csv,.txt" style="display:none;">
-      </div>
+  <!-- FAB -->
+  <button class="fab" onclick="openDetailPanel()" title="Yeni müraciət">+</button>
 
-      <div class="import-preview">
-        <table class="import-tbl">
-          <thead>
-            <tr><th>external_id</th><th>kateqoriya</th><th>ciddilik</th><th>başlıq</th><th>koordinatlar</th><th>status</th><th>tarix</th><th>qurum</th></tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9821</td>
-              <td>Yol tamiri</td>
-              <td><span class="priority-badge kritik" style="font-size:9px;padding:1px 6px;">CİDDİ</span></td>
-              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Asfalt örtüyün d...</td>
-              <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4093, 49.8671</td>
-              <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
-              <td>12.10.2023</td>
-              <td>Azərsu</td>
-            </tr>
-            <tr>
-              <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9822</td>
-              <td>İşıqlandırma</td>
-              <td><span class="priority-badge orta" style="font-size:9px;padding:1px 6px;">ORTA</span></td>
-              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Fənarlərin sönmə...</td>
-              <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4100, 49.8700</td>
-              <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
-              <td>12.10.2023</td>
-              <td>Bakışıq</td>
-            </tr>
-            <tr>
-              <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">EXT-9823</td>
-              <td>Təmizlik</td>
-              <td><span class="priority-badge asagi" style="font-size:9px;padding:1px 6px;">Aşağı</span></td>
-              <td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;">Tullantıların yığın...</td>
-              <td style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);">40.4090, 49.8600</td>
-              <td><span class="status-badge slate" style="font-size:9px;padding:1px 7px;">Yeni</span></td>
-              <td>11.10.2023</td>
-              <td style="max-width:100px;overflow:hidden;text-overflow:ellipsis;">Rayon Təmizlat...</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="import-ok">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        Məlumatların validasiyası tamamlandı
-      </div>
-      <div class="import-count-row">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-        8 müraciət hazırdır
-      </div>
-    </div>
-    <div class="import-modal-foot">
-      <button class="btn btn-secondary" onclick="closeImportModal()">Ləğv et</button>
-      <button class="btn btn-primary" onclick="closeImportModal()">İdxal et →</button>
-    </div>
-  </div>
-</div>
-
-<!-- FAB -->
-<button class="fab" onclick="openDetailPanel()" title="Yeni müraciət">+</button>
-
-<script src="dashboard.js"></script>
+  <script src="dashboard.js"></script>
 </body>
+
 </html>

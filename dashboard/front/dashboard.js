@@ -33,7 +33,27 @@ function priorityLabel(score) {
 let allReports = [];       // mapped from API
 let rawIssues = [];        // raw API items for detail panel
 let orgsList = [];         // from GET /admin/orgs
-let currentIssueId = null; // selected detail panel issue
+
+// Category to image mapping
+const CATEGORY_IMAGES = {
+  road_surface: 'img/potholes.png',
+  road_excavation: 'img/potholes.png',
+  sidewalk: 'img/sidewalk.png',
+  lighting: 'img/streetlights.png',
+  flooding: 'img/drainage.png',
+  ice: 'img/drainage.png',
+  park_equipment: 'img/swing.png',
+  // Default for other categories
+  facade: 'img/potholes.png',
+  green_zone: 'img/swing.png',
+  cleanliness: 'img/potholes.png',
+  waste: 'img/potholes.png',
+  signage: 'img/potholes.png',
+  storefront: 'img/potholes.png',
+  fountain: 'img/drainage.png',
+  construction_fence: 'img/potholes.png',
+  other: 'img/potholes.png'
+};
 
 function mapIssue(i) {
   const s = i.status;
@@ -73,9 +93,9 @@ async function loadIssues() {
     if (statsRes.ok) {
       const s = await statsRes.json();
       const el = id => document.getElementById(id);
-      if (el('stat-open'))       el('stat-open').textContent       = s.open ?? '73';
+      if (el('stat-open')) el('stat-open').textContent = s.open ?? '73';
       if (el('stat-inprogress')) el('stat-inprogress').textContent = s.by_status?.in_progress ?? '37';
-      if (el('stat-overdue'))    el('stat-overdue').textContent    = s.overdue ?? '9';
+      if (el('stat-overdue')) el('stat-overdue').textContent = s.overdue ?? '9';
       // Update charts
       if (s.by_category) updateCategoryChart(s.by_category);
     }
@@ -92,12 +112,12 @@ function populateFilterDropdowns() {
   const statusSel = document.getElementById('filter-status');
   const catSel = document.getElementById('filter-category');
   if (statusSel && statusSel.children.length <= 1) {
-    Object.entries(STATUS_LABEL).forEach(([k,v]) => {
+    Object.entries(STATUS_LABEL).forEach(([k, v]) => {
       statusSel.innerHTML += `<option value="${k}">${v}</option>`;
     });
   }
   if (catSel && catSel.children.length <= 1) {
-    Object.entries(CATEGORY_LABEL).forEach(([k,v]) => {
+    Object.entries(CATEGORY_LABEL).forEach(([k, v]) => {
       catSel.innerHTML += `<option value="${k}">${v}</option>`;
     });
   }
@@ -105,150 +125,24 @@ function populateFilterDropdowns() {
   const mapCat = document.getElementById('map-filter-cat');
   const mapSt = document.getElementById('map-filter-status');
   if (mapCat && mapCat.children.length <= 1) {
-    Object.entries(CATEGORY_LABEL).forEach(([k,v]) => {
+    Object.entries(CATEGORY_LABEL).forEach(([k, v]) => {
       mapCat.innerHTML += `<option value="${k}">${v}</option>`;
     });
   }
   if (mapSt && mapSt.children.length <= 1) {
-    Object.entries(STATUS_LABEL).forEach(([k,v]) => {
+    Object.entries(STATUS_LABEL).forEach(([k, v]) => {
       mapSt.innerHTML += `<option value="${k}">${v}</option>`;
     });
   }
 }
 
 function populateOrgDropdowns() {
-  const sel = document.getElementById('dp-org-select');
   const orgSel = document.getElementById('filter-org');
-  if (sel) sel.innerHTML = '<option value="">Avtomatik</option>' + orgsList.map(o => `<option value="${o.key}">${o.name_az}</option>`).join('');
   if (orgSel) orgSel.innerHTML = '<option value="">Bütün şöbələr</option>' + orgsList.map(o => `<option value="${o.key}">${o.name_az}</option>`).join('');
-}
-
-/* ===== Admin Actions ===== */
-async function approveCurrentIssue() {
-  if (!currentIssueId) return;
-  const fd = new FormData();
-  const sev = document.getElementById('dp-sev-select')?.value;
-  const cat = document.getElementById('dp-cat-select')?.value;
-  const org = document.getElementById('dp-org-select')?.value;
-  const notes = document.getElementById('dp-notes')?.value;
-  if (sev) fd.append('severity', sev);
-  if (cat) fd.append('category', cat);
-  if (org) fd.append('org_key', org);
-  if (notes) fd.append('operator_notes', notes);
-  try {
-    const res = await fetch(`${API}/admin/issues/${currentIssueId}/approve`, { method: 'POST', body: fd });
-    if (res.ok) {
-      alert('Müraciət təsdiqləndi və quruma yönləndirildi.');
-      closeDetailPanel();
-      loadIssues();
-    } else {
-      const e = await res.json();
-      alert('Xəta: ' + (e.detail || res.statusText));
-    }
-  } catch (e) { alert('API xətası: ' + e.message); }
-}
-
-async function advanceIssueStatus() {
-  if (!currentIssueId) return;
-  const newStatus = document.getElementById('dp-status-select')?.value;
-  if (!newStatus) return alert('Status seçin.');
-  const fd = new FormData();
-  fd.append('status', newStatus);
-  try {
-    const res = await fetch(`${API}/admin/issues/${currentIssueId}/status`, { method: 'POST', body: fd });
-    if (res.ok) {
-      alert('Status yeniləndi.');
-      closeDetailPanel();
-      loadIssues();
-    } else {
-      const e = await res.json();
-      alert('Xəta: ' + (e.detail || res.statusText));
-    }
-  } catch (e) { alert('API xətası: ' + e.message); }
-}
-
-async function rejectCurrentIssue() {
-  if (!currentIssueId) return;
-  const reason = prompt('İmtina səbəbini daxil edin (Azərbaycan dilində):');
-  if (!reason) return;
-  const fd = new FormData();
-  fd.append('rejection_reason_az', reason);
-  try {
-    const res = await fetch(`${API}/admin/issues/${currentIssueId}/reject`, { method: 'POST', body: fd });
-    if (res.ok) {
-      alert('Müraciət imtina edildi.');
-      closeDetailPanel();
-      loadIssues();
-    } else {
-      const e = await res.json();
-      alert('Xəta: ' + (e.detail || res.statusText));
-    }
-  } catch (e) { alert('API xətası: ' + e.message); }
-}
-
-/* ===== Detail Panel ===== */
-async function openDetailForIssue(report) {
-  currentIssueId = report._api_id;
-  document.getElementById('detail-overlay').classList.add('open');
-  document.getElementById('detail-panel').classList.add('open');
-  document.getElementById('dp-desc').textContent = report.desc;
-  document.getElementById('dp-coords').textContent = report.location;
-  document.getElementById('dp-location').textContent = report.zone;
-  document.getElementById('dp-zone').textContent = report.zone;
-  document.getElementById('dp-report-count').textContent = report.report_count || '—';
-  document.getElementById('dp-deadline').textContent = report.date;
-  document.querySelector('.dp-api-id').textContent = '#' + report.id;
-  document.querySelector('.dp-api-cat').childNodes[0].textContent = report.cat;
-  document.querySelector('.dp-api-sev').childNodes[0].textContent = report.severity || '—';
-  document.getElementById('dp-priority-badge').innerHTML = `<span class="priority-badge ${report.priority}">${report.priority}</span>`;
-  document.getElementById('dp-status-badge').textContent = report.status;
-  document.getElementById('dp-status-badge').className = 'status-badge ' + report.mStatus;
-  document.getElementById('dp-notes').value = '';
-  // Fetch full issue detail for thread
-  try {
-    const res = await fetch(`${API}/issues/${currentIssueId}`);
-    if (res.ok) {
-      const issue = await res.json();
-      document.getElementById('dp-desc').textContent = issue.description_az || report.desc;
-      const threadEl = document.getElementById('dp-thread');
-      if (issue.reports) {
-        threadEl.innerHTML = issue.reports.map(r => `
-          <div class="timeline-item" ${r.is_root ? 'style="border-color:var(--accent);"' : ''}>
-            <div class="tl-content">
-              <div>${r.user_text || 'Müraciət əlavə edildi'}</div>
-              <div class="tl-time">${new Date(r.created_at).toLocaleDateString('az-AZ')}</div>
-            </div>
-          </div>`).join('');
-      }
-      // Populate override selects
-      const catSel = document.getElementById('dp-cat-select');
-      const sevSel = document.getElementById('dp-sev-select');
-      if (catSel) { catSel.style.display = 'inline-block'; catSel.innerHTML = Object.entries(CATEGORY_LABEL).map(([k,v]) => `<option value="${k}" ${k===issue.category?'selected':''}>${v}</option>`).join(''); }
-      if (sevSel) { sevSel.style.display = 'inline-block'; sevSel.innerHTML = Object.entries(SEVERITY_LABEL).map(([k,v]) => `<option value="${k}" ${k===issue.severity?'selected':''}>${v}</option>`).join(''); }
-      if (issue.org) {
-        document.getElementById('dp-org-select').value = issue.org.key || '';
-      }
-    }
-  } catch {}
-  // Render org quick-action buttons
-  const orgBtns = document.getElementById('dp-org-buttons');
-  if (orgBtns) {
-    orgBtns.innerHTML = orgsList.map(o => {
-      const colors = ['#B3001B','#D5505F','#C42032','#2563EB','#1E3A8A','#E0A100','#EA7317','#1F9D55','#64748B'];
-      const c = colors[orgsList.indexOf(o) % colors.length];
-      return `<button class="btn btn-xs" style="background:${c};color:#fff;" onclick="window.open('mailto:${o.key === 'azersu' || o.key === 'azeriqaz' ? '' : o.contact_hint || ''}?subject=' + encodeURIComponent('Nərimanov — Müraciət #${report.id}'),'_blank')" title="${o.contact_hint || o.name_az}">${o.name_az}</button>`;
-    }).join('');
-  }
 }
 
 function openImportModal() { document.getElementById('import-overlay').classList.add('open'); }
 function closeImportModal() { document.getElementById('import-overlay').classList.remove('open'); }
-function openDetailPanel() { closeDetailPanel(); /* replaced by openDetailForIssue */ }
-function closeDetailPanel() {
-  currentIssueId = null;
-  document.getElementById('detail-overlay').classList.remove('open');
-  document.getElementById('detail-panel').classList.remove('open');
-}
 
 /* ===== Map API Loading ===== */
 async function loadMapFromAPI() {
@@ -260,7 +154,7 @@ async function loadMapFromAPI() {
       const icon = L.divIcon({
         className: '',
         html: `<div style="width:14px;height:14px;border-radius:50%;background:${item.color};border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,0.3);"></div>`,
-        iconSize: [14,14], iconAnchor: [7,7],
+        iconSize: [14, 14], iconAnchor: [7, 7],
       });
       const marker = L.marker([item.lat, item.lng], { icon }).addTo(map);
       marker._reportData = {
@@ -275,27 +169,74 @@ async function loadMapFromAPI() {
       };
       markers.push(marker);
       marker.on('click', () => {
-        if (marker._reportData._api_id) openDetailForIssue(marker._reportData);
-        else showMapPanel(marker._reportData);
+        showMapPanel(marker._reportData);
       });
     });
-  } catch {}
+  } catch { }
 }
 
-function showMapPanel(d) {
+async function showMapPanel(d) {
   window._currentMapData = d;
   const get = id => document.getElementById(id);
-  if (d.img) { get('mp-img').src = d.img; get('mp-img').style.display = 'block'; }
-  else get('mp-img').style.display = 'none';
+
+  // Show basic info first
   get('mp-title').textContent = d.title;
   get('mp-id').textContent = 'ID: ' + d.id;
-  get('mp-desc').textContent = d.desc;
+  get('mp-desc').textContent = 'Yüklənir...';
   get('mp-loc').textContent = d.location;
   get('mp-zone').textContent = d.zone;
   get('mp-date').textContent = d.date;
-  const stMap = { orange:'İcradadır', green:'Həll edildi', blue:'Quruma yönləndirildi', amber:'Operator yoxlaması', slate:'Süni intellekt yoxlaması', red:'İmtina edildi' };
+
+  // Show category-based image
+  const category = d._cat || 'other';
+  const imagePath = CATEGORY_IMAGES[category] || CATEGORY_IMAGES['other'];
+  get('mp-img').src = imagePath;
+  get('mp-img').style.display = 'block';
+
+  const stMap = { orange: 'İcradadır', green: 'Həll edildi', blue: 'Quruma yönləndirildi', amber: 'Operator yoxlaması', slate: 'Süni intellekt yoxlaması', red: 'İmtina edildi' };
   get('mp-status').innerHTML = `<span class="status-badge ${d.mStatus}">${stMap[d.mStatus] || d.status || ''}</span>`;
+
   document.getElementById('map-panel').classList.add('open');
+
+  // Fetch detailed data from API
+  if (d._api_id) {
+    try {
+      const res = await fetch(`${API}/issues/${d._api_id}`);
+      if (res.ok) {
+        const issue = await res.json();
+
+        // Update with detailed info
+        get('mp-desc').textContent = issue.description_az || d.desc;
+
+        // Update image based on actual category from API
+        const apiCategory = issue.category || category;
+        const apiImagePath = CATEGORY_IMAGES[apiCategory] || CATEGORY_IMAGES['other'];
+        get('mp-img').src = apiImagePath;
+
+        // Update status with actual data
+        const statusLabel = STATUS_LABEL[issue.status] || issue.status;
+        const statusBadge = STATUS_BADGE[issue.status] || 'slate';
+        get('mp-status').innerHTML = `<span class="status-badge ${statusBadge}">${statusLabel}</span>`;
+
+        // Update date
+        if (issue.created_at) {
+          get('mp-date').textContent = new Date(issue.created_at).toLocaleDateString('az-AZ');
+        }
+
+        // Add category info
+        const catLabel = CATEGORY_LABEL[issue.category] || issue.category;
+        get('mp-desc').textContent = `${catLabel} — ${issue.description_az || d.desc}`;
+
+        // Add severity info
+        const sevLabel = SEVERITY_LABEL[issue.severity] || issue.severity;
+        if (sevLabel) {
+          get('mp-desc').textContent += ` (Ciddilik: ${sevLabel})`;
+        }
+      }
+    } catch (e) {
+      get('mp-desc').textContent = d.desc;
+    }
+  }
 }
 
 function exportPDF() {
@@ -348,14 +289,14 @@ function exportPDF() {
 function updateTime() {
   const now = new Date();
   document.getElementById('live-time').textContent =
-    now.toLocaleDateString('az-AZ', { day:'numeric', month:'long', year:'numeric' }) +
-    '  ' + now.toLocaleTimeString('az-AZ', { hour:'2-digit', minute:'2-digit' });
+    now.toLocaleDateString('az-AZ', { day: 'numeric', month: 'long', year: 'numeric' }) +
+    '  ' + now.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' });
 }
 updateTime();
 setInterval(updateTime, 30000);
 
 /* ===== DASHBOARD CHARTS (dynamic) ===== */
-const COLORS = ['#B3001B','#DC2626','#EA7317','#1F9D55','#E0A100','#2563EB','#64748B','#D5505F','#F0833A','#F2C14E','#8F0016','#1E3A8A','#6B0011','#0D9488','#7C3AED','#DB2777'];
+const COLORS = ['#B3001B', '#DC2626', '#EA7317', '#1F9D55', '#E0A100', '#2563EB', '#64748B', '#D5505F', '#F0833A', '#F2C14E', '#8F0016', '#1E3A8A', '#6B0011', '#0D9488', '#7C3AED', '#DB2777'];
 
 let catBarChart, catChart;
 
@@ -366,9 +307,10 @@ function initCharts() {
       type: 'bar',
       data: {
         labels: ['Yol', 'İşıq', 'Tullantı', 'Su'],
-        datasets: [{ data: [28, 15, 18, 12], backgroundColor: ['#B3001B','#E0A100','#EA7317','#2563EB'], borderRadius: 6, borderSkipped: false }]
+        datasets: [{ data: [28, 15, 18, 12], backgroundColor: ['#B3001B', '#E0A100', '#EA7317', '#2563EB'], borderRadius: 6, borderSkipped: false }]
       },
-      options: { responsive: true, maintainAspectRatio: false,
+      options: {
+        responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
           x: { grid: { display: false }, ticks: { color: '#8C95A6', font: { size: 12 } } },
@@ -381,8 +323,9 @@ function initCharts() {
   if (catCtx) {
     catChart = new Chart(catCtx.getContext('2d'), {
       type: 'doughnut',
-      data: { labels: ['Yol','Tullantı','İşıq','Su'], datasets: [{ data: [38, 24, 21, 17], backgroundColor: ['#B3001B','#E0A100','#EA7317','#2563EB'], borderWidth: 0 }] },
-      options: { responsive: true, maintainAspectRatio: false, cutout: '70%',
+      data: { labels: ['Yol', 'Tullantı', 'İşıq', 'Su'], datasets: [{ data: [38, 24, 21, 17], backgroundColor: ['#B3001B', '#E0A100', '#EA7317', '#2563EB'], borderWidth: 0 }] },
+      options: {
+        responsive: true, maintainAspectRatio: false, cutout: '70%',
         plugins: { legend: { display: false } }
       }
     });
@@ -391,10 +334,10 @@ function initCharts() {
 
 function updateCategoryChart(byCategory) {
   if (!catChart) return;
-  const entries = Object.entries(byCategory).sort((a,b) => b[1] - a[1]).slice(0, 6);
-  const total = entries.reduce((s,[,v]) => s+v, 0);
+  const entries = Object.entries(byCategory).sort((a, b) => b[1] - a[1]).slice(0, 6);
+  const total = entries.reduce((s, [, v]) => s + v, 0);
   catChart.data.labels = entries.map(([k]) => CATEGORY_LABEL[k] || k);
-  catChart.data.datasets[0].data = entries.map(([,v]) => v);
+  catChart.data.datasets[0].data = entries.map(([, v]) => v);
   catChart.data.datasets[0].backgroundColor = COLORS.slice(0, entries.length);
   catChart.update();
 
@@ -403,7 +346,7 @@ function updateCategoryChart(byCategory) {
 
   const legendEl = document.getElementById('dash-donut-legend');
   if (legendEl && entries.length > 0) {
-    legendEl.innerHTML = entries.slice(0, 4).map(([k,v], i) => {
+    legendEl.innerHTML = entries.slice(0, 4).map(([k, v], i) => {
       const pct = total > 0 ? Math.round(v / total * 100) : 0;
       return `<div class="donut-legend-item"><span class="donut-legend-dot" style="background:${COLORS[i]};"></span><span class="donut-legend-label">${CATEGORY_LABEL[k] || k}</span><span class="donut-legend-pct">${pct}%</span></div>`;
     }).join('');
@@ -412,10 +355,10 @@ function updateCategoryChart(byCategory) {
   // Update grouped bar chart
   if (catBarChart) {
     const groups = {
-      'Yol': (byCategory.road_surface||0)+(byCategory.road_excavation||0)+(byCategory.sidewalk||0),
-      'İşıq': (byCategory.lighting||0),
-      'Tullantı': (byCategory.waste||0)+(byCategory.cleanliness||0),
-      'Su': (byCategory.flooding||0)+(byCategory.ice||0),
+      'Yol': (byCategory.road_surface || 0) + (byCategory.road_excavation || 0) + (byCategory.sidewalk || 0),
+      'İşıq': (byCategory.lighting || 0),
+      'Tullantı': (byCategory.waste || 0) + (byCategory.cleanliness || 0),
+      'Su': (byCategory.flooding || 0) + (byCategory.ice || 0),
     };
     catBarChart.data.datasets[0].data = Object.values(groups);
     catBarChart.update();
@@ -429,8 +372,8 @@ function initAnalyticsCharts() {
   new Chart(barCtx.getContext('2d'), {
     type: 'bar',
     data: {
-      labels: ['B.e','Ç.a','Ç','C.a','C','Ş','B'],
-      datasets: [{ data: [38,42,35,48,52,22,15], backgroundColor: '#B3001B', borderRadius: 4, borderSkipped: false }]
+      labels: ['B.e', 'Ç.a', 'Ç', 'C.a', 'C', 'Ş', 'B'],
+      datasets: [{ data: [38, 42, 35, 48, 52, 22, 15], backgroundColor: '#B3001B', borderRadius: 4, borderSkipped: false }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
@@ -446,8 +389,8 @@ function initAnalyticsCharts() {
   new Chart(doughnutCtx, {
     type: 'doughnut',
     data: {
-      labels: ['Süni intellekt yoxlaması','Operator yoxlaması','Quruma yönləndirildi','İcradadır','Həll edildi','İmtina edildi'],
-      datasets: [{ data: [120,210,89,210,847,69], backgroundColor: ['#64748B','#E0A100','#2563EB','#EA7317','#1F9D55','#DC2626'], borderWidth: 0 }]
+      labels: ['Süni intellekt yoxlaması', 'Operator yoxlaması', 'Quruma yönləndirildi', 'İcradadır', 'Həll edildi', 'İmtina edildi'],
+      datasets: [{ data: [120, 210, 89, 210, 847, 69], backgroundColor: ['#64748B', '#E0A100', '#2563EB', '#EA7317', '#1F9D55', '#DC2626'], borderWidth: 0 }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
@@ -459,8 +402,8 @@ function initAnalyticsCharts() {
   new Chart(resTimeCtx, {
     type: 'bar',
     data: {
-      labels: ['Montin','N.Nərimanov','Gənclik','Ulduz','Atatürk P.','R.Stadionu','B.Zooparkı','M.prospektlər'],
-      datasets: [{ label: 'Orta həll müddəti', data: [10,21,11,40,16,14,0,30], backgroundColor: '#B3001B', borderRadius: 4, borderSkipped: false }]
+      labels: ['Montin', 'N.Nərimanov', 'Gənclik', 'Ulduz', 'Atatürk P.', 'R.Stadionu', 'B.Zooparkı', 'M.prospektlər'],
+      datasets: [{ label: 'Orta həll müddəti', data: [10, 21, 11, 40, 16, 14, 0, 30], backgroundColor: '#B3001B', borderRadius: 4, borderSkipped: false }]
     },
     options: {
       responsive: true, maintainAspectRatio: false,
@@ -476,8 +419,8 @@ function initAnalyticsCharts() {
   new Chart(geoCtx, {
     type: 'bar',
     data: {
-      labels: ['N. Nərimanov','Gənclik','Ulduz','Atatürk Parkı','M. prospektlər','Montin','R. Stadionu','B. Zooparkı'],
-      datasets: [{ label: 'Müraciət sayı', data: [6,4,3,3,2,1,1,0], backgroundColor: ['#B3001B','#E0A100','#2563EB','#EA7317','#1F9D55','#64748B','#DC2626','#BBC2CE'], borderRadius: 4, borderSkipped: false }]
+      labels: ['N. Nərimanov', 'Gənclik', 'Ulduz', 'Atatürk Parkı', 'M. prospektlər', 'Montin', 'R. Stadionu', 'B. Zooparkı'],
+      datasets: [{ label: 'Müraciət sayı', data: [6, 4, 3, 3, 2, 1, 1, 0], backgroundColor: ['#B3001B', '#E0A100', '#2563EB', '#EA7317', '#1F9D55', '#64748B', '#DC2626', '#BBC2CE'], borderRadius: 4, borderSkipped: false }]
     },
     options: {
       indexAxis: 'y',
@@ -493,14 +436,14 @@ function initAnalyticsCharts() {
 
 /* ===== STATISTIK ZONALAR ===== */
 const ZONES = [
-  { id: 'montin',        label: 'Montin',               lat: 40.396, lng: 49.849 },
-  { id: 'n-nerimanov',   label: 'Nəriman Nərimanov',   lat: 40.412, lng: 49.868 },
-  { id: 'genclik',       label: 'Gənclik',             lat: 40.403, lng: 49.855 },
-  { id: 'ulduz',         label: 'Ulduz',               lat: 40.418, lng: 49.864 },
-  { id: 'atat-park',     label: 'Atatürk Parkı',       lat: 40.407, lng: 49.850 },
-  { id: 'resp-stadion',  label: 'Respublika Stadionu', lat: 40.400, lng: 49.853 },
-  { id: 'zoo',           label: 'Bakı Zooparkı',       lat: 40.393, lng: 49.846 },
-  { id: 'merk-prosp',    label: 'Mərkəzi prospektlər', lat: 40.409, lng: 49.859 }
+  { id: 'montin', label: 'Montin', lat: 40.396, lng: 49.849 },
+  { id: 'n-nerimanov', label: 'Nəriman Nərimanov', lat: 40.412, lng: 49.868 },
+  { id: 'genclik', label: 'Gənclik', lat: 40.403, lng: 49.855 },
+  { id: 'ulduz', label: 'Ulduz', lat: 40.418, lng: 49.864 },
+  { id: 'atat-park', label: 'Atatürk Parkı', lat: 40.407, lng: 49.850 },
+  { id: 'resp-stadion', label: 'Respublika Stadionu', lat: 40.400, lng: 49.853 },
+  { id: 'zoo', label: 'Bakı Zooparkı', lat: 40.393, lng: 49.846 },
+  { id: 'merk-prosp', label: 'Mərkəzi prospektlər', lat: 40.409, lng: 49.859 }
 ];
 
 function assignZone(lat, lng) {
@@ -517,20 +460,20 @@ function assignZone(lat, lng) {
 let map, mapInitialized = false, heatmapOn = false, markers = [], heatLayers = [];
 
 const heatColorMap = {
-  'Bina fasadı': ['#FF6B7A','#F43F5E','#E11D48','#9F1239'],
-  'Zibil konteynerləri': ['#FFA726','#FB8C00','#EF6C00','#BF360C'],
-  'Subasma': ['#60A5FA','#3B82F6','#1D4ED8','#1E3A8A'],
-  'İşıqlandırma': ['#FACC15','#EAB308','#CA8A04','#713F12'],
-  'Təmizlik': ['#4ADE80','#22C55E','#16A34A','#064E3B'],
-  'Digər': ['#94A3B8','#64748B','#475569','#1E293B']
+  'Bina fasadı': ['#FF6B7A', '#F43F5E', '#E11D48', '#9F1239'],
+  'Zibil konteynerləri': ['#FFA726', '#FB8C00', '#EF6C00', '#BF360C'],
+  'Subasma': ['#60A5FA', '#3B82F6', '#1D4ED8', '#1E3A8A'],
+  'İşıqlandırma': ['#FACC15', '#EAB308', '#CA8A04', '#713F12'],
+  'Təmizlik': ['#4ADE80', '#22C55E', '#16A34A', '#064E3B'],
+  'Digər': ['#94A3B8', '#64748B', '#475569', '#1E293B']
 };
 
 function initMap() {
   if (mapInitialized) return;
   mapInitialized = true;
   map = L.map('map', { center: [40.4093, 49.8671], zoom: 14, zoomControl: true });
-  L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-    attribution: '&copy; OpenStreetMap',
+  L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+    attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community',
     maxZoom: 19
   }).addTo(map);
   // API-live markers are loaded by loadMapFromAPI after data arrives
@@ -551,7 +494,7 @@ function toggleHeatmap() {
         .filter(m => m._reportData?.cat === cat)
         .map(m => [m._reportData.lat, m._reportData.lng, 0.5]);
       if (points.length === 0) return;
-      const baseColors = heatColorMap[cat] || ['#F1F5F9','#CBD5E1','#64748B','#334155'];
+      const baseColors = heatColorMap[cat] || ['#F1F5F9', '#CBD5E1', '#64748B', '#334155'];
       const layer = L.heatLayer(points, {
         radius: 35, blur: 20, maxZoom: 17, max: 0.7,
         gradient: { 0.20: baseColors[0], 0.45: baseColors[1], 0.65: baseColors[2], 0.85: baseColors[3] }
@@ -585,7 +528,7 @@ function renderReportsTable() {
   tbody.innerHTML = filtered.map(r => `
     <tr style="${r._status === 'resolved' ? 'background:rgba(31,157,85,0.04);' : ''}">
       <td><div style="width:48px;height:48px;border-radius:6px;background:var(--slate-100);display:flex;align-items:center;justify-content:center;font-size:20px;">📍</div></td>
-      <td><div class="td-title" style="cursor:pointer;" onclick="openDetailForIssue(allReports.find(x=>x.id==='${r.id}'))">${r.title}</div><div class="td-meta">ID: #${r.id}</div></td>
+      <td><div class="td-title">${r.title}</div><div class="td-meta">ID: #${r.id}</div></td>
       <td>${r.cat}</td>
       <td>${r.location}</td>
       <td>${r.zone}</td>
@@ -594,7 +537,6 @@ function renderReportsTable() {
       <td><span class="priority-badge ${r.priority}">${r.priority}</span></td>
       <td>
         <div class="row-actions" style="display:flex;flex-wrap:wrap;gap:4px;">
-          <button class="btn btn-secondary btn-xs" onclick="openDetailForIssue(allReports.find(x=>x.id==='${r.id}'))">Bax</button>
           <button class="btn btn-secondary btn-xs" onclick="quickResolve(${r._api_id})" ${r._status === 'resolved' ? 'disabled style="opacity:0.3;"' : ''}>${r._status === 'resolved' ? '✓ Həll edildi' : 'Həll et'}</button>
         </div>
       </td>
@@ -611,7 +553,7 @@ function renderReportsCards() {
     <div class="report-card" style="${r._status === 'resolved' ? 'border-left:3px solid #1F9D55;' : ''}">
       <div style="height:150px;background:var(--slate-50);display:flex;align-items:center;justify-content:center;font-size:40px;">📍</div>
       <div class="report-card-body">
-        <h4 style="cursor:pointer;" onclick="openDetailForIssue(allReports.find(x=>x.id==='${r.id}'))">${r.title}</h4>
+        <h4>${r.title}</h4>
         <div class="rc-meta">ID: #${r.id} &middot; ${r.cat} &middot; ${r.zone}</div>
         <div class="rc-footer">
           <div style="display:flex;gap:6px;align-items:center;">
@@ -621,7 +563,6 @@ function renderReportsCards() {
           <div class="rc-meta">${r.date}</div>
         </div>
         <div style="display:flex;gap:6px;margin-top:10px;flex-wrap:wrap;">
-          <button class="btn btn-secondary btn-xs" onclick="openDetailForIssue(allReports.find(x=>x.id==='${r.id}'))">Bax</button>
           <button class="btn btn-secondary btn-xs" onclick="quickResolve(${r._api_id})" ${r._status === 'resolved' ? 'disabled style="opacity:0.3;"' : ''}>${r._status === 'resolved' ? '✓ Həll edildi' : 'Həll et'}</button>
         </div>
       </div>
@@ -637,7 +578,7 @@ async function quickResolve(issueId) {
   fd.append('status', 'resolved');
   try {
     await fetch(`${API}/admin/issues/${issueId}/status`, { method: 'POST', body: fd });
-  } catch {}
+  } catch { }
   loadIssues();
 }
 
