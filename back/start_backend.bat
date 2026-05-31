@@ -1,0 +1,9 @@
+@echo off
+echo Starting SafeX Backend Server...
+echo.
+echo Setting environment variables...
+set OPENWAVE_MOCK=1
+echo.
+echo Starting FastAPI server on port 8000...
+python -m uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+pause
