@@ -1,6 +1,7 @@
 import { Camera, Image, X } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../store';
+import { resolveLocation } from '../geolocate';
 
 export default function CameraScreen() {
   const { dispatch, navigate, toast } = useApp();
@@ -29,32 +30,13 @@ export default function CameraScreen() {
       })
       .catch(() => { if (alive) setDenied(true); });
 
-    // GPS — resolve location string via Nominatim, store lat/lng in draft
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        async pos => {
-          if (!alive) return;
-          const { latitude: lat, longitude: lng } = pos.coords;
-          let location = `${lat.toFixed(4)}°N, ${lng.toFixed(4)}°E`;
-          try {
-            const res = await fetch(
-              `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lng}&format=json&accept-language=az`,
-              { headers: { 'Accept-Language': 'az' } }
-            );
-            if (res.ok) {
-              const data = await res.json();
-              const a = data.address ?? {};
-              const road = a.road || a.pedestrian || a.footway || '';
-              const suburb = a.suburb || a.neighbourhood || a.city_district || '';
-              if (road || suburb) location = [road, suburb].filter(Boolean).join(', ');
-            }
-          } catch { /* keep coordinate fallback */ }
-          if (alive) dispatch({ type: 'SET_DRAFT', patch: { lat, lng, location, isLocationCustom: false } });
-        },
-        () => { /* permission denied or unavailable — keep default draft coords */ },
-        { enableHighAccuracy: true, timeout: 8000 }
-      );
-    }
+    // GPS — resolve once and store in draft (not gated on `alive`: the value
+    // should survive even if the user captures and navigates away quickly)
+    resolveLocation()
+      .then(({ lat, lng, location }) =>
+        dispatch({ type: 'SET_DRAFT', patch: { lat, lng, location, isLocationCustom: false } }),
+      )
+      .catch(() => { /* denied/unavailable — keep default draft coords */ });
 
     return () => {
       alive = false;

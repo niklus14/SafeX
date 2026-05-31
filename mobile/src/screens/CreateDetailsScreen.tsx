@@ -1,11 +1,30 @@
-import { ArrowLeft, Camera, Check, MapPin, Send } from 'lucide-react';
+import { ArrowLeft, Camera, Check, Loader, MapPin, Send } from 'lucide-react';
+import { useEffect, useState } from 'react';
 import { useApp } from '../store';
+import { resolveLocation } from '../geolocate';
 
 const CATEGORIES = ['Yol Təmiri', 'Fontan Təmiri', 'Sanitariya və Təmizlik', 'Qəzalı İşıq'];
 
 export default function CreateDetailsScreen() {
   const { state, dispatch, navigate } = useApp();
   const { draft } = state;
+  const [locating, setLocating] = useState(false);
+
+  // Resolve real GPS on mount (camera capture may have navigated away before
+  // the high-accuracy fix landed; this screen stays open long enough).
+  function fetchLocation() {
+    setLocating(true);
+    resolveLocation()
+      .then(({ lat, lng, location }) =>
+        dispatch({ type: 'SET_DRAFT', patch: { lat, lng, location, isLocationCustom: false } }),
+      )
+      .catch(() => { /* denied/unavailable — keep whatever draft has */ })
+      .finally(() => setLocating(false));
+  }
+
+  useEffect(() => {
+    if (!draft.isLocationCustom) fetchLocation();
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   function setType(t: string) {
     dispatch({ type: 'SET_DRAFT', patch: { type: t } });
@@ -16,14 +35,14 @@ export default function CreateDetailsScreen() {
   }
 
   function toggleLocationMode() {
-    const custom = !draft.isLocationCustom;
-    dispatch({
-      type: 'SET_DRAFT',
-      patch: {
-        isLocationCustom: custom,
-        location: custom ? 'İstiqlaliyyət küçəsi, 24' : 'Nərimanov r., Təbriz küç.',
-      },
-    });
+    if (draft.isLocationCustom) {
+      // Switching back to automatic — re-run GPS instead of faking an address
+      dispatch({ type: 'SET_DRAFT', patch: { isLocationCustom: false } });
+      fetchLocation();
+    } else {
+      // Switching to manual entry — clear so the user types their own
+      dispatch({ type: 'SET_DRAFT', patch: { isLocationCustom: true, location: '' } });
+    }
   }
 
   function submit() {
@@ -124,10 +143,18 @@ export default function CreateDetailsScreen() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-[11px] font-bold text-brand-on-surface-variant uppercase tracking-wider">Cari məkan</p>
-                <p className="font-bold text-sm text-brand-on-surface leading-tight mt-1 truncate">{draft.location}</p>
-                <span className="inline-flex items-center gap-1 text-[10px] text-brand-primary font-semibold mt-1">
-                  <Check size={12} /> GPS vasitəsilə təyin olundu
-                </span>
+                {locating ? (
+                  <p className="font-bold text-sm text-brand-on-surface-variant/60 leading-tight mt-1 flex items-center gap-1.5">
+                    <Loader size={13} className="animate-spin" /> Məkan təyin olunur…
+                  </p>
+                ) : (
+                  <>
+                    <p className="font-bold text-sm text-brand-on-surface leading-tight mt-1 truncate">{draft.location}</p>
+                    <span className="inline-flex items-center gap-1 text-[10px] text-brand-primary font-semibold mt-1">
+                      <Check size={12} /> GPS vasitəsilə təyin olundu
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           )}

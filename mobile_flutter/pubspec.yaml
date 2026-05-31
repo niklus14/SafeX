@@ -1,0 +1,26 @@
+name: myregion
+description: myRegion — geolocation civic issue reporting (Nərimanov, Baku). Flutter port.
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.3.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  provider: ^6.1.2
+  http: ^1.2.2
+  image_picker: ^1.1.2
+  geolocator: ^13.0.1
+  geocoding: ^3.0.0
+  permission_handler: ^11.3.1
+  shared_preferences: ^2.3.2
+  google_fonts: ^6.2.1
+  url_launcher: ^6.3.0
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
