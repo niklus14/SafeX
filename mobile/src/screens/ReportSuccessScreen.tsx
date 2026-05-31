@@ -1,4 +1,4 @@
-import { ArrowRight, Award, Calendar, CheckCircle2, ClipboardList } from 'lucide-react';
+import { ArrowRight, Calendar, CheckCircle2, ClipboardList } from 'lucide-react';
 import { useApp } from '../store';
 
 export default function ReportSuccessScreen() {
@@ -58,28 +58,6 @@ export default function ReportSuccessScreen() {
           </div>
         </div>
 
-        {/* Cluster notice */}
-        <div className="w-full bg-[#ffe9e7]/50 p-4 rounded-xl border border-brand-primary/10 flex items-center gap-3 mb-6">
-          <div className="bg-brand-primary/10 p-2 rounded-lg text-brand-primary shrink-0">
-            <Award size={20} />
-          </div>
-          <p className="text-xs text-brand-on-surface-variant/90 leading-relaxed font-medium">
-            Bu müraciət sistemdə mövcud mövzuya əlavə edildi{' '}
-            <span className="text-brand-primary font-extrabold">(+1)</span>. Oxşar müraciətlər həlli sürətləndirir.
-          </p>
-        </div>
-
-        {/* Baku image */}
-        <div className="w-full rounded-2xl overflow-hidden aspect-video shadow-inner bg-[#fadbd9] relative mb-6">
-          <img
-            className="w-full h-full object-cover opacity-90"
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCh-DRufxO4GjAS6J9LMlFSj0kEJ7-PvF8zRzU2IEO4rA3AUdh2hOMST99QIkivwB0v1-ZLTg2Q4UTAH0JmfIes6NGTuev-aUFOw5IdwKDWlTuwg7nH0xiWtW_kwLYc1jmFLj3pFu9NjskBC1fqz495jl1f0HmwJIMe-SyZ9jScklvoImWEv8FhLa4HMSzmPME1L0LnLHgPmXKIKCE3rJZBKq-_TQqKNVcp5u6vmQaFe0S7nWk9qbRXTXhFe8dh1gvXdPRTCkeQsZk"
-            alt="Baku"
-          />
-          <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 text-white text-[11px] font-bold">
-            Müasir Bakı, abad şəhərimiz
-          </div>
-        </div>
       </main>
 
       <footer className="p-6 bg-[#fff8f7] border-t border-[#e5bdba]/15 space-y-3 shrink-0 max-w-md mx-auto w-full">
