@@ -15,7 +15,7 @@ export type Screen =
   | 'rewards'
   | 'profile';
 
-export type ReportStatus = 'İCRADADIR' | 'HƏLL EDİLDİ' | 'GÖZLƏYİR';
+export type ReportStatus = 'İCRADADIR' | 'HƏLL EDİLDİ' | 'GÖZLƏYİR' | 'İMTİNA EDİLDİ';
 export type SeverityLabel = 'Orta' | 'Yüksək' | 'Aşağı';
 
 export interface StatusStep {
@@ -50,6 +50,8 @@ export interface Report {
   reporterAvatar: string;
   reactionsCount: number;
   hasUserReacted: boolean;
+  upvotes: number;
+  upvotedByUser: boolean;
   comments: ReportComment[];
   steps: StatusStep[];
   isOwn?: boolean;

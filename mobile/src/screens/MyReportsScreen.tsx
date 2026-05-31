@@ -10,10 +10,11 @@ export default function MyReportsScreen() {
   const solvedCount = myReports.filter(r => r.status === 'HƏLL EDİLDİ').length;
 
   const statusLabel = (s: string) =>
-    s === 'HƏLL EDİLDİ' ? 'Həll edildi' : s === 'İCRADADIR' ? 'İcradadır' : 'Gözləyir';
+    s === 'HƏLL EDİLDİ' ? 'Həll edildi' : s === 'İCRADADIR' ? 'İcradadır' : s === 'İMTİNA EDİLDİ' ? 'İmtina edildi' : 'Gözləyir';
 
   const statusCls = (s: string) =>
-    s === 'HƏLL EDİLDİ'
+    s === 'İMTİNA EDİLDİ' ? 'bg-[#fce4ec] text-[#c62828]'
+    : s === 'HƏLL EDİLDİ'
       ? 'bg-[#e8f5e9] text-[#2e7d32]'
       : s === 'İCRADADIR'
       ? 'bg-[#fff0ef] text-brand-primary'

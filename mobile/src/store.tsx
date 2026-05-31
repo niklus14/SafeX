@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useReducer, useCallback, useRef } from 'react';
 import { Screen, Report, Reward, UserProfile, DraftReport, ReportComment } from './types';
-import { INITIAL_USER, INITIAL_REPORTS, INITIAL_REWARDS } from './data';
+import { INITIAL_USER } from './data';
 import { api, MyReportSummary, FeedIssue } from './api';
 
 // ── State ────────────────────────────────────────────────────────────────────
@@ -42,11 +42,11 @@ const INITIAL_STATE: AppState = {
     return s ? parseInt(s, 10) : null;
   })(),
   user: INITIAL_USER,
-  reports: INITIAL_REPORTS,
-  selectedReportId: '#88241',
+  reports: [],
+  selectedReportId: null,
   selectedOrganization: null,
   messageThread: null,
-  rewards: INITIAL_REWARDS,
+  rewards: [],
   apiIssueIds: {},
   draft: INITIAL_DRAFT,
   justCreatedId: null,
@@ -86,21 +86,22 @@ export type Action =
   | { type: 'SET_CHIP'; chip: AppState['activeChip'] }
   | { type: 'SUPPORT_REPORT'; id: string; userName: string; avatar: string }
   | { type: 'ADD_COMMENT'; reportId: string; comment: ReportComment }
+  | { type: 'TOGGLE_UPVOTE'; id: string }
   | { type: 'RESET' };
 
 // ── Shared label maps (used by both HYDRATE_BACKEND_REPORTS and LOAD_FEED) ───
 
-const BACKEND_STATUS: Record<string, 'GÖZLƏYİR' | 'İCRADADIR' | 'HƏLL EDİLDİ'> = {
+const BACKEND_STATUS: Record<string, 'GÖZLƏYİR' | 'İCRADADIR' | 'HƏLL EDİLDİ' | 'İMTİNA EDİLDİ'> = {
   ai_review: 'GÖZLƏYİR', manual_review: 'GÖZLƏYİR', routed: 'GÖZLƏYİR',
-  in_progress: 'İCRADADIR', resolved: 'HƏLL EDİLDİ', rejected: 'HƏLL EDİLDİ',
+  in_progress: 'İCRADADIR', resolved: 'HƏLL EDİLDİ', rejected: 'İMTİNA EDİLDİ',
 };
 
 const BACKEND_CAT: Record<string, string> = {
   facade: 'Bina fasadı', green_zone: 'Yaşıllıq zonası', flooding: 'Subasma',
-  ice: 'Buzlaşma', cleanliness: 'Təmizlik', waste: 'Zibil',
-  road_excavation: 'Yol qazıntısı', road_surface: 'Asfalt örtüyü',
-  signage: 'Reklam lövhəsi', storefront: 'Vitrin', park_equipment: 'Park avadanlığı',
-  fountain: 'Fontanlar', sidewalk: 'Səki', construction_fence: 'Tikinti hasarı',
+  ice: 'Buzlaşma', cleanliness: 'Təmizlik', waste: 'Zibil konteynerləri',
+  road_excavation: 'Qazılmış asfalt (bərpa)', road_surface: 'Asfalt örtüyü',
+  signage: 'Reklam lövhələri', storefront: 'Vitrinlər', park_equipment: 'Park avadanlığı',
+  fountain: 'Fontanlar', sidewalk: 'Səki və bardürlər', construction_fence: 'Tikinti hasarları',
   lighting: 'İşıqlandırma', other: 'Digər',
 };
 
@@ -186,6 +187,8 @@ function reducer(state: AppState, action: Action): AppState {
             reporterAvatar: state.user.avatar,
             reactionsCount: 1,
             hasUserReacted: true,
+            upvotes: 0,
+            upvotedByUser: false,
             comments: [],
             steps: [
               { name: 'Süni intellekt yoxlaması', status: 'completed', subtitle: 'Tamamlandı', time: '' },
@@ -216,7 +219,7 @@ function reducer(state: AppState, action: Action): AppState {
           time: created.toLocaleTimeString('az-AZ', { hour: '2-digit', minute: '2-digit' }),
           date: created.toLocaleDateString('az-AZ', { day: 'numeric', month: 'long' }),
           imageUrl: i.image_url ?? '',
-          descr: i.title_az ?? '',
+          descr: i.brief_desc_az ?? '',
           location: i.location_az || `${i.lat.toFixed(4)}°N, ${i.lng.toFixed(4)}°E`,
           severity: BACKEND_SEV[i.severity] ?? 'Orta',
           authority: '',
@@ -224,6 +227,8 @@ function reducer(state: AppState, action: Action): AppState {
           reporterAvatar: `https://picsum.photos/seed/u${i.id}/40/40`,
           reactionsCount: i.report_count,
           hasUserReacted: false,
+          upvotes: 0,
+          upvotedByUser: false,
           comments: [],
           steps: [],
           isOwn: ownIds.has(localId),
@@ -260,6 +265,8 @@ function reducer(state: AppState, action: Action): AppState {
         reporterAvatar: user.avatar,
         reactionsCount: 1,
         hasUserReacted: true,
+        upvotes: 0,
+        upvotedByUser: false,
         comments: [],
         steps: [
           {
@@ -361,6 +368,16 @@ function reducer(state: AppState, action: Action): AppState {
         ),
       };
 
+    case 'TOGGLE_UPVOTE':
+      return {
+        ...state,
+        reports: state.reports.map(r =>
+          r.id === action.id
+            ? { ...r, upvotedByUser: !r.upvotedByUser, upvotes: r.upvotes + (r.upvotedByUser ? -1 : 1) }
+            : r,
+        ),
+      };
+
     case 'RESET':
       return {
         ...INITIAL_STATE,
@@ -372,7 +389,7 @@ function reducer(state: AppState, action: Action): AppState {
           notificationsEnabled: true,
           language: 'AZ',
         },
-        reports: INITIAL_REPORTS,
+        reports: [],
         carouselIndex: 0,
         reportDetailView: 'thread' as const,
       };

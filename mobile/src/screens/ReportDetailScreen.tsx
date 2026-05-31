@@ -7,6 +7,7 @@ import {
   MessageSquare,
   Send,
   Star,
+  Users,
   X,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -37,9 +38,9 @@ export default function ReportDetailScreen() {
     setThreadLoading(true);
     api.getIssue(apiId).then(issue => {
       setIssueDetail(issue);
-      const statusMap: Record<string, 'İCRADADIR' | 'HƏLL EDİLDİ' | 'GÖZLƏYİR'> = {
+      const statusMap: Record<string, 'İCRADADIR' | 'HƏLL EDİLDİ' | 'GÖZLƏYİR' | 'İMTİNA EDİLDİ'> = {
         ai_review: 'GÖZLƏYİR', manual_review: 'GÖZLƏYİR', routed: 'GÖZLƏYİR',
-        in_progress: 'İCRADADIR', resolved: 'HƏLL EDİLDİ', rejected: 'HƏLL EDİLDİ',
+        in_progress: 'İCRADADIR', resolved: 'HƏLL EDİLDİ', rejected: 'İMTİNA EDİLDİ',
       };
       dispatch({
         type: 'UPDATE_REPORT',
@@ -80,12 +81,13 @@ export default function ReportDetailScreen() {
     dispatch({ type: 'ADD_COMMENT', reportId: report!.id, comment: c });
     setCommentText('');
     setCommentImage(null);
-    toast('Şərhiniz əlavə edildi! +2 Coin', 'success');
+    toast('Şərhiniz əlavə edildi! +2 Xal', 'success');
   }
 
   const statusColor =
-    report.status === 'HƏLL EDİLDİ' ? 'bg-[#e8f5e9] text-[#2e7d32]'
-    : report.status === 'İCRADADIR'  ? 'bg-[#fff0ef] text-brand-primary'
+    report.status === 'HƏLL EDİLDİ'     ? 'bg-[#e8f5e9] text-[#2e7d32]'
+    : report.status === 'İCRADADIR'     ? 'bg-[#fff0ef] text-brand-primary'
+    : report.status === 'İMTİNA EDİLDİ' ? 'bg-[#fce4ec] text-[#c62828]'
     : 'bg-brand-highest text-brand-on-surface-variant';
 
   const currentStep =
@@ -111,7 +113,7 @@ export default function ReportDetailScreen() {
         </button>
         <div className="flex items-center gap-2">
           <span className={`px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-wide ${statusColor}`}>
-            {report.status === 'HƏLL EDİLDİ' ? 'Həll edildi' : report.status === 'İCRADADIR' ? 'İcradadır' : 'Gözləyir'}
+            {report.status === 'HƏLL EDİLDİ' ? 'Həll edildi' : report.status === 'İCRADADIR' ? 'İcradadır' : report.status === 'İMTİNA EDİLDİ' ? 'İmtina edildi' : 'Gözləyir'}
           </span>
           <span className="text-[11px] font-bold text-brand-primary bg-[#fff0ef] px-2.5 py-1 rounded-full truncate max-w-[110px]">
             {report.category}
@@ -167,7 +169,7 @@ export default function ReportDetailScreen() {
                   </div>
                   <div className="min-w-0">
                     <p className="text-[13px] font-bold text-[#1c0f0e] leading-tight truncate">{report.reporterName}</p>
-                    <p className="text-[11px] text-[#a08280]">Əsas müraciət · {report.time}</p>
+                    <p className="text-[11px] text-[#a08280]">{report.time}</p>
                   </div>
                   <span className="ml-auto shrink-0">
                     <Star size={14} className="text-brand-primary fill-brand-primary/30" />
@@ -177,10 +179,12 @@ export default function ReportDetailScreen() {
                 {/* Title — bold headline */}
                 <h2 className="text-[16px] font-bold text-[#1c0f0e] leading-snug mb-2">{report.title}</h2>
 
-                {/* Description — secondary context */}
-                {report.descr && (
+                {/* Full description — prefer live API data, fall back to seed descr */}
+                {(issueDetail?.full_desc_az || report.descr) && (
                   <div className="border-l-2 border-[#e5bdba] pl-3 mb-3">
-                    <p className="text-[13px] text-[#8a6260] leading-relaxed italic">{report.descr}</p>
+                    <p className="text-[13px] text-[#8a6260] leading-relaxed italic">
+                      {issueDetail?.full_desc_az || report.descr}
+                    </p>
                   </div>
                 )}
 
@@ -239,17 +243,15 @@ export default function ReportDetailScreen() {
 
             {/* Cluster thread — additional reports on same issue */}
             {threadLoading && (
-              <div className="px-4 py-8 flex flex-col items-center gap-2">
+              <div className="px-4 py-8 flex items-center justify-center">
                 <div className="w-6 h-6 border-2 border-brand-primary/30 border-t-brand-primary rounded-full animate-spin" />
-                <span className="text-[11px] text-[#a08280]">Müraciətlər yüklənir...</span>
               </div>
             )}
             {!threadLoading && threadReports.length > 1 && (
               <div className="bg-white border-b border-[#e5bdba]/20">
-                <div className="px-4 py-3 border-b border-[#f0dbd9]/50">
-                  <p className="text-[11px] font-extrabold text-[#a08280] uppercase tracking-widest">
-                    {threadReports.length} Vətəndaş eyni yerdə bildirdi
-                  </p>
+                <div className="px-4 py-2.5 border-b border-[#f0dbd9]/50 flex items-center gap-1.5">
+                  <Users size={13} className="text-[#a08280]" />
+                  <span className="text-[11px] font-bold text-[#a08280]">{threadReports.length} bildiriş</span>
                 </div>
                 {threadReports.filter(r => !r.is_root).map((r, i) => (
                   <div key={r.id} className={`flex gap-3 px-4 py-3.5 ${i < threadReports.filter(x => !x.is_root).length - 1 ? 'border-b border-[#f0dbd9]/40' : ''}`}>

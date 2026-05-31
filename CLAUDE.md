@@ -136,6 +136,20 @@ docs/                        ← full spec: ARCHITECTURE, API, DATA_MODEL, BUILD
 
 The UI language is **Azerbaijani**. The currency unit is **Xal** (points) — not "Coin". Do not use "Coin" in any display string.
 
+#### UI/UX design philosophy
+
+**Minimal text, maximum intuition.** Every piece of text must earn its place. If colour, icon, layout, or interaction pattern can carry the meaning — remove the text. When in doubt, cut it.
+
+Concrete rules derived from how the owner designs:
+
+- **Progressive disclosure over upfront explanation.** Don't explain how something works on the default view. Put it behind a tap — an (i) icon, a bottom sheet, an expand action. The rewards earn-table is hidden until the user taps (i); the leaderboard award notice was removed from the default view entirely.
+- **Replace labels with live data.** "Bu ay top 20 vətəndaş xallarına görə sıralanır" became nothing — the badge slot was repurposed to show "Sizin yeriniz: #N", which is contextual and immediately useful.
+- **No disclaimers on screen.** Notices like "Coin pul deyil / Bu göstərici..." belong in onboarding, not repeated on every visit. Remove them.
+- **One screen, no scroll by default.** A screen's default state should fit within the visible area. Use `h-full flex-col` layouts and show only the essential slice of a list (top 3, not top 20). If more detail exists, let the user pull it — don't push it.
+- **Remove buttons that add complexity without clear value.** "Hamısını gör" was cut: if the full list isn't needed for the task, don't offer it.
+- **Shorten every label to the minimum that preserves meaning.** "Liderlik cədvəli / Bu ay top 20..." → "Aylıq liderlik cədvəli". One line, one concept.
+- **Use contextual cards instead of generic rows.** The user's own rank card (with "siz" pill + brand colour + `···` separator) conveys position in context without any explanatory text.
+
 #### Phone frame + overlay pattern
 
 On desktop, the app renders inside a 390×844 px phone frame: `#root` in `index.css` has `position: relative; overflow: hidden; border-radius: 44px`. This clips the content to the frame boundary.
