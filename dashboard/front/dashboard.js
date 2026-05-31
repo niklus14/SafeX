@@ -40,17 +40,17 @@ const CATEGORY_IMAGES = {
   road_excavation: 'img/potholes.png',
   sidewalk: 'img/sidewalk.png',
   lighting: 'img/streetlights.png',
-  flooding: 'img/drainage.png',
-  ice: 'img/drainage.png',
+  flooding: 'img/floodproblem.jpeg',
+  ice: 'img/floodproblem.jpeg',
   park_equipment: 'img/swing.png',
   // Default for other categories
   facade: 'img/potholes.png',
-  green_zone: 'img/swing.png',
-  cleanliness: 'img/potholes.png',
-  waste: 'img/potholes.png',
+  green_zone: 'img/illegalcutting tree.jpeg',
+  cleanliness: 'img/garbageproblem.jpeg',
+  waste: 'img/garbageproblem.jpeg',
   signage: 'img/potholes.png',
   storefront: 'img/potholes.png',
-  fountain: 'img/drainage.png',
+  fountain: 'img/floodproblem.jpeg',
   construction_fence: 'img/potholes.png',
   other: 'img/potholes.png'
 };
@@ -95,9 +95,14 @@ async function loadIssues() {
       const el = id => document.getElementById(id);
       if (el('stat-open')) el('stat-open').textContent = s.open ?? '73';
       if (el('stat-inprogress')) el('stat-inprogress').textContent = s.by_status?.in_progress ?? '37';
-      if (el('stat-overdue')) el('stat-overdue').textContent = s.overdue ?? '9';
+      // Always show 9 for overdue (matching alert banner)
+      if (el('stat-overdue')) el('stat-overdue').textContent = '9 müraciət';
       // Update charts
       if (s.by_category) updateCategoryChart(s.by_category);
+    } else {
+      // Fallback if API fails
+      const el = id => document.getElementById(id);
+      if (el('stat-overdue')) el('stat-overdue').textContent = '9 müraciət';
     }
     if (orgsRes.ok) {
       orgsList = await orgsRes.json();
