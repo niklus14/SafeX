@@ -13,3 +13,4 @@ async def upload_sensor_data(data: SensorReading):
         "status": "success",
         "risk_score": risk_score
     }
+#

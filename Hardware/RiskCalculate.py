@@ -18,3 +18,4 @@ def calculate_risk(data):
         score += 20
 
     return min(score, 100)
+#

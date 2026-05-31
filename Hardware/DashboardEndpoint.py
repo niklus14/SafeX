@@ -11,3 +11,4 @@ async def get_map_data():
             "risk": 72
         }
     ]
+#

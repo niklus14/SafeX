@@ -11,3 +11,4 @@ function markerColor(risk) {
 
   return "red";
 }
+//

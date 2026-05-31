@@ -21,3 +21,4 @@ CREATE TABLE sensor_readings (
 
     created_at TIMESTAMP DEFAULT NOW()
 );
+--

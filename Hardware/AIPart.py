@@ -8,3 +8,4 @@ def predict_failure(sensor_history):
         return "HIGH RISK"
 
     return "NORMAL"
+#

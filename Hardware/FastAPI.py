@@ -16,3 +16,4 @@ class SensorReading(BaseModel):
     tilt_y: float
 
     vibration: float
+#
