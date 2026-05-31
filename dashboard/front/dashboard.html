@@ -103,6 +103,14 @@
           </svg>
           <span>Qurumlar</span>
         </div>
+        <div class="nav-item" data-page="hardware">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2v20M2 12h20" />
+            <circle cx="12" cy="12" r="10" />
+            <path d="M12 6v6l4 2" />
+          </svg>
+          <span>Hardware Data</span>
+        </div>
         <div class="nav-item" data-page="analytics">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <line x1="18" y1="20" x2="18" y2="10" />
@@ -914,6 +922,129 @@
                     <div class="fin-fill" style="width:78%;background:#7C3AED;"></div>
                   </div>
                 </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- HARDWARE DATA -->
+      <section class="page" id="page-hardware">
+        <div class="page-header">
+          <div>
+            <h1>Hardware Data</h1>
+            <p>Sensor monitoring and real-time data</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-secondary" onclick="refreshHardwareData()">Yenilə</button>
+          </div>
+        </div>
+
+        <div class="stats-grid" style="grid-template-columns:repeat(2,1fr);margin-bottom:24px;">
+          <!-- Water Level Card -->
+          <div class="stat-card-v2">
+            <div class="stat-label-top">SU SƏVİYYƏSİ</div>
+            <div class="hardware-gauge-container">
+              <div class="water-tank">
+                <div class="water" id="water-level" style="height: 65%;">
+                  <div class="water-surface"></div>
+                  <div class="water-waves"></div>
+                </div>
+                <div class="tank-percentage" id="water-percent">65%</div>
+              </div>
+            </div>
+            <div class="stat-label-bottom" id="water-status">Normal</div>
+          </div>
+
+          <!-- Gas Level Card -->
+          <div class="stat-card-v2">
+            <div class="stat-label-top">QAZ SƏVİYYƏSİ</div>
+            <div class="hardware-gauge-container">
+              <div class="gas-tank">
+                <div class="gas" id="gas-level" style="height: 28%;">
+                  <div class="gas-particles">
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                    <div class="particle"></div>
+                  </div>
+                </div>
+                <div class="tank-percentage" id="gas-percent">28%</div>
+              </div>
+            </div>
+            <div class="stat-label-bottom" id="gas-status">Normal</div>
+          </div>
+        </div>
+
+        <div class="dash-grid">
+          <!-- Water Level Chart -->
+          <div class="chart-card">
+            <div class="cc-header">
+              <h3>Su Səviyyəsi Tarixçəsi</h3>
+              <button class="cc-dots">···</button>
+            </div>
+            <div class="chart-wrap"><canvas id="waterChart"></canvas></div>
+          </div>
+
+          <!-- Gas Level Chart -->
+          <div class="chart-card">
+            <div class="cc-header">
+              <h3>Qaz Səviyyəsi Tarixçəsi</h3>
+              <button class="cc-dots">···</button>
+            </div>
+            <div class="chart-wrap"><canvas id="gasChart"></canvas></div>
+          </div>
+        </div>
+
+        <!-- Sensor Status Table -->
+        <div class="chart-card" style="margin-top:24px;">
+          <div class="cc-header">
+            <h3>Sensor Status</h3>
+          </div>
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Sensor ID</th>
+                <th>Növ</th>
+                <th>Lokasiya</th>
+                <th>Dəyər</th>
+                <th>Status</th>
+                <th>Yenilənib</th>
+              </tr>
+            </thead>
+            <tbody id="sensor-table-body">
+              <tr>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">WS-001</td>
+                <td>Su Səviyyəsi</td>
+                <td>Nərimanov stansiyası</td>
+                <td><strong>65%</strong></td>
+                <td><span class="status-badge green">Aktiv</span></td>
+                <td style="color:var(--text-muted);font-size:12px;">2 dəq əvvəl</td>
+              </tr>
+              <tr>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">GS-001</td>
+                <td>Qaz Detektor</td>
+                <td>Füzuli küçəsi</td>
+                <td><strong>28%</strong></td>
+                <td><span class="status-badge green">Aktiv</span></td>
+                <td style="color:var(--text-muted);font-size:12px;">1 dəq əvvəl</td>
+              </tr>
+              <tr>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">WS-002</td>
+                <td>Su Səviyyəsi</td>
+                <td>Hüseyn Cavid prospekti</td>
+                <td><strong>72%</strong></td>
+                <td><span class="status-badge green">Aktiv</span></td>
+                <td style="color:var(--text-muted);font-size:12px;">3 dəq əvvəl</td>
+              </tr>
+              <tr>
+                <td style="font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:10px;">GS-002</td>
+                <td>Qaz Detektor</td>
+                <td>Əhməd Cavad küçəsi</td>
+                <td><strong>15%</strong></td>
+                <td><span class="status-badge amber">Xəbərdarlıq</span></td>
+                <td style="color:var(--text-muted);font-size:12px;">5 dəq əvvəl</td>
               </tr>
             </tbody>
           </table>

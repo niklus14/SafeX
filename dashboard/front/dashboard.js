@@ -244,6 +244,114 @@ async function showMapPanel(d) {
   }
 }
 
+/* ===== HARDWARE DATA ===== */
+let waterChart, gasChart;
+
+function initHardwareCharts() {
+  const waterCtx = document.getElementById('waterChart');
+  const gasCtx = document.getElementById('gasChart');
+
+  if (waterCtx) {
+    waterChart = new Chart(waterCtx.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+        datasets: [{
+          label: 'Su Səviyyəsi (%)',
+          data: [60, 62, 65, 68, 65, 63, 65],
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { callback: value => value + '%' }
+          }
+        }
+      }
+    });
+  }
+
+  if (gasCtx) {
+    gasChart = new Chart(gasCtx.getContext('2d'), {
+      type: 'line',
+      data: {
+        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '24:00'],
+        datasets: [{
+          label: 'Qaz Səviyyəsi (%)',
+          data: [25, 27, 28, 30, 28, 26, 28],
+          borderColor: '#f59e0b',
+          backgroundColor: 'rgba(245, 158, 11, 0.1)',
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            max: 100,
+            ticks: { callback: value => value + '%' }
+          }
+        }
+      }
+    });
+  }
+}
+
+function refreshHardwareData() {
+  // Simulate real-time data update
+  const waterLevel = Math.floor(Math.random() * 20) + 55; // 55-75%
+  const gasLevel = Math.floor(Math.random() * 15) + 20; // 20-35%
+
+  const waterEl = document.getElementById('water-level');
+  const gasEl = document.getElementById('gas-level');
+  const waterPercent = document.getElementById('water-percent');
+  const gasPercent = document.getElementById('gas-percent');
+  const waterStatus = document.getElementById('water-status');
+  const gasStatus = document.getElementById('gas-status');
+
+  if (waterEl) {
+    waterEl.style.height = waterLevel + '%';
+    waterPercent.textContent = waterLevel + '%';
+    waterStatus.textContent = waterLevel > 70 ? 'Yüksək' : waterLevel < 40 ? 'Aşağı' : 'Normal';
+    waterStatus.style.color = waterLevel > 70 ? '#f59e0b' : waterLevel < 40 ? '#ef4444' : '#64748b';
+  }
+
+  if (gasEl) {
+    gasEl.style.height = gasLevel + '%';
+    gasPercent.textContent = gasLevel + '%';
+    gasStatus.textContent = gasLevel > 30 ? 'Xəbərdarlıq' : gasLevel < 10 ? 'Təhlükəli' : 'Normal';
+    gasStatus.style.color = gasLevel > 30 ? '#f59e0b' : gasLevel < 10 ? '#ef4444' : '#64748b';
+  }
+
+  // Update charts
+  if (waterChart) {
+    waterChart.data.datasets[0].data = waterChart.data.datasets[0].data.map(() => Math.floor(Math.random() * 20) + 55);
+    waterChart.update();
+  }
+
+  if (gasChart) {
+    gasChart.data.datasets[0].data = gasChart.data.datasets[0].data.map(() => Math.floor(Math.random() * 15) + 20);
+    gasChart.update();
+  }
+}
+
 function exportPDF() {
   const docEl = document.querySelector('.report-doc');
   if (!docEl) return;
@@ -610,6 +718,7 @@ const pages = {
   dashboard: 'page-dashboard',
   reports: 'page-reports',
   map: 'page-map',
+  hardware: 'page-hardware',
   analytics: 'page-analytics',
   orgs: 'page-orgs',
   settings: 'page-settings'
@@ -624,6 +733,7 @@ function navigateTo(page) {
   if (pageEl) {
     pageEl.classList.add('active');
     if (page === 'map') { setTimeout(() => { if (map) map.invalidateSize(); }, 100); }
+    if (page === 'hardware') { setTimeout(() => initHardwareCharts(), 100); }
   }
 }
 
