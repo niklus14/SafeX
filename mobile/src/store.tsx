@@ -32,6 +32,8 @@ const INITIAL_DRAFT: DraftReport = {
   description: '',
   location: 'Nərimanov r., Təbriz küç.',
   isLocationCustom: false,
+  lat: 40.4093,
+  lng: 49.8671,
 };
 
 const INITIAL_STATE: AppState = {

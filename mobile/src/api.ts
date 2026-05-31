@@ -73,7 +73,8 @@ export interface IssueDetail {
   category: string;
   severity: string;
   title_az: string;
-  description_az: string;
+  brief_desc_az: string;
+  full_desc_az: string;
   status: string;
   deadline: string | null;
   created_at: string;
@@ -107,6 +108,7 @@ export interface UserProfile {
 export interface FeedIssue {
   id: number;
   title_az: string;
+  brief_desc_az: string;
   category: string;
   severity: string;
   status: string;

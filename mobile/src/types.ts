@@ -82,4 +82,6 @@ export interface DraftReport {
   description: string;
   location: string;
   isLocationCustom: boolean;
+  lat: number;
+  lng: number;
 }

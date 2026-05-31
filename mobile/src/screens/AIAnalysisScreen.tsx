@@ -33,14 +33,12 @@ export default function AIAnalysisScreen() {
         // Persist to backend — fire-and-forget, UI already updated optimistically
         const uid = state.userId;
         if (uid !== null) {
-          const lat = 40.4093 + (Math.random() - 0.5) * 0.005;
-          const lng = 49.8671 + (Math.random() - 0.5) * 0.005;
           api
             .submitReport({
               imageUrl: state.draft.photo,
               description: state.draft.description,
-              lat,
-              lng,
+              lat: state.draft.lat,
+              lng: state.draft.lng,
               userId: uid,
             })
             .then(result => {
